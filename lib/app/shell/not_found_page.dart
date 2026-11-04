@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../design_system/arcane_button.dart';
+import '../../design_system/mascot/maitre_and_droiid.dart';
+import '../../design_system/page_frame.dart';
 import '../sections.dart';
 
 class NotFoundPage extends StatelessWidget {
@@ -10,27 +13,20 @@ class NotFoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page introuvable')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Ce chemin n\'existe pas : $uri',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => context.go(AppSection.accueil.path),
-                child: const Text('Retour à l\'accueil'),
-              ),
-            ],
+    return PageFrame(
+      title: 'Page introuvable',
+      children: [
+        const Center(
+          child: MaitreAndDroiid(width: 96, mood: MascotMood.surpris),
+        ),
+        Text('Ce chemin n\'existe pas : $uri', textAlign: TextAlign.center),
+        Center(
+          child: ArcaneButton(
+            label: 'Retour à l\'accueil',
+            onPressed: () => context.go(AppSection.accueil.path),
           ),
         ),
-      ),
+      ],
     );
   }
 }

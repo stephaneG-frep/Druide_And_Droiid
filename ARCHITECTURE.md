@@ -11,17 +11,20 @@ lib/
     app.dart                MaterialApp, locale française
     router.dart             Routes GoRouter
     sections.dart           Rubriques : source unique des routes et des menus
-    theme/                  Palette et thèmes
-    shell/                  Coque de navigation, page Plus, page 404, placeholders
+    theme/                  Palette, couleurs par thème, ThemeData
+    shell/                  Coque de navigation, page Plus, page 404
   core/                     Services transverses
     persistence/            Base SQLite (Drift)
     security/               Coffre des secrets
-  features/<rubrique>/      Prévu dès la phase 2
-    presentation/           Écrans et widgets
-    domain/                 Logique métier
-    data/                   Repositories et sources de données
+  design_system/            Composants réutilisables, mascotte, animations
+  features/<rubrique>/      Une rubrique par dossier
+    presentation/           Écrans et contrôleurs
+    domain/                 Modèles et catalogues
+    data/                   Repositories
+tool/                       Génération de l'icône et des aperçus
 test/                       Tests unitaires et de widgets
 integration_test/           Tests sur la plateforme réelle
+assets/                     Polices et sources de l'icône
 ```
 
 Séparation demandée par la spec, et emplacement de chaque couche :
@@ -31,7 +34,7 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | Présentation | `features/*/presentation`, `app/shell` |
 | Logique métier | `features/*/domain` |
 | Persistance | `core/persistence`, `features/*/data` |
-| Contenu pédagogique | Prévu : `assets/` chargés en local, phase 4 |
+| Contenu pédagogique | `features/*/domain` pour les catalogues ; leçons prévues en phases 4 et 5 |
 | Fournisseurs IA | Prévu : phase 6 |
 | Services de plateforme | Prévu : `core/platform`, phase 7 |
 
@@ -47,6 +50,9 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | Sauvegarde Android | `allowBackup="false"` | Évite que la sauvegarde cloud du système embarque des données du coffre. Les sauvegardes passent par l'export de l'application (phase 11). |
 | Identifiant | `com.druideanddroiid.druide_and_droiid` | Confirmé. Il ne peut plus changer après une publication. |
 | Langue | Locale `fr` fixe | La spec demande une interface entièrement française. |
+
+| Apparence | Chargée avant le premier rendu | Évite un flash du mauvais thème. Un échec de lecture n'empêche pas le démarrage. |
+| Progression | `progressProvider` renvoie un état zéro | Point de branchement unique : la phase 3 le reliera à SQLite sans toucher aux écrans. |
 
 ## Dépendances système
 

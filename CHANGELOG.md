@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## Phase 2 — 2026-11-04
+
+- Thèmes sombre et clair personnalisés, avec polices embarquées.
+- Mascotte Maître And-Droiīd en vectoriel : cinq humeurs et animation discrète.
+- Onze familles de composants réutilisables (voir [DESIGN.md](DESIGN.md)).
+- Tableau de bord, avec question flash quotidienne.
+- Écrans principaux de toutes les rubriques : programme des douze modules, vingt projets, huit grades.
+- Paramètres : thème et niveau d'animation, conservés au redémarrage.
+- Icône de l'application et écran de démarrage sombre sur Android.
+- Corrections : débordement du rail en paysage, plantage de `AnimatedSize` avec animations désactivées.
+
 ## Phase 1 — 2026-11-04
 
 - Projet Flutter créé pour Android et Linux.

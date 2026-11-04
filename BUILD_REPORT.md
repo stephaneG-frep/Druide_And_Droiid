@@ -1,5 +1,16 @@
 # Rapport de compilation
 
+## Phase 2 — 2026-11-04
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi (207 Mo), installé et lancé sur Honor MTN-NX1M |
+| Linux debug | `flutter build linux --debug` | Réussi, lancé et contrôlé sur capture |
+| Android release | — | Non tenté, prévu en phase 13 |
+| Linux release et `.deb` | — | Non tenté, prévu en phase 13 |
+
+La hausse de taille de l'APK de debug (30 Mo) vient surtout des polices et des icônes. La taille d'un APK de debug n'annonce pas celle du release.
+
 ## Phase 1 — 2026-11-04
 
 | Cible | Commande | Résultat |

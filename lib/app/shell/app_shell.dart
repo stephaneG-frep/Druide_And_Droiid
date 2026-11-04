@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../design_system/mascot/maitre_and_droiid.dart';
 import '../sections.dart';
 
-/// Largeur à partir de laquelle la barre basse cède la place au rail latéral.
-const wideLayoutBreakpoint = 840.0;
+/// Taille à partir de laquelle la barre basse cède la place au rail latéral.
+/// La hauteur minimale écarte les téléphones en paysage, où le rail déborderait.
+const wideLayoutMinWidth = 840.0;
+const wideLayoutMinHeight = 560.0;
 
 /// Coque de navigation : barre basse sur téléphone, rail latéral sur ordinateur.
 class AppShell extends StatelessWidget {
@@ -24,7 +27,9 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.sizeOf(context).width >= wideLayoutBreakpoint;
+    final size = MediaQuery.sizeOf(context);
+    final isWide =
+        size.width >= wideLayoutMinWidth && size.height >= wideLayoutMinHeight;
 
     if (isWide) {
       return Scaffold(
@@ -35,6 +40,10 @@ class AppShell extends StatelessWidget {
                 selectedIndex: shell.currentIndex,
                 onDestinationSelected: _select,
                 labelType: NavigationRailLabelType.all,
+                leading: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: MaitreAndDroiid(width: 52),
+                ),
                 destinations: [
                   for (final (label, icon) in _tabs)
                     NavigationRailDestination(

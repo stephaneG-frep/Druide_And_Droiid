@@ -12,4 +12,21 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 
 ## Ce qui est disponible
 
-Pour l'instant, seule la navigation fonctionne. Chaque rubrique indique la phase qui apportera son contenu.
+- **Accueil** : votre grade, vos statistiques et une question flash chaque jour. Son résultat ne compte pas encore dans votre progression.
+- **Académie** : le programme des douze modules. Les leçons ne sont pas encore rédigées.
+- **Lab** : un exemple de code Kotlin à lire et à copier. Il ne peut pas être exécuté dans l'application.
+- **Projets** : la liste des vingt projets prévus.
+- **Progression** : les huit grades de l'Académie.
+- **Grimoire** : l'aide de l'application.
+- **Paramètres** : le thème et les animations.
+
+Le Maître And-Droiīd et le Chaudron des Bugs présentent ce qu'ils sauront faire, mais ils ne sont pas encore reliés à une IA.
+
+## Changer l'apparence
+
+Ouvrez **Plus**, puis **Paramètres**.
+
+- **Thème** : Sombre, Clair, ou celui du système.
+- **Animations** : Toutes, Réduites ou Aucune.
+
+Vos choix sont conservés au redémarrage.

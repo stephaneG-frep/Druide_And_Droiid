@@ -3,7 +3,7 @@
 | Phase | Sujet | État |
 | --- | --- | --- |
 | 1 | Fondations | Terminée le 2026-11-04 |
-| 2 | Design | À faire |
+| 2 | Design | Terminée le 2026-11-04 |
 | 3 | Persistance | À faire |
 | 4 | Moteur pédagogique | À faire |
 | 5 | Contenus Android | À faire |
@@ -18,6 +18,7 @@
 
 ## Points ouverts
 
-- Publication GitHub en attente : remote `origin` à ajouter.
-- Rendu Linux à vérifier à l'œil (voir [TEST_REPORT.md](TEST_REPORT.md)).
+- Branche `phase-2-design` à fusionner et publier.
+- Icône de la fenêtre et du paquet Linux : à faire avec le `.deb` en phase 13.
+- Seuils d'expérience des grades provisoires, à ajuster en phase 10.
 - Signature release Android : encore la clé de debug, à remplacer en phase 13.
