@@ -10,6 +10,8 @@ import '../features/chaudron/presentation/chaudron_page.dart';
 import '../features/grimoire/presentation/grimoire_page.dart';
 import '../features/lab/presentation/lab_page.dart';
 import '../features/maitre/presentation/maitre_page.dart';
+import '../features/notes/presentation/note_editor_page.dart';
+import '../features/notes/presentation/notes_page.dart';
 import '../features/parametres/presentation/parametres_page.dart';
 import '../features/progression/presentation/progression_page.dart';
 import '../features/projets/presentation/projets_page.dart';
@@ -25,6 +27,7 @@ Widget _pageFor(AppSection section) => switch (section) {
   AppSection.academie => const AcademiePage(),
   AppSection.maitre => const MaitrePage(),
   AppSection.lab => const LabPage(),
+  AppSection.notes => const NotesPage(),
   AppSection.chaudron => const ChaudronPage(),
   AppSection.projets => const ProjetsPage(),
   AppSection.progression => const ProgressionPage(),
@@ -37,6 +40,21 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: AppSection.accueil.path,
     errorBuilder: (context, state) => NotFoundPage(uri: state.uri),
     routes: [
+      // L'éditeur couvre la navigation et laisse toute la place au clavier.
+      GoRoute(
+        path: newNotePath,
+        builder: (context, state) =>
+            NoteEditorPage(moduleId: state.uri.queryParameters['module']),
+      ),
+      GoRoute(
+        path: '/note/:noteId',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['noteId']!);
+          return id == null
+              ? NotFoundPage(uri: state.uri)
+              : NoteEditorPage(noteId: id);
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

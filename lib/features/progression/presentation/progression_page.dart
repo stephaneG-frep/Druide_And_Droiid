@@ -8,6 +8,7 @@ import '../../../design_system/page_frame.dart';
 import '../../../design_system/rune_badge.dart';
 import '../../../design_system/techno_card.dart';
 import '../../../design_system/xp_bar.dart';
+import '../data/progress_repository.dart';
 import '../domain/progression.dart';
 
 class ProgressionPage extends ConsumerWidget {
@@ -15,12 +16,15 @@ class ProgressionPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progress = ref.watch(progressProvider);
+    final snapshot = ref.watch(progressProvider);
+    final progress = snapshot.value ?? ProgressSnapshot.start;
     final rank = progress.rank;
 
     return PageFrame(
       title: AppSection.progression.label,
       children: [
+        if (snapshot.hasError)
+          const ErrorNotice(message: 'Impossible de lire votre progression.'),
         TechnoCard(
           accent: context.techno.emeraude,
           child: Column(
@@ -39,8 +43,9 @@ class ProgressionPage extends ConsumerWidget {
         ),
         const PhaseNotice(
           message:
-              'Le gain d\'expérience et les défis ne sont pas encore '
-              'actifs. Les seuils des grades sont provisoires.',
+              'Pour l\'instant, seule la question flash de l\'accueil '
+              'rapporte de l\'expérience. Les défis et badges ne sont pas '
+              'encore actifs, et les seuils des grades sont provisoires.',
         ),
         const SectionTitle('Les huit grades'),
         AdaptiveGrid(

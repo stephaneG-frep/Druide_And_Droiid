@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Grades de l'Académie. Les seuils sont provisoires : la phase 10 les ajustera.
 enum Rank {
@@ -31,25 +30,28 @@ class ProgressSnapshot {
     required this.xp,
     required this.lessonsCompleted,
     required this.quizzesPassed,
-    required this.badges,
   });
 
   static const start = ProgressSnapshot(
     xp: 0,
     lessonsCompleted: 0,
     quizzesPassed: 0,
-    badges: 0,
   );
 
   final int xp;
   final int lessonsCompleted;
+
+  /// Nombre de quiz différents réussis au moins une fois.
   final int quizzesPassed;
-  final int badges;
 
   Rank get rank => Rank.forXp(xp);
 }
 
-/// Aucune activité n'existe encore : la phase 3 branchera ce fournisseur à SQLite.
-final progressProvider = Provider<ProgressSnapshot>(
-  (ref) => ProgressSnapshot.start,
-);
+/// Résultat de l'enregistrement d'une tentative de quiz.
+class QuizOutcome {
+  const QuizOutcome({required this.recorded, required this.xpEarned});
+
+  /// `false` si la tentative a été ignorée car le quiz ne compte qu'une fois.
+  final bool recorded;
+  final int xpEarned;
+}

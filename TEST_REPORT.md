@@ -1,5 +1,54 @@
 # Rapport de tests
 
+## Phase 3 — 2026-11-04
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 137 tests sur 137 réussis |
+| Intégration sur Linux | 4 tests sur 4 réussis |
+| Intégration sur Honor MTN-NX1M (Android 16, arm64) | 4 tests sur 4 réussis |
+
+Couvert par les tests :
+
+- **Migration** : d'un vrai fichier v1 vers v2, sans perte, et même schéma qu'une base neuve.
+- **Progression** : leçons, quiz, expérience créditée une seule fois, y compris en appels simultanés.
+- **Notes** : création, relecture, accents et emoji, tri, filtre par module, suppression, note inconnue.
+- **Sauvegarde automatique** : délai, sortie immédiate de l'écran, passage en arrière-plan, frappe pendant une écriture, note vide jamais créée, échec puis nouvel essai.
+- **Écrans** : annulation et confirmation de suppression, note liée à un module, favoris, question flash.
+- **Persistance sur fichier** : notes, progression et favoris relus après fermeture, sur Linux et Android.
+
+Vérifié à la main sur les appareils réels :
+
+| Vérification | Résultat |
+| --- | --- |
+| Honor : mise à jour de la version phase 2 par-dessus, sans désinstaller | Fichier passé de v1 à v2, réglage conservé, thème clair affiché |
+| Honor : bonne réponse à la question flash, arrêt forcé, relance | 10 XP et 1 quiz réussi affichés et présents dans la base |
+| Honor : suppression d'une note avec confirmation | Note retirée de la base |
+| Honor : logcat | Aucun crash ni erreur Flutter |
+| Linux : lancement réel | Base v2 créée dans `~/.local/share/`, plus rien écrit dans `~/Documents` |
+
+Sauvegarde des notes sur le Honor, avec arrêt forcé :
+
+| Scénario | Résultat |
+| --- | --- |
+| Arrêt 2 s après la frappe | Note conservée |
+| Arrêt environ 860 ms après le début de la frappe | Note conservée |
+| Touche Accueil puis arrêt forcé immédiat, délai alors de 600 ms | **Note perdue** |
+
+Le délai a ensuite été réduit à 300 ms. Le scénario perdant n'a pas été rejoué : la fenêtre est réduite, pas supprimée. L'enregistrement au passage en arrière-plan est prouvé par un test de widget, mais il n'a pas été isolé sur le téléphone.
+
+Bugs trouvés et corrigés pendant la phase :
+
+- La base était écrite dans `~/Documents` sur Linux.
+- La tuile « Badges obtenus » affichait un zéro figé pour une fonction inexistante.
+
+### Non vérifié
+
+- **Base corrompue ou disque plein** sur un appareil réel : seules des erreurs simulées sont testées.
+- **Performances** avec un grand nombre de notes.
+- **Saisie sur Linux** : l'écran des notes n'y a pas été essayé à la main.
+
 ## Phase 2 — 2026-11-04
 
 | Vérification | Résultat |

@@ -32,6 +32,12 @@ enum AppSection {
     description: 'Analysez erreurs et logs pour comprendre vos pannes.',
     icon: Icons.bug_report_outlined,
   ),
+  notes(
+    path: '/plus/notes',
+    label: 'Mes notes',
+    description: 'Votre grimoire personnel, enregistré automatiquement.',
+    icon: Icons.edit_note,
+  ),
   projets(
     path: '/plus/projets',
     label: 'Projets',
@@ -74,6 +80,7 @@ enum AppSection {
 
   /// Rubriques regroupées derrière l'onglet « Plus ».
   static const secondary = [
+    notes,
     chaudron,
     projets,
     progression,

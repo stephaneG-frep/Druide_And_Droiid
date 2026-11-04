@@ -148,6 +148,13 @@ abstract final class AppTheme {
           color: techno.muted,
         ),
       ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: scheme.surfaceContainerHigh,
+        shape: BeveledRectangleBorder(
+          borderRadius: bevel,
+          side: BorderSide(color: techno.border),
+        ),
+      ),
       dividerTheme: DividerThemeData(color: techno.border, space: 1),
       iconTheme: IconThemeData(color: scheme.onSurface),
       listTileTheme: ListTileThemeData(

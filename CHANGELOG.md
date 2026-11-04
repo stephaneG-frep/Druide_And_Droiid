@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## Phase 3 — 2026-11-04
+
+- Schéma SQLite en version 2, avec migration depuis la version 1.
+- Repositories de la progression, des notes et des favoris.
+- Progression réelle : l'accueil et la page Progression lisent la base.
+- Question flash : une bonne réponse du premier coup rapporte 10 XP, une fois par jour.
+- Nouvelle rubrique Mes notes, avec sauvegarde automatique et suppression confirmée.
+- Notes rattachées à un module, depuis sa page.
+- Favoris sur les modules, avec un bloc dédié dans l'Académie.
+- Messages d'erreur visibles si la progression ou les notes sont illisibles.
+- Tuile « Badges obtenus » remplacée par « Points d'expérience » : les badges n'existent pas encore.
+- Dialogues aux coins biseautés.
+- Correction : sur Linux, la base est désormais dans le dossier de données de l'application, et non dans `~/Documents`.
+
 ## Phase 2 — 2026-11-04
 
 - Thèmes sombre et clair personnalisés, avec polices embarquées.

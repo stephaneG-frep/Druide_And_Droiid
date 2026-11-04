@@ -8,15 +8,21 @@ const maxContentWidth = 1100.0;
 
 /// Gabarit commun des écrans : barre de titre, fond et colonne centrée.
 class PageFrame extends StatelessWidget {
-  const PageFrame({required this.title, required this.children, super.key});
+  const PageFrame({
+    required this.title,
+    required this.children,
+    this.actions,
+    super.key,
+  });
 
   final String title;
   final List<Widget> children;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(title), actions: actions),
       body: CircuitBackdrop(
         child: LayoutBuilder(
           builder: (context, box) {

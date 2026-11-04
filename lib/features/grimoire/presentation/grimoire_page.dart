@@ -22,8 +22,8 @@ class GrimoirePage extends StatelessWidget {
           initiallyOpen: true,
           child: Text(
             'Utilisez la barre du bas sur téléphone, ou le rail à gauche sur '
-            'ordinateur. L\'onglet Plus regroupe le Chaudron des Bugs, les '
-            'Projets, la Progression, ce Grimoire et les Paramètres. Toucher '
+            'ordinateur. L\'onglet Plus regroupe vos Notes, le Chaudron des '
+            'Bugs, les Projets, la Progression, ce Grimoire et les Paramètres. Toucher '
             'à nouveau l\'onglet actif ramène à sa page de départ.',
             style: body,
           ),
@@ -33,7 +33,29 @@ class GrimoirePage extends StatelessWidget {
           icon: Icons.school_outlined,
           child: Text(
             'Dans l\'onglet Académie, touchez un module pour lire son '
-            'programme. Les leçons ne sont pas encore disponibles.',
+            'programme. L\'étoile en haut de l\'écran l\'ajoute à vos favoris. '
+            'Les leçons ne sont pas encore disponibles.',
+            style: body,
+          ),
+        ),
+        GrimoirePanel(
+          title: 'Prendre des notes',
+          icon: Icons.edit_note,
+          child: Text(
+            'Dans Plus, ouvrez Mes notes pour écrire une note libre. Depuis '
+            'un module, le bouton Ajouter une note la rattache à ce module. '
+            'Vos notes s\'enregistrent automatiquement pendant que vous '
+            'écrivez et restent disponibles hors ligne.',
+            style: body,
+          ),
+        ),
+        GrimoirePanel(
+          title: 'Gagner de l\'expérience',
+          icon: Icons.bolt,
+          child: Text(
+            'Chaque jour, une bonne réponse du premier coup à la question '
+            'flash de l\'accueil rapporte de l\'expérience. Votre progression '
+            'est conservée sur cet appareil.',
             style: body,
           ),
         ),

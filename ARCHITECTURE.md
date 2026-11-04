@@ -52,7 +52,33 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | Langue | Locale `fr` fixe | La spec demande une interface entièrement française. |
 
 | Apparence | Chargée avant le premier rendu | Évite un flash du mauvais thème. Un échec de lecture n'empêche pas le démarrage. |
-| Progression | `progressProvider` renvoie un état zéro | Point de branchement unique : la phase 3 le reliera à SQLite sans toucher aux écrans. |
+| Éditeur de note | Route hors de la coque de navigation | Laisse la place au clavier, et le retour revient à l'écran d'origine, module ou liste. |
+
+## Données
+
+Base SQLite locale gérée par Drift, schéma en version 2 (`lib/core/persistence/`).
+
+| Table | Contenu |
+| --- | --- |
+| `app_meta` | Réglages (clé/valeur) |
+| `lesson_progress` | Leçons terminées |
+| `quiz_attempts` | Toutes les tentatives de quiz |
+| `xp_events` | Registre de l'expérience ; `source` unique, donc une action ne rapporte qu'une fois |
+| `notes` | Notes, liées ou non à un module |
+| `favorites` | Favoris, par type et identifiant |
+
+L'expérience totale est la somme du registre : elle n'est jamais stockée à part, et ne peut donc pas diverger.
+
+Emplacement du fichier :
+
+- **Android** : dossier privé de l'application.
+- **Linux** : `~/.local/share/com.druideanddroiid.druide_and_droiid/`.
+
+Chaque hausse de `schemaVersion` exige une étape de migration et un test partant d'un vrai fichier de l'ancienne version (`test/core/migration_test.dart`). La migration doit aussi aboutir au même schéma qu'une base neuve.
+
+Les repositories sont dans `features/*/data`. Les lectures sont des flux : les écrans se mettent à jour d'eux-mêmes après une écriture.
+
+**Sauvegarde automatique des notes** (`NoteDraft`) : écriture 300 ms après la dernière frappe, et immédiatement en quittant l'écran ou en passant en arrière-plan. Les écritures sont sérialisées pour ne jamais créer de doublon. Limite connue : si le processus est tué brutalement moins de 300 ms après une frappe, cette frappe peut être perdue.
 
 ## Dépendances système
 

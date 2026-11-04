@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/sections.dart';
@@ -6,14 +7,17 @@ import '../../../app/theme/app_theme.dart';
 import '../../../design_system/adaptive_grid.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
+import '../data/favorites_repository.dart';
 import '../domain/module_catalog.dart';
 import 'level_color.dart';
 
-class AcademiePage extends StatelessWidget {
+class AcademiePage extends ConsumerWidget {
   const AcademiePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoriteModulesProvider).value ?? const {};
+
     return PageFrame(
       title: AppSection.academie.label,
       children: [
@@ -27,6 +31,17 @@ class AcademiePage extends StatelessWidget {
               'Les leçons, quiz et exercices sont en cours de rédaction : '
               'seuls les programmes sont disponibles pour l\'instant.',
         ),
+        if (favorites.isNotEmpty) ...[
+          const SectionTitle('Vos favoris'),
+          AdaptiveGrid(
+            minItemWidth: 300,
+            children: [
+              for (final module in academyModules)
+                if (favorites.contains(module.id)) CourseCard(module: module),
+            ],
+          ),
+          const SectionTitle('Tous les modules'),
+        ],
         AdaptiveGrid(
           minItemWidth: 300,
           children: [

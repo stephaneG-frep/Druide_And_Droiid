@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 2 (design) terminée.** L'interface et les écrans sont en place, mais les leçons, l'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 3 (persistance) terminée.** La progression, les notes et les favoris sont enregistrés, mais les leçons, l'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 
@@ -26,6 +26,8 @@ flutter analyze
 flutter test
 flutter test integration_test -d linux
 ```
+
+**Attention :** lancés sur un téléphone, les tests d'intégration désinstallent l'application à la fin, ce qui efface ses données. L'APK produit par ces tests démarre sur les tests : refaites `flutter build apk --debug` avant de réinstaller.
 
 Après toute modification des tables Drift, régénérer le code :
 

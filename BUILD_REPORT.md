@@ -1,5 +1,14 @@
 # Rapport de compilation
 
+## Phase 3 — 2026-11-04
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé et lancé sur Honor MTN-NX1M |
+| Linux debug | `flutter build linux --debug` | Réussi, lancé |
+| Android release | — | Non tenté, prévu en phase 13 |
+| Linux release et `.deb` | — | Non tenté, prévu en phase 13 |
+
 ## Phase 2 — 2026-11-04
 
 | Cible | Commande | Résultat |

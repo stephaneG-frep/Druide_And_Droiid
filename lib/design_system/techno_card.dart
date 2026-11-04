@@ -103,6 +103,30 @@ class PhaseNotice extends StatelessWidget {
   }
 }
 
+/// Signale une erreur que l'utilisateur doit voir.
+class ErrorNotice extends StatelessWidget {
+  const ErrorNotice({required this.message, super.key});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final techno = context.techno;
+
+    return TechnoCard(
+      accent: techno.danger,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: techno.danger, size: 22),
+          const SizedBox(width: 12),
+          Expanded(child: Text(message, style: context.text.bodyMedium)),
+        ],
+      ),
+    );
+  }
+}
+
 /// Titre de bloc à l'intérieur d'un écran.
 class SectionTitle extends StatelessWidget {
   const SectionTitle(this.title, {super.key});

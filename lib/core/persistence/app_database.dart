@@ -1,24 +1,38 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'tables.dart';
 
 part 'app_database.g.dart';
 
-/// Paires clé/valeur techniques ; les tables métier arrivent en phase 3.
-class AppMeta extends Table {
-  TextColumn get key => text()();
-  TextColumn get value => text()();
-
-  @override
-  Set<Column<Object>> get primaryKey => {key};
-}
-
-@DriftDatabase(tables: [AppMeta])
+@DriftDatabase(
+  tables: [AppMeta, LessonProgress, QuizAttempts, XpEvents, Notes, Favorites],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
+  /// Toute hausse de version exige une étape dans [migration] et un test sur
+  /// une base réelle de l'ancienne version.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.createTable(lessonProgress);
+        await migrator.createTable(quizAttempts);
+        await migrator.createTable(xpEvents);
+        await migrator.createTable(notes);
+        await migrator.createTable(favorites);
+      }
+    },
+  );
 
   Future<void> writeMeta(String key, String value) {
     return into(
@@ -35,7 +49,18 @@ class AppDatabase extends _$AppDatabase {
 const databaseName = 'druide_and_droiid';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  final database = AppDatabase(driftDatabase(name: databaseName));
+  final database = AppDatabase(
+    driftDatabase(
+      name: databaseName,
+      native: DriftNativeOptions(
+        // Par défaut, drift écrirait dans ~/Documents sur Linux. Sur Android, ce
+        // dossier est déjà privé à l'application.
+        databaseDirectory: Platform.isLinux
+            ? getApplicationSupportDirectory
+            : null,
+      ),
+    ),
+  );
   ref.onDispose(database.close);
   return database;
 });

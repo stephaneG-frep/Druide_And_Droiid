@@ -13,6 +13,8 @@ import '../../../design_system/stat_tile.dart';
 import '../../../design_system/techno_card.dart';
 import '../../../design_system/xp_bar.dart';
 import '../../academie/domain/module_catalog.dart';
+import '../../../design_system/druide_toast.dart';
+import '../../progression/data/progress_repository.dart';
 import '../../progression/domain/progression.dart';
 import '../domain/flash_questions.dart';
 
@@ -21,12 +23,20 @@ class AccueilPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progress = ref.watch(progressProvider);
+    final snapshot = ref.watch(progressProvider);
+    final progress = snapshot.value ?? ProgressSnapshot.start;
+    final today = DateTime.now();
 
     return PageFrame(
       title: AppSection.accueil.label,
       children: [
         _Hero(progress: progress),
+        if (snapshot.hasError)
+          const ErrorNotice(
+            message:
+                'Impossible de lire votre progression : les chiffres '
+                'ci-dessous ne sont peut-être pas à jour.',
+          ),
         AdaptiveGrid(
           minItemWidth: 140,
           maxColumns: 4,
@@ -47,19 +57,14 @@ class AccueilPage extends ConsumerWidget {
               label: 'Quiz réussis',
             ),
             StatTile(
-              icon: Icons.emoji_events_outlined,
-              value: '${progress.badges}',
-              label: 'Badges obtenus',
+              icon: Icons.bolt,
+              value: '${progress.xp}',
+              label: 'Points d\'expérience',
             ),
           ],
         ),
         const SectionTitle('Question flash'),
-        QuizCard(
-          question: flashQuestionFor(DateTime.now()),
-          footnote:
-              'Pour le plaisir : ce résultat ne compte pas encore '
-              'dans votre progression.',
-        ),
+        _FlashQuiz(date: today),
         const SectionTitle('Explorer'),
         AdaptiveGrid(
           minItemWidth: 240,
@@ -75,6 +80,57 @@ class AccueilPage extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _FlashQuiz extends ConsumerWidget {
+  const _FlashQuiz({required this.date});
+
+  final DateTime date;
+
+  Future<void> _record(
+    BuildContext context,
+    WidgetRef ref,
+    bool correct,
+  ) async {
+    try {
+      final outcome = await ref
+          .read(progressRepositoryProvider)
+          .recordQuizAttempt(
+            quizId: flashQuizId(date),
+            score: correct ? 1 : 0,
+            maxScore: 1,
+            passed: correct,
+            xp: flashQuizXp,
+            onlyFirstAttempt: true,
+          );
+      if (outcome.xpEarned > 0 && context.mounted) {
+        showDruideToast(context, '+${outcome.xpEarned} XP gagnés !');
+      }
+    } on Exception catch (error) {
+      debugPrint('Enregistrement du quiz impossible : $error');
+      if (context.mounted) {
+        showDruideToast(
+          context,
+          'Votre résultat n\'a pas pu être enregistré.',
+          kind: ToastKind.error,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attempted =
+        ref.watch(quizAttemptedProvider(flashQuizId(date))).value ?? false;
+
+    return QuizCard(
+      question: flashQuestionFor(date),
+      footnote: attempted
+          ? 'Votre réponse du jour est enregistrée. Revenez demain !'
+          : 'Une bonne réponse du premier coup rapporte $flashQuizXp XP.',
+      onAnswered: (correct) => _record(context, ref, correct),
     );
   }
 }

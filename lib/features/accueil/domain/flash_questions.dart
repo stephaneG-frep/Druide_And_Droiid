@@ -10,6 +10,15 @@ QuizQuestion flashQuestionFor(DateTime date) {
   return flashQuestions[dayNumber % flashQuestions.length];
 }
 
+/// Expérience gagnée par une bonne réponse. Valeur provisoire, voir la phase 10.
+const flashQuizXp = 10;
+
+/// Identifiant du quiz du jour : la question flash compte une fois par date.
+String flashQuizId(DateTime date) {
+  String two(int value) => value.toString().padLeft(2, '0');
+  return 'flash:${date.year}-${two(date.month)}-${two(date.day)}';
+}
+
 const flashQuestions = [
   QuizQuestion(
     prompt: 'Sur quel noyau repose Android ?',

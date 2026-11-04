@@ -20,10 +20,18 @@ class QuizQuestion {
 
 /// Question à choix unique avec correction immédiate.
 class QuizCard extends StatefulWidget {
-  const QuizCard({required this.question, this.footnote, super.key});
+  const QuizCard({
+    required this.question,
+    this.footnote,
+    this.onAnswered,
+    super.key,
+  });
 
   final QuizQuestion question;
   final String? footnote;
+
+  /// Appelé à chaque réponse, avec `true` si elle est correcte.
+  final ValueChanged<bool>? onAnswered;
 
   @override
   State<QuizCard> createState() => _QuizCardState();
@@ -70,7 +78,10 @@ class _QuizCardState extends State<QuizCard> {
                 },
                 onTap: answered
                     ? null
-                    : () => setState(() => _selected = index),
+                    : () {
+                        setState(() => _selected = index);
+                        widget.onAnswered?.call(index == question.answerIndex);
+                      },
               ),
             ),
           SmoothSize(
