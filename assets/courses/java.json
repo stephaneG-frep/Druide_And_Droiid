@@ -1,0 +1,1513 @@
+{
+ "moduleId": "java",
+ "lessons": [
+  {
+   "id": "java-01-syntaxe",
+   "title": "La syntaxe de Java",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Kotlin est aujourd'hui le premier choix sur Android, mais d'innombrables applications et bibliothèques sont écrites en **Java**. Savoir le lire et le corriger reste une vraie compétence professionnelle."
+    },
+    {
+     "type": "info",
+     "text": "Ce module suppose que vous connaissez déjà Kotlin : nous nous concentrons sur ce qui change."
+    },
+    {
+     "type": "heading",
+     "text": "La structure d'un programme"
+    },
+    {
+     "type": "paragraph",
+     "text": "En Java, tout code vit dans une classe. Le point d'entrée est la méthode `main`, et chaque instruction se termine par un point-virgule."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Bonjour, jeune apprenti !\");\n    }\n}",
+     "output": "Bonjour, jeune apprenti !"
+    },
+    {
+     "type": "heading",
+     "text": "Variables et types"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le type s'écrit avant le nom. `final` joue le rôle de `val`. Java distingue les **types primitifs**, comme `int` ou `boolean`, des objets, comme `String`."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) {\n        final String nom = \"Merlin\";\n        int niveau = 1;\n        double vitesse = 2.5;\n        boolean actif = true;\n        char initiale = 'M';\n\n        niveau = niveau + 1;\n\n        System.out.println(nom + \" : niveau \" + niveau);\n        System.out.println(vitesse * 2);\n        System.out.println(actif);\n        System.out.println(initiale);\n        System.out.println(7 / 2);\n        System.out.println(7 / 2.0);\n    }\n}",
+     "output": "Merlin : niveau 2\n5.0\ntrue\nM\n3\n3.5"
+    },
+    {
+     "type": "warning",
+     "text": "Pour comparer deux chaînes, utilisez `equals`, jamais `==`. L'opérateur `==` compare les références des objets, pas leur contenu. En Kotlin, `==` appelle `equals` : c'est un piège classique en passant d'un langage à l'autre."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) {\n        String a = new String(\"feu\");\n        String b = new String(\"feu\");\n\n        System.out.println(a == b);\n        System.out.println(a.equals(b));\n    }\n}",
+     "output": "false\ntrue"
+    },
+    {
+     "type": "heading",
+     "text": "Conditions et boucles"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les parenthèses sont obligatoires autour des conditions. La boucle `for` classique est très répandue dans le code ancien, et la boucle `for` améliorée parcourt un tableau ou une collection."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) {\n        int xp = 120;\n\n        if (xp >= 100) {\n            System.out.println(\"Initié\");\n        } else {\n            System.out.println(\"Apprenti\");\n        }\n\n        String statut = xp > 50 ? \"avancé\" : \"débutant\";\n        System.out.println(statut);\n\n        int[] notes = {12, 15, 9};\n        int total = 0;\n        for (int i = 0; i < notes.length; i++) {\n            total += notes[i];\n        }\n        System.out.println(total);\n\n        for (int note : notes) {\n            System.out.print(note + \" \");\n        }\n        System.out.println();\n    }\n}",
+     "output": "Initié\navancé\n36\n12 15 9 "
+    },
+    {
+     "type": "heading",
+     "text": "switch"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le `switch` classique exige un `break` à la fin de chaque cas : sans lui, l'exécution continue dans le cas suivant. On appelle cela le **fall-through**, et c'est une source fréquente de bugs."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) {\n        int code = 2;\n\n        switch (code) {\n            case 1:\n                System.out.println(\"Un\");\n                break;\n            case 2:\n                System.out.println(\"Deux\");\n            case 3:\n                System.out.println(\"Trois\");\n                break;\n            default:\n                System.out.println(\"Autre\");\n        }\n    }\n}",
+     "output": "Deux\nTrois"
+    },
+    {
+     "type": "tip",
+     "text": "Dans ce dernier exemple, le `break` oublié du cas 2 affiche aussi « Trois ». Dans un vieux code, ce genre d'oubli vous fera perdre des heures !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment comparer le contenu de deux chaînes en Java ?",
+     "options": [
+      "a.equals(b)",
+      "a == b",
+      "a === b"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "== compare les références des objets."
+    },
+    {
+     "prompt": "Quel mot-clé correspond à `val` en Kotlin ?",
+     "options": [
+      "final",
+      "static",
+      "const"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une variable final ne peut être réassignée."
+    },
+    {
+     "prompt": "Que se passe-t-il sans `break` dans un `case` ?",
+     "options": [
+      "L'exécution continue dans le cas suivant",
+      "Le programme ne compile pas",
+      "Le switch s'arrête"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est le fall-through."
+    },
+    {
+     "prompt": "Que vaut 7 / 2 avec deux int ?",
+     "options": [
+      "3",
+      "3.5"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La division entière abandonne la partie décimale, comme en Kotlin."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-01-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode compare le contenu de deux objets String ?",
+     "accepted": [
+      "equals",
+      "equals()",
+      ".equals"
+     ],
+     "solution": "equals, par exemple a.equals(b)."
+    },
+    {
+     "id": "java-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme Java qui affiche la somme des nombres de 1 à 10.",
+     "solution": "public class Main {\n    public static void main(String[] args) {\n        int somme = 0;\n        for (int i = 1; i <= 10; i++) {\n            somme += i;\n        }\n        System.out.println(somme);\n    }\n}",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-02-poo",
+   "title": "La programmation orientée objet",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Les concepts sont ceux de Kotlin, mais Java est plus verbeux : ce que Kotlin génère pour vous s'écrit ici à la main."
+    },
+    {
+     "type": "heading",
+     "text": "Une classe complète"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les champs sont privés, et on y accède par des **accesseurs**. C'est l'**encapsulation** : la classe contrôle ce qui entre et ce qui sort."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "class Apprenti {\n    private final String nom;\n    private int xp;\n\n    Apprenti(String nom) {\n        this.nom = nom;\n        this.xp = 0;\n    }\n\n    String getNom() {\n        return nom;\n    }\n\n    int getXp() {\n        return xp;\n    }\n\n    void gagner(int points) {\n        if (points > 0) {\n            xp += points;\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Apprenti merlin = new Apprenti(\"Merlin\");\n        merlin.gagner(50);\n        merlin.gagner(-10);\n        System.out.println(merlin.getNom() + \" : \" + merlin.getXp());\n    }\n}",
+     "output": "Merlin : 50"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le mot-clé `new` crée un objet, et `this` désigne l'objet courant. En Kotlin, cette classe tiendrait en quelques lignes, mais le principe est identique."
+    },
+    {
+     "type": "heading",
+     "text": "Héritage et polymorphisme"
+    },
+    {
+     "type": "paragraph",
+     "text": "Contrairement à Kotlin, les classes Java sont **ouvertes** par défaut. `extends` hérite d'une classe, `super` appelle la classe mère, et `@Override` signale une redéfinition. Le mot-clé `final` interdit l'héritage ou la redéfinition."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "class Creature {\n    protected final String nom;\n\n    Creature(String nom) {\n        this.nom = nom;\n    }\n\n    String crier() {\n        return \"...\";\n    }\n\n    String presenter() {\n        return nom + \" dit : \" + crier();\n    }\n}\n\nclass Dragon extends Creature {\n    Dragon(String nom) {\n        super(nom);\n    }\n\n    @Override\n    String crier() {\n        return \"Grrr !\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Creature[] creatures = {new Creature(\"Ombre\"), new Dragon(\"Braise\")};\n\n        for (Creature creature : creatures) {\n            System.out.println(creature.presenter());\n        }\n    }\n}",
+     "output": "Ombre dit : ...\nBraise dit : Grrr !"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ici, `presenter()` appelle la version de `crier()` propre à l'objet réel. C'est le **polymorphisme**."
+    },
+    {
+     "type": "heading",
+     "text": "Classes abstraites et membres statiques"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une classe `abstract` ne s'instancie pas. Un membre `static` appartient à la classe elle-même : il correspond au `companion object` de Kotlin."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "abstract class Forme {\n    private static int compteur = 0;\n\n    Forme() {\n        compteur++;\n    }\n\n    abstract double aire();\n\n    static int nombreCree() {\n        return compteur;\n    }\n}\n\nclass Carre extends Forme {\n    private final double cote;\n\n    Carre(double cote) {\n        this.cote = cote;\n    }\n\n    @Override\n    double aire() {\n        return cote * cote;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Forme carre = new Carre(3);\n        new Carre(1);\n\n        System.out.println(carre.aire());\n        System.out.println(Forme.nombreCree());\n    }\n}",
+     "output": "9.0\n2"
+    },
+    {
+     "type": "heading",
+     "text": "equals et hashCode"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une `data class` Kotlin génère `equals`, `hashCode` et `toString`. En Java, sans ces méthodes, deux objets aux contenus identiques sont considérés comme différents. Elles se redéfinissent ensemble : un `HashMap` a besoin des deux."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.Objects;\n\nclass Point {\n    final int x;\n    final int y;\n\n    Point(int x, int y) {\n        this.x = x;\n        this.y = y;\n    }\n\n    @Override\n    public boolean equals(Object autre) {\n        if (!(autre instanceof Point)) return false;\n        Point point = (Point) autre;\n        return x == point.x && y == point.y;\n    }\n\n    @Override\n    public int hashCode() {\n        return Objects.hash(x, y);\n    }\n\n    @Override\n    public String toString() {\n        return \"(\" + x + \", \" + y + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Point a = new Point(1, 2);\n        Point b = new Point(1, 2);\n\n        System.out.println(a.equals(b));\n        System.out.println(a.hashCode() == b.hashCode());\n        System.out.println(a);\n    }\n}",
+     "output": "true\ntrue\n(1, 2)"
+    },
+    {
+     "type": "tip",
+     "text": "Vous tombez sur une classe de 80 lignes de getters ? Vérifiez : c'est peut-être une `data class` de trois lignes qui s'ignore !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Par défaut, une classe Java peut-elle être héritée ?",
+     "options": [
+      "Oui",
+      "Non, sauf si elle est marquée open"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est l'inverse de Kotlin : ici, final interdit l'héritage."
+    },
+    {
+     "prompt": "Quel mot-clé hérite d'une classe ?",
+     "options": [
+      "extends",
+      "implements",
+      "inherits"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "implements sert aux interfaces."
+    },
+    {
+     "prompt": "À quoi correspond un membre static ?",
+     "options": [
+      "À un membre du companion object Kotlin",
+      "À une variable locale",
+      "À une constante du manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il appartient à la classe, pas aux instances."
+    },
+    {
+     "prompt": "Que faut-il redéfinir ensemble ?",
+     "options": [
+      "equals et hashCode",
+      "toString et main",
+      "new et super"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon les collections par hachage se comportent mal."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation signale la redéfinition d'une méthode ?",
+     "accepted": [
+      "@Override",
+      "Override"
+     ],
+     "solution": "@Override."
+    },
+    {
+     "id": "java-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une classe `Compte` avec un solde privé, une méthode `deposer` qui refuse les montants négatifs, et un accesseur.",
+     "solution": "class Compte {\n    private int solde = 0;\n\n    void deposer(int montant) {\n        if (montant > 0) {\n            solde += montant;\n        }\n    }\n\n    int getSolde() {\n        return solde;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Compte compte = new Compte();\n        compte.deposer(100);\n        compte.deposer(-50);\n        System.out.println(compte.getSolde());\n    }\n}",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-03-interfaces",
+   "title": "Interfaces et lambdas",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Les interfaces sont omniprésentes dans le SDK Android : tout écouteur de clic en est une."
+    },
+    {
+     "type": "heading",
+     "text": "Implémenter une interface"
+    },
+    {
+     "type": "paragraph",
+     "text": "`implements` engage une classe à fournir les méthodes de l'interface. Depuis Java 8, une interface peut proposer une implémentation avec `default`."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "interface Lanceur {\n    String lancer();\n\n    default String annoncer() {\n        return \"Attention : \" + lancer();\n    }\n}\n\nclass Mage implements Lanceur {\n    @Override\n    public String lancer() {\n        return \"boule de feu\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Lanceur mage = new Mage();\n        System.out.println(mage.annoncer());\n    }\n}",
+     "output": "Attention : boule de feu"
+    },
+    {
+     "type": "heading",
+     "text": "Des classes anonymes aux lambdas"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans le code ancien, on écrit souvent une **classe anonyme** pour fournir une petite implémentation. Depuis Java 8, une interface à une seule méthode, dite **fonctionnelle**, s'écrit plus simplement avec une **lambda**."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "interface Action {\n    void executer(String nom);\n}\n\npublic class Main {\n    static void lancer(Action action) {\n        action.executer(\"Merlin\");\n    }\n\n    public static void main(String[] args) {\n        lancer(new Action() {\n            @Override\n            public void executer(String nom) {\n                System.out.println(\"Ancien style : \" + nom);\n            }\n        });\n\n        lancer(nom -> System.out.println(\"Lambda : \" + nom));\n    }\n}",
+     "output": "Ancien style : Merlin\nLambda : Merlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "C'est exactement ce que vous verrez avec un bouton Android :"
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "// Style ancien\nbouton.setOnClickListener(new View.OnClickListener() {\n    @Override\n    public void onClick(View vue) {\n        valider();\n    }\n});\n\n// Lambda\nbouton.setOnClickListener(vue -> valider());"
+    },
+    {
+     "type": "warning",
+     "text": "Une classe anonyme ou une lambda créée dans une activité retient souvent cette activité. Si un objet durable garde cet écouteur, l'activité ne peut plus être libérée : c'est une fuite de mémoire."
+    },
+    {
+     "type": "heading",
+     "text": "Les génériques"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un type générique fonctionne avec différents types, tout en restant vérifié à la compilation. `List<String>` en est l'exemple le plus courant."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "class Boite<T> {\n    private final T contenu;\n\n    Boite(T contenu) {\n        this.contenu = contenu;\n    }\n\n    T ouvrir() {\n        return contenu;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Boite<String> grimoire = new Boite<>(\"Sort\");\n        Boite<Integer> coffre = new Boite<>(42);\n\n        System.out.println(grimoire.ouvrir().length());\n        System.out.println(coffre.ouvrir() + 1);\n    }\n}",
+     "output": "4\n43"
+    },
+    {
+     "type": "tip",
+     "text": "L'IDE propose de remplacer une classe anonyme par une lambda. Acceptez : le code n'en sera que plus lisible !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel mot-clé implémente une interface ?",
+     "options": [
+      "implements",
+      "extends",
+      "override"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "extends sert à l'héritage de classe."
+    },
+    {
+     "prompt": "Qu'est-ce qu'une interface fonctionnelle ?",
+     "options": [
+      "Une interface à une seule méthode abstraite",
+      "Une interface sans méthode",
+      "Une classe finale"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle peut alors s'écrire avec une lambda."
+    },
+    {
+     "prompt": "Que permet `default` dans une interface ?",
+     "options": [
+      "De fournir une implémentation",
+      "De rendre l'interface privée",
+      "D'empêcher l'héritage"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est possible depuis Java 8."
+    },
+    {
+     "prompt": "Quel risque présente un écouteur conservé longtemps ?",
+     "options": [
+      "Une fuite de mémoire de l'activité",
+      "Une erreur de compilation",
+      "Une perte de signature"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'écouteur peut retenir l'activité."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-03-ex1",
+     "kind": "fill",
+     "prompt": "Quel symbole sépare les paramètres du corps d'une lambda en Java ?",
+     "accepted": [
+      "->"
+     ],
+     "solution": "-> : par exemple nom -> afficher(nom)."
+    },
+    {
+     "id": "java-03-ex2",
+     "kind": "self",
+     "prompt": "Réécrivez cet écouteur en lambda : `liste.setOnItemClickListener(new OnItemClickListener() { public void onItemClick(int position) { ouvrir(position); } });`",
+     "solution": "liste.setOnItemClickListener(position -> ouvrir(position));"
+    }
+   ]
+  },
+  {
+   "id": "java-04-collections",
+   "title": "Les collections",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le paquet `java.util` fournit les structures de données de base. Kotlin s'appuie d'ailleurs dessus."
+    },
+    {
+     "type": "heading",
+     "text": "Les principales collections"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**List** : une suite ordonnée, avec `ArrayList`.",
+      "**Set** : des éléments uniques, avec `HashSet`.",
+      "**Map** : des paires clé/valeur, avec `HashMap`."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> sorts = new ArrayList<>();\n        sorts.add(\"Feu\");\n        sorts.add(\"Eau\");\n        sorts.remove(\"Feu\");\n        System.out.println(sorts);\n        System.out.println(sorts.size());\n\n        Map<String, Integer> niveaux = new HashMap<>();\n        niveaux.put(\"Merlin\", 7);\n        System.out.println(niveaux.get(\"Merlin\"));\n        System.out.println(niveaux.get(\"Inconnu\"));\n        System.out.println(niveaux.getOrDefault(\"Inconnu\", 0));\n    }\n}",
+     "output": "[Eau]\n1\n7\nnull\n0"
+    },
+    {
+     "type": "paragraph",
+     "text": "Déclarer la variable avec l'interface `List`, plutôt qu'avec `ArrayList`, permet de changer d'implémentation sans toucher au reste du code."
+    },
+    {
+     "type": "warning",
+     "text": "En Java, contrairement au `List` en lecture seule de Kotlin, `Map.get` renvoie `null` pour une clé absente, et le compilateur ne vous prévient pas. Si la valeur est un `int`, la conversion automatique plante alors à l'exécution."
+    },
+    {
+     "type": "heading",
+     "text": "Parcourir et modifier"
+    },
+    {
+     "type": "paragraph",
+     "text": "Retirer un élément pendant un parcours `for` provoque une `ConcurrentModificationException`. La méthode `removeIf` évite ce problème."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nombres = new ArrayList<>(Arrays.asList(1, 2, 3, 4));\n\n        try {\n            for (Integer nombre : nombres) {\n                if (nombre == 2) nombres.remove(nombre);\n            }\n        } catch (java.util.ConcurrentModificationException e) {\n            System.out.println(\"Liste modifiée pendant le parcours\");\n        }\n\n        nombres.removeIf(n -> n % 2 == 0);\n        System.out.println(nombres);\n    }\n}",
+     "output": "Liste modifiée pendant le parcours\n[1, 3]"
+    },
+    {
+     "type": "heading",
+     "text": "Les flux"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'API **Stream** de Java 8 ressemble aux fonctions de collection de Kotlin. Sur Android, elle est disponible à partir de l'API 24, ou plus bas avec le désucrage."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nombres = List.of(3, 8, 12, 5);\n\n        List<Integer> doubles = nombres.stream()\n                .filter(n -> n > 4)\n                .map(n -> n * 2)\n                .collect(Collectors.toList());\n\n        System.out.println(doubles);\n    }\n}",
+     "output": "[16, 24, 10]"
+    },
+    {
+     "type": "tip",
+     "text": "Quand `get` renvoie null en silence, votre plantage arrive dix lignes plus loin. Méfiez-vous des clés absentes !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle collection garantit des éléments uniques ?",
+     "options": [
+      "HashSet",
+      "ArrayList"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un Set n'accepte pas de doublons."
+    },
+    {
+     "prompt": "Que renvoie `map.get` pour une clé absente ?",
+     "options": [
+      "null",
+      "0",
+      "Une exception"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut y penser, le compilateur ne le signale pas."
+    },
+    {
+     "prompt": "Que provoque un retrait dans une boucle for améliorée ?",
+     "options": [
+      "Souvent une ConcurrentModificationException",
+      "Rien de particulier",
+      "Une erreur de compilation"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "removeIf est la bonne solution."
+    },
+    {
+     "prompt": "Pourquoi déclarer `List<String> l = new ArrayList<>()` ?",
+     "options": [
+      "Pour pouvoir changer d'implémentation",
+      "Pour accélérer le code",
+      "Parce que c'est obligatoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code dépend de l'interface."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode d'une Map renvoie une valeur de repli si la clé est absente ?",
+     "accepted": [
+      "getOrDefault",
+      "getOrDefault()"
+     ],
+     "solution": "getOrDefault."
+    },
+    {
+     "id": "java-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui compte les occurrences de chaque mot de la liste `a, b, a` dans une `TreeMap`, puis l'affiche.",
+     "solution": "import java.util.List;\nimport java.util.Map;\nimport java.util.TreeMap;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> compte = new TreeMap<>();\n        for (String mot : List.of(\"a\", \"b\", \"a\")) {\n            compte.put(mot, compte.getOrDefault(mot, 0) + 1);\n        }\n        System.out.println(compte);\n    }\n}",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-05-exceptions",
+   "title": "Les exceptions",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une **exception** signale qu'une opération a échoué. Bien les gérer fait la différence entre un message clair et un plantage."
+    },
+    {
+     "type": "heading",
+     "text": "Attraper une exception"
+    },
+    {
+     "type": "paragraph",
+     "text": "`try` contient le code à risque, `catch` traite l'erreur, et `finally` s'exécute dans tous les cas."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    static int convertir(String texte) {\n        try {\n            return Integer.parseInt(texte);\n        } catch (NumberFormatException e) {\n            System.out.println(\"Nombre invalide : \" + texte);\n            return 0;\n        } finally {\n            System.out.println(\"Conversion terminée\");\n        }\n    }\n\n    public static void main(String[] args) {\n        System.out.println(convertir(\"42\"));\n        System.out.println(convertir(\"abc\"));\n    }\n}",
+     "output": "Conversion terminée\n42\nNombre invalide : abc\nConversion terminée\n0"
+    },
+    {
+     "type": "heading",
+     "text": "Vérifiées ou non"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Exceptions vérifiées**, comme `IOException` : le compilateur exige de les traiter, ou de les déclarer avec `throws`.",
+      "**Exceptions non vérifiées**, comme `NullPointerException` : elles héritent de `RuntimeException` et signalent souvent un bug."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Kotlin n'a pas d'exceptions vérifiées : aucun code ne vous oblige à les attraper. Lorsque vous appelez du Java, consultez sa documentation."
+    },
+    {
+     "type": "heading",
+     "text": "Fermer les ressources"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un fichier ou un flux réseau doit toujours être fermé. La forme **try-with-resources** le fait automatiquement, même en cas d'erreur. C'est l'équivalent de `use` en Kotlin."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "class Ressource implements AutoCloseable {\n    Ressource() {\n        System.out.println(\"Ouverture\");\n    }\n\n    void lire() {\n        throw new IllegalStateException(\"lecture impossible\");\n    }\n\n    @Override\n    public void close() {\n        System.out.println(\"Fermeture\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        try (Ressource ressource = new Ressource()) {\n            ressource.lire();\n        } catch (IllegalStateException e) {\n            System.out.println(\"Erreur : \" + e.getMessage());\n        }\n    }\n}",
+     "output": "Ouverture\nFermeture\nErreur : lecture impossible"
+    },
+    {
+     "type": "heading",
+     "text": "Créer ses exceptions"
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "class SortInconnuException extends Exception {\n    SortInconnuException(String nom) {\n        super(\"Sort inconnu : \" + nom);\n    }\n}\n\npublic class Main {\n    static void lancer(String nom) throws SortInconnuException {\n        if (!nom.equals(\"Feu\")) {\n            throw new SortInconnuException(nom);\n        }\n        System.out.println(\"Sort lancé\");\n    }\n\n    public static void main(String[] args) {\n        try {\n            lancer(\"Feu\");\n            lancer(\"Glace\");\n        } catch (SortInconnuException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}",
+     "output": "Sort lancé\nSort inconnu : Glace"
+    },
+    {
+     "type": "warning",
+     "text": "N'écrivez jamais un `catch` vide. Une erreur avalée en silence ne disparaît pas : elle devient un bug introuvable."
+    },
+    {
+     "type": "tip",
+     "text": "Sur Android, une exception non attrapée ferme l'application. Pour remonter à la cause, lisez la pile d'appels dans Logcat : le module 4 vous montre comment."
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quand s'exécute le bloc finally ?",
+     "options": [
+      "Dans tous les cas",
+      "Uniquement en cas d'erreur",
+      "Uniquement sans erreur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est son rôle."
+    },
+    {
+     "prompt": "Lequel est une exception vérifiée ?",
+     "options": [
+      "IOException",
+      "NullPointerException"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le compilateur exige de la traiter."
+    },
+    {
+     "prompt": "Que garantit try-with-resources ?",
+     "options": [
+      "La fermeture automatique de la ressource",
+      "L'absence d'exception",
+      "Un code plus rapide"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La ressource doit implémenter AutoCloseable."
+    },
+    {
+     "prompt": "Quel est le problème d'un catch vide ?",
+     "options": [
+      "L'erreur est masquée",
+      "Le code ne compile pas",
+      "Il ralentit l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le bug devient très difficile à trouver."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-05-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé déclare qu'une méthode peut lever une exception vérifiée ?",
+     "accepted": [
+      "throws"
+     ],
+     "solution": "throws. Attention, throw sert à lever l'exception."
+    },
+    {
+     "id": "java-05-ex2",
+     "kind": "self",
+     "prompt": "Écrivez `diviser(int a, int b)`, qui renvoie 0 et affiche un message si `b` vaut 0, en attrapant `ArithmeticException`.",
+     "solution": "public class Main {\n    static int diviser(int a, int b) {\n        try {\n            return a / b;\n        } catch (ArithmeticException e) {\n            System.out.println(\"Division par zéro\");\n            return 0;\n        }\n    }\n\n    public static void main(String[] args) {\n        System.out.println(diviser(10, 2));\n        System.out.println(diviser(1, 0));\n    }\n}",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-06-threads",
+   "title": "Les threads",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Avant les coroutines, le code Android gérait l'asynchrone avec des **threads**. Vous en croiserez dans tous les projets anciens."
+    },
+    {
+     "type": "heading",
+     "text": "Créer un thread"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un thread exécute du code en parallèle du fil principal. `start` le lance, et `join` attend sa fin."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Main {\n    public static void main(String[] args) throws InterruptedException {\n        Thread tache = new Thread(() -> System.out.println(\"Travail terminé\"));\n\n        tache.start();\n        tache.join();\n\n        System.out.println(\"Fin\");\n    }\n}",
+     "output": "Travail terminé\nFin"
+    },
+    {
+     "type": "warning",
+     "text": "Appeler `run()` au lieu de `start()` exécute le code sur le fil courant, sans créer de thread. L'application semble marcher, mais bloque l'interface."
+    },
+    {
+     "type": "heading",
+     "text": "Les accès concurrents"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand plusieurs threads modifient la même donnée, des mises à jour se perdent : c'est une **condition de concurrence**. `compteur++` paraît unique, mais comporte une lecture, un calcul et une écriture. `synchronized` n'autorise qu'un thread à la fois, et les classes atomiques offrent une solution plus légère."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.concurrent.atomic.AtomicInteger;\n\npublic class Main {\n    private static int protege = 0;\n    private static final AtomicInteger atomique = new AtomicInteger();\n\n    static synchronized void incrementer() {\n        protege++;\n    }\n\n    public static void main(String[] args) throws InterruptedException {\n        Runnable travail = () -> {\n            for (int i = 0; i < 10000; i++) {\n                incrementer();\n                atomique.incrementAndGet();\n            }\n        };\n\n        Thread a = new Thread(travail);\n        Thread b = new Thread(travail);\n        a.start();\n        b.start();\n        a.join();\n        b.join();\n\n        System.out.println(protege);\n        System.out.println(atomique.get());\n    }\n}",
+     "output": "20000\n20000"
+    },
+    {
+     "type": "heading",
+     "text": "Les pools de threads"
+    },
+    {
+     "type": "paragraph",
+     "text": "Créer un thread par tâche coûte cher. Un `ExecutorService` réutilise un groupe de threads, et un `Future` donne accès au résultat."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "import java.util.concurrent.ExecutionException;\nimport java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args)\n            throws InterruptedException, ExecutionException {\n        ExecutorService pool = Executors.newFixedThreadPool(2);\n\n        Future<Integer> a = pool.submit(() -> 20 + 1);\n        Future<Integer> b = pool.submit(() -> 2 * 10);\n\n        System.out.println(a.get() + b.get());\n        pool.shutdown();\n    }\n}",
+     "output": "41"
+    },
+    {
+     "type": "heading",
+     "text": "Sur Android"
+    },
+    {
+     "type": "paragraph",
+     "text": "Deux règles s'imposent : ne pas bloquer le fil principal, et ne modifier l'interface que depuis celui-ci. Un `Handler` permet donc de revenir au fil principal après un travail en arrière-plan."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "ExecutorService fond = Executors.newSingleThreadExecutor();\nHandler principal = new Handler(Looper.getMainLooper());\n\nfond.execute(() -> {\n    String resultat = telecharger();\n    principal.post(() -> texte.setText(resultat));\n});"
+    },
+    {
+     "type": "info",
+     "text": "Dans un nouveau code Kotlin, préférez les coroutines. Elles simplifient l'annulation et le retour au fil principal."
+    },
+    {
+     "type": "tip",
+     "text": "Un bug qui disparaît quand on ajoute un log sent la condition de concurrence. Méfiez-vous des bugs timides !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle méthode lance vraiment un thread ?",
+     "options": [
+      "start()",
+      "run()",
+      "execute()"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "run() s'exécuterait sur le fil courant."
+    },
+    {
+     "prompt": "Que fait join() ?",
+     "options": [
+      "Il attend la fin du thread",
+      "Il fusionne deux threads",
+      "Il arrête le thread"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le fil appelant patiente."
+    },
+    {
+     "prompt": "Pourquoi `compteur++` n'est-il pas sûr entre threads ?",
+     "options": [
+      "L'opération comporte plusieurs étapes",
+      "Le mot-clé est interdit",
+      "Le compilateur l'optimise"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Lecture, calcul, écriture peuvent s'entremêler."
+    },
+    {
+     "prompt": "Depuis quel fil peut-on modifier une vue Android ?",
+     "options": [
+      "Le fil principal",
+      "N'importe lequel"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Handler permet d'y revenir."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-06-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé autorise un seul thread à la fois dans une méthode ?",
+     "accepted": [
+      "synchronized"
+     ],
+     "solution": "synchronized."
+    },
+    {
+     "id": "java-06-ex2",
+     "kind": "self",
+     "prompt": "Lancez un thread qui remplit une variable atomique avec 42, attendez-le, puis affichez la valeur.",
+     "solution": "import java.util.concurrent.atomic.AtomicInteger;\n\npublic class Main {\n    public static void main(String[] args) throws InterruptedException {\n        AtomicInteger valeur = new AtomicInteger();\n        Thread tache = new Thread(() -> valeur.set(42));\n        tache.start();\n        tache.join();\n        System.out.println(valeur.get());\n    }\n}",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-07-android",
+   "title": "Les classes Android en Java",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Passons au code Android tel que vous le lirez dans un projet existant. Ces extraits utilisent le SDK Android : ils se lisent ici, et ne peuvent pas être exécutés sur un ordinateur."
+    },
+    {
+     "type": "heading",
+     "text": "L'activité"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une `Activity` représente un écran. Le système appelle ses méthodes de cycle de vie, comme `onCreate`."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class AccueilActivity extends AppCompatActivity {\n    private TextView texte;\n\n    @Override\n    protected void onCreate(Bundle etatSauvegarde) {\n        super.onCreate(etatSauvegarde);\n        setContentView(R.layout.activity_accueil);\n\n        texte = findViewById(R.id.texte);\n        Button bouton = findViewById(R.id.bouton);\n        bouton.setOnClickListener(vue -> texte.setText(\"Bonjour !\"));\n    }\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`R` est une classe générée, qui donne accès aux ressources.",
+      "`findViewById` relie le code à la vue déclarée dans le XML.",
+      "`super.onCreate` est obligatoire : l'oublier provoque une exception."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le Context"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le `Context` donne accès aux ressources et aux services du système. Une `Activity` est un `Context`, et elle est détruite avec son écran. Pour un objet qui vit longtemps, utilisez plutôt `getApplicationContext()`."
+    },
+    {
+     "type": "warning",
+     "text": "Stocker une `Activity` dans un champ `static` la retient en mémoire : c'est l'une des fuites les plus fréquentes dans le code Android ancien."
+    },
+    {
+     "type": "heading",
+     "text": "Naviguer avec un Intent"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `Intent` décrit une action à réaliser. Explicite, il vise une activité précise. Implicite, il laisse le système trouver une application capable de l'exécuter."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "// Explicite : ouvrir un écran de l'application\nIntent ecran = new Intent(this, DetailActivity.class);\necran.putExtra(\"identifiant\", 42);\nstartActivity(ecran);\n\n// Dans DetailActivity : lire la valeur\nint identifiant = getIntent().getIntExtra(\"identifiant\", -1);\n\n// Implicite : ouvrir une page web\nIntent web = new Intent(Intent.ACTION_VIEW, Uri.parse(\"https://developer.android.com\"));\nstartActivity(web);"
+    },
+    {
+     "type": "heading",
+     "text": "Conserver l'état"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pivoter l'écran recrée l'activité. Le `Bundle` de `onSaveInstanceState` conserve de petites données le temps de cette recréation."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "@Override\nprotected void onSaveInstanceState(Bundle sortie) {\n    super.onSaveInstanceState(sortie);\n    sortie.putInt(\"score\", score);\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les autres composants"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Fragment** : une portion d'écran réutilisable, avec son propre cycle de vie.",
+      "**Service** : une tâche sans interface.",
+      "**BroadcastReceiver** : une réaction aux événements du système.",
+      "**ContentProvider** : le partage de données entre applications."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Dans les vieux projets, vous croiserez `android.support.*`. Ces bibliothèques ont été remplacées par **AndroidX**, sous `androidx.*`."
+    },
+    {
+     "type": "tip",
+     "text": "Pour comprendre une activité inconnue, commencez par `onCreate` : tout s'y met en place !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait `findViewById` ?",
+     "options": [
+      "Il récupère une vue déclarée dans le XML",
+      "Il crée un fichier",
+      "Il cherche une activité"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il relie le code à la mise en page."
+    },
+    {
+     "prompt": "Quel contexte conserver dans un objet qui vit longtemps ?",
+     "options": [
+      "getApplicationContext()",
+      "L'activité courante"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne retient aucun écran."
+    },
+    {
+     "prompt": "Quel Intent laisse le système choisir l'application ?",
+     "options": [
+      "Implicite",
+      "Explicite"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il décrit une action, pas une cible."
+    },
+    {
+     "prompt": "Que se passe-t-il pour une activité quand l'écran pivote ?",
+     "options": [
+      "Elle est recréée par défaut",
+      "Rien",
+      "L'application se ferme"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "D'où l'utilité de sauvegarder l'état."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode d'une activité est appelée à sa création ?",
+     "accepted": [
+      "onCreate",
+      "onCreate()"
+     ],
+     "solution": "onCreate."
+    },
+    {
+     "id": "java-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez le code qui ouvre `ProfilActivity` en lui transmettant le nom « Merlin ».",
+     "solution": "Intent ecran = new Intent(this, ProfilActivity.class);\necran.putExtra(\"nom\", \"Merlin\");\nstartActivity(ecran);",
+     "language": "java"
+    }
+   ]
+  },
+  {
+   "id": "java-08-interop",
+   "title": "L'interopérabilité Kotlin et Java",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Kotlin et Java se compilent en bytecode pour la même machine : ils cohabitent dans un même projet et s'appellent mutuellement. Il suffit de connaître quelques règles."
+    },
+    {
+     "type": "heading",
+     "text": "Appeler Java depuis Kotlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les accesseurs Java apparaissent comme des propriétés Kotlin : `getName()` s'écrit `name`. Les classes Java s'utilisent directement."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.File\nimport java.util.ArrayList\n\nfun main() {\n    val fichier = File(\"notes.txt\")\n    println(fichier.name)\n\n    val liste = ArrayList<String>()\n    liste.add(\"Kotlin\")\n    println(liste.size)\n\n    val tampon = StringBuilder().apply {\n        append(\"Druide\")\n        append(\"!\")\n    }\n    println(tampon)\n}",
+     "output": "notes.txt\n1\nDruide!"
+    },
+    {
+     "type": "heading",
+     "text": "Les types de plateforme"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une valeur venue de Java sans annotation a un **type de plateforme**, noté `String!` : Kotlin ne sait pas si elle peut être nulle, et ne vous protège pas. Dans l'exemple suivant, `System.getProperty` renvoie `null` pour une clé inconnue."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val valeur: String? = System.getProperty(\"druide.inconnue\")\n    println(valeur?.length ?: \"absente\")\n}",
+     "output": "absente"
+    },
+    {
+     "type": "warning",
+     "text": "Écrire `val valeur: String = System.getProperty(...)` compile, mais lève une exception à l'exécution si la valeur est nulle. Donnez un type nullable aux valeurs Java incertaines."
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans le code Java, les annotations `@Nullable` et `@NonNull` d'AndroidX lèvent cette ambiguïté : Kotlin les comprend et vous protège."
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Depot {\n    @Nullable\n    public String trouverNom(int id) { /* ... */ }\n\n    @NonNull\n    public List<String> tousLesNoms() { /* ... */ }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Appeler Kotlin depuis Java"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quelques annotations rendent le code Kotlin agréable à utiliser en Java."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`@JvmStatic` : expose une fonction de `companion object` comme méthode statique.",
+      "`@JvmOverloads` : génère les surcharges correspondant aux paramètres par défaut.",
+      "`@JvmField` : expose une propriété comme champ.",
+      "`@file:JvmName` : donne un nom propre à la classe d'un fichier. Sans cela, `Outils.kt` devient `OutilsKt`.",
+      "`@Throws` : déclare une exception vérifiée pour Java."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Potion(val nom: String) {\n    companion object {\n        @JvmStatic\n        fun soin() = Potion(\"Soin\")\n    }\n\n    @JvmOverloads\n    fun boire(doses: Int = 1, avecEau: Boolean = false): String {\n        val eau = if (avecEau) \" avec de l'eau\" else \"\"\n        return \"$doses dose(s) de $nom$eau\"\n    }\n}"
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "public class Exemple {\n    public static void main(String[] args) {\n        Potion potion = Potion.soin();\n\n        System.out.println(potion.getNom());\n        System.out.println(potion.boire());\n        System.out.println(potion.boire(2));\n        System.out.println(potion.boire(2, true));\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Cet appel croisé a été compilé et exécuté à la rédaction du cours, et il affiche :"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Soin\n1 dose(s) de Soin\n2 dose(s) de Soin\n2 dose(s) de Soin avec de l'eau"
+    },
+    {
+     "type": "info",
+     "text": "Sans `@JvmStatic`, Java devrait écrire `Potion.Companion.soin()`. Sans `@JvmOverloads`, il devrait fournir tous les arguments."
+    },
+    {
+     "type": "heading",
+     "text": "Mots réservés et lambdas"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un nom Java qui est un mot réservé en Kotlin, comme `when`, s'écrit entre accents graves. Une interface Java à une seule méthode accepte une lambda Kotlin : c'est la **conversion SAM**."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val tache = Runnable { println(\"Exécutée\") }\n    tache.run()\n}",
+     "output": "Exécutée"
+    },
+    {
+     "type": "tip",
+     "text": "Annotez vos API Java : chaque `@Nullable` ajouté épargne un plantage à vos collègues Kotlin !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment Kotlin voit-il `user.getName()` ?",
+     "options": [
+      "user.name",
+      "user.name()",
+      "user->name"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les accesseurs deviennent des propriétés."
+    },
+    {
+     "prompt": "Qu'est-ce qu'un type de plateforme ?",
+     "options": [
+      "Un type venu de Java dont la nullité est inconnue",
+      "Un type réservé à Android",
+      "Un type générique"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Kotlin ne peut pas vous protéger."
+    },
+    {
+     "prompt": "Quelle annotation génère les surcharges des paramètres par défaut ?",
+     "options": [
+      "@JvmOverloads",
+      "@JvmStatic",
+      "@Throws"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sans elle, Java fournit tous les arguments."
+    },
+    {
+     "prompt": "Comment Java appelle-t-il une fonction de companion object annotée @JvmStatic ?",
+     "options": [
+      "Potion.soin()",
+      "Potion.Companion.soin()",
+      "new Potion().soin()"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle devient une vraie méthode statique."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation AndroidX indique qu'une valeur Java peut être nulle ?",
+     "accepted": [
+      "@Nullable",
+      "Nullable"
+     ],
+     "solution": "@Nullable."
+    },
+    {
+     "id": "java-08-ex2",
+     "kind": "self",
+     "prompt": "Pourquoi écrire `val nom: String? = depot.lireNom()` plutôt que `val nom: String = depot.lireNom()` si `lireNom` vient d'une classe Java non annotée ?",
+     "solution": "Sans annotation, Kotlin ignore si la valeur peut être nulle. Le type nullable oblige à traiter le cas null. Avec String, le code compile, mais il plante à l'exécution dès que Java renvoie null."
+    }
+   ]
+  },
+  {
+   "id": "java-09-maintenance",
+   "title": "Maintenir une application Java",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Reprendre une application existante est une tâche courante, et délicate. Le premier objectif est simple : ne rien casser."
+    },
+    {
+     "type": "heading",
+     "text": "Avant de toucher au code"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Compilez et lancez le projet tel quel. Sans cela, vous ne saurez pas qui a cassé quoi.",
+      "Mettez le projet sous Git, et travaillez sur une branche.",
+      "Lisez le manifeste : il liste les écrans et les permissions.",
+      "Repérez le `minSdk`, le `targetSdk` et les versions de Gradle.",
+      "Écrivez quelques tests sur le comportement actuel avant de le modifier."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les API dépréciées"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le code ancien utilise des API retirées ou déconseillées. Android Lint et le compilateur vous les signalent."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`AsyncTask` : déprécié depuis l'API 30. Il provoquait des fuites et des plantages lors des changements de configuration. Utilisez `java.util.concurrent` ou les coroutines.",
+      "`android.support.*` : à migrer vers AndroidX.",
+      "`startActivityForResult` et `onActivityResult` : remplacés par les Activity Result APIs.",
+      "`IntentService` : déprécié depuis Android 11. Préférez WorkManager."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "java",
+     "code": "// Avant : déprécié depuis l'API 30\nnew AsyncTask<Void, Void, String>() {\n    @Override\n    protected String doInBackground(Void... parametres) {\n        return telecharger();\n    }\n\n    @Override\n    protected void onPostExecute(String resultat) {\n        texte.setText(resultat);\n    }\n}.execute();\n\n// Après : avec java.util.concurrent\nfond.execute(() -> {\n    String resultat = telecharger();\n    principal.post(() -> texte.setText(resultat));\n});"
+    },
+    {
+     "type": "heading",
+     "text": "Monter le targetSdk"
+    },
+    {
+     "type": "paragraph",
+     "text": "Google Play impose un `targetSdk` récent. Augmenter cette valeur change le comportement de l'application. Lisez les changements de chaque version, un palier à la fois, et testez à chaque étape."
+    },
+    {
+     "type": "heading",
+     "text": "Migrer vers Kotlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Rien n'oblige à tout réécrire : les deux langages cohabitent. Android Studio propose **Code > Convert Java File to Kotlin File**. Le résultat compile souvent, mais il doit être relu."
+    },
+    {
+     "type": "layers",
+     "title": "Une migration progressive",
+     "layers": [
+      {
+       "name": "1. Sécuriser",
+       "detail": "Git, compilation qui fonctionne, premiers tests."
+      },
+      {
+       "name": "2. Écrire le nouveau code en Kotlin",
+       "detail": "Les nouveaux fichiers cohabitent avec les anciens."
+      },
+      {
+       "name": "3. Annoter le code Java",
+       "detail": "@Nullable et @NonNull, pour un appel sûr depuis Kotlin."
+      },
+      {
+       "name": "4. Convertir fichier par fichier",
+       "detail": "Commencez par les classes simples, avec une relecture et un commit par fichier."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "La conversion automatique peut ajouter des `!!` et traduire des choix de nullité approximatifs. Relisez chaque fichier, et ne mélangez jamais conversion et changement de fonctionnement dans un même commit."
+    },
+    {
+     "type": "heading",
+     "text": "Comprendre l'historique"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Qui a modifié cette ligne, et pourquoi ?\ngit blame app/src/main/java/com/exemple/Ecran.java\n\n# L'histoire d'un fichier\ngit log --follow -p app/src/main/java/com/exemple/Ecran.java"
+    },
+    {
+     "type": "tip",
+     "text": "Un code étrange a souvent une raison. Avant de le « nettoyer », cherchez pourquoi il a été écrit ainsi !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle est la première étape sur un projet inconnu ?",
+     "options": [
+      "Le compiler et le lancer tel quel",
+      "Le convertir en Kotlin",
+      "Monter toutes les dépendances"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est la référence pour la suite."
+    },
+    {
+     "prompt": "Depuis quelle API AsyncTask est-il déprécié ?",
+     "options": [
+      "API 21",
+      "API 30",
+      "API 36"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Il est déprécié depuis l'API 30."
+    },
+    {
+     "prompt": "Par quoi remplacer android.support.* ?",
+     "options": [
+      "AndroidX",
+      "Jetpack Compose uniquement",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "AndroidX a pris la suite."
+    },
+    {
+     "prompt": "Que faire après une conversion automatique en Kotlin ?",
+     "options": [
+      "Relire le résultat",
+      "Publier aussitôt",
+      "Supprimer les tests"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La conversion peut introduire des !!."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "java-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande Git indique qui a modifié chaque ligne d'un fichier ?",
+     "accepted": [
+      "git blame",
+      "blame"
+     ],
+     "solution": "git blame."
+    },
+    {
+     "id": "java-09-ex2",
+     "kind": "self",
+     "prompt": "Votre chef vous demande de migrer une application Java de 200 fichiers vers Kotlin en une seule fois. Que proposez-vous ?",
+     "solution": "Une migration progressive : sécuriser avec Git et des tests, écrire le nouveau code en Kotlin, annoter le Java, puis convertir fichier par fichier avec une relecture et un commit à chaque fois. L'application reste livrable à chaque étape, et les deux langages cohabitent sans problème."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Comment comparer le contenu de deux String ?",
+    "options": [
+     "a.equals(b)",
+     "a == b"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "== compare les références."
+   },
+   {
+    "prompt": "Quelle est la différence avec Kotlin concernant l'héritage ?",
+    "options": [
+     "Les classes Java sont ouvertes par défaut",
+     "Java interdit l'héritage"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Les classes Kotlin sont fermées par défaut."
+   },
+   {
+    "prompt": "Que faut-il redéfinir pour utiliser un objet comme clé de HashMap ?",
+    "options": [
+     "equals et hashCode",
+     "toString",
+     "finalize"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Les deux doivent être cohérents."
+   },
+   {
+    "prompt": "Quelle écriture remplace une classe anonyme à méthode unique ?",
+    "options": [
+     "Une lambda",
+     "Un champ static"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est possible pour une interface fonctionnelle."
+   },
+   {
+    "prompt": "Que risque-t-on avec `int n = map.get(cle)` pour une clé absente ?",
+    "options": [
+     "Une NullPointerException",
+     "La valeur 0",
+     "Une erreur de compilation"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La conversion de null vers int échoue."
+   },
+   {
+    "prompt": "Quelles exceptions le compilateur exige-t-il de traiter ?",
+    "options": [
+     "Les exceptions vérifiées",
+     "Les RuntimeException"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "IOException en est un exemple."
+   },
+   {
+    "prompt": "Que faut-il pour modifier une vue après un travail en arrière-plan ?",
+    "options": [
+     "Revenir sur le fil principal",
+     "Appeler run()",
+     "Créer une activité"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Un Handler lié au Looper principal le permet."
+   },
+   {
+    "prompt": "Lesquelles sont dépréciées ou remplacées ?",
+    "options": [
+     "AsyncTask",
+     "android.support.*",
+     "java.util.concurrent"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "java.util.concurrent reste recommandé."
+   },
+   {
+    "prompt": "Quelle annotation rend une fonction de companion object statique pour Java ?",
+    "options": [
+     "@JvmStatic",
+     "@JvmField"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "@JvmField sert aux champs."
+   },
+   {
+    "prompt": "Quelle approche choisir pour migrer un gros projet vers Kotlin ?",
+    "options": [
+     "Progressive, fichier par fichier",
+     "Tout réécrire d'un coup"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'application reste livrable à chaque étape."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Interopérabilité Kotlin et Java",
+   "url": "https://developer.android.com/kotlin/interop"
+  },
+  {
+   "title": "Appeler Java depuis Kotlin",
+   "url": "https://kotlinlang.org/docs/java-interop.html"
+  },
+  {
+   "title": "Documentation de AsyncTask",
+   "url": "https://developer.android.com/reference/android/os/AsyncTask"
+  },
+  {
+   "title": "Processus et threads",
+   "url": "https://developer.android.com/guide/components/processes-and-threads"
+  },
+  {
+   "title": "Migrer vers AndroidX",
+   "url": "https://developer.android.com/jetpack/androidx/migrate"
+  }
+ ]
+}

@@ -1,5 +1,36 @@
 # Rapport de tests
 
+## Phase 5, tour 2 — 2026-11-04
+
+La phase n'est pas terminée : modules 1 à 4 sur douze.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux et sur Honor | 5 tests sur 5 réussis sur chacun |
+| Exemples Kotlin et Java compilés, exécutés et comparés | 70 sur 70 |
+
+Vérifications complémentaires, faites à part :
+
+- **Blocs Gradle du module 4** : assemblés dans un projet Android jetable avec AGP 9.1.0 et Gradle 9.3.1. Variantes, suffixe d'identifiant, catalogue de versions, R8, AAB et signature par `keystore.properties` fonctionnent. L'APK de release porte bien le certificat de la clé de test, lu avec `apksigner`.
+- **Interopérabilité** : la classe Kotlin `Potion` et son appel en Java ont été compilés ensemble. La sortie correspond au cours.
+- **Commandes lancées sur cette machine** : `emulator -accel-check`, `emulator -list-avds`, `sdkmanager --list_installed`, `avdmanager list device -c`, `keytool -genkeypair`, `keytool -list`, `apksigner verify`, et l'existence des tâches `assembleDebug`, `assembleRelease`, `bundleRelease`, `installDebug`, `lintDebug` et `signingReport`.
+- **Police de code** : tous les caractères des blocs existent, y compris le dessin de l'arborescence.
+
+Sources contrôlées sur developer.android.com : accélération de l'émulateur, appareils USB, build, Logcat, signature, débogage, Profiler, `sdkmanager`, interopérabilité et `AsyncTask`.
+
+Vérifié à la main sur le Honor : liste des modules, module Android Studio, leçon de structure de projet avec l'arborescence. Aucun crash ni erreur Flutter dans logcat.
+
+### Non vérifié
+
+- **Extraits non exécutés** : 25 extraits utilisent des API Android ou sont des fragments, listés par `tool/check_course_code.py`. Six d'entre eux relèvent des vérifications complémentaires ci-dessus : quatre blocs Gradle et deux blocs d'interopérabilité. Les 19 autres n'ont été ni compilés ni exécutés.
+- **Commandes non lancées** : `avdmanager create avd` et `emulator -avd`, faute d'image système ; `sudo tar`, `apt-get install`, `usermod`, qui modifieraient la machine ; `sdkmanager --licenses`.
+- **Installation d'Android Studio** : la procédure n'a pas été rejouée. La page lue ne donnait pas la procédure Linux, l'extraction de l'archive repose sur l'installation présente dans `/opt`. La configuration requise n'est pas chiffrée : le cours renvoie à la page officielle.
+- **Interface d'Android Studio** : les noms de menus viennent de la documentation, et ils n'ont pas été vérifiés dans l'application. Les raccourcis F7, F8, F9 et Maj + F8 n'ont pas été recoupés sur une page lue.
+- **Nouvelle commande `android sdk`** : mentionnée comme remplaçante de `sdkmanager`, mais non essayée.
+- **Le contenu n'a pas été relu par un tiers**, et toutes les leçons n'ont pas été parcourues sur le téléphone.
+
 ## Phase 5, tour 1 — 2026-11-04
 
 La phase n'est pas terminée : modules 1 et 2 sur douze.

@@ -2,6 +2,10 @@
 
 ## Phase 5, en cours — 2026-11-04
 
+- Module 3 Java pour Android rédigé : neuf leçons et évaluation.
+- Module 4 Android Studio rédigé : neuf leçons et évaluation, procédures Linux.
+- Le contrôle des exemples couvre aussi Java.
+- Nouveau type de bloc de code « Texte », pour les arborescences et les journaux.
 - Module 1 terminé : huit leçons, évaluation de onze questions.
 - Module 2 Kotlin rédigé : neuf leçons et évaluation.
 - Sortie des programmes affichée sous les exemples de code.

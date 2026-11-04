@@ -14,6 +14,7 @@ void main() {
       CodeLanguage.dart: "final a = 'x'; // note",
       CodeLanguage.xml: '<!-- note --><a b="c">texte</a>',
       CodeLanguage.shell: '# note\nadb install -r "app.apk" # fin',
+      CodeLanguage.text: 'app/\n├── src/   # Code',
     };
 
     for (final MapEntry(key: language, value: code) in samples.entries) {

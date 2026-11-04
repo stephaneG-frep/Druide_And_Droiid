@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 5 (contenus) en cours.** Les modules 1 et 2 sont rédigés sur douze. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 5 (contenus) en cours.** Les modules 1 à 4 sont rédigés sur douze. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 
@@ -35,7 +35,7 @@ Après toute modification des tables Drift, régénérer le code :
 dart run build_runner build
 ```
 
-Après toute modification d'un cours, contrôlez les exemples Kotlin (il faut `kotlinc`, fourni avec Android Studio) :
+Après toute modification d'un cours, contrôlez les exemples Kotlin et Java (`kotlinc` et le JDK sont fournis avec Android Studio) :
 
 ```bash
 python3 tool/check_course_code.py
