@@ -1,5 +1,14 @@
 # Rapport de compilation
 
+## Phase 5, tour 2 — 2026-11-04
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé et lancé sur Honor MTN-NX1M |
+| Linux debug | `flutter test integration_test -d linux` | Réussi, compilé et exécuté par ces tests |
+| Exemples | `python3 tool/check_course_code.py` (kotlinc 2.2.20, javac 21) | 70 exemples compilés et exécutés |
+| Projet jetable du module 4 | `gradlew assembleGratuitDebug assemblePayantRelease bundleGratuitRelease` | Réussi |
+
 ## Phase 5, tour 1 — 2026-11-04
 
 | Cible | Commande | Résultat |

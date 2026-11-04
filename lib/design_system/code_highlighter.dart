@@ -3,7 +3,10 @@ enum CodeLanguage {
   java('Java'),
   dart('Dart'),
   xml('XML'),
-  shell('Shell');
+  shell('Shell'),
+
+  /// Arborescences, fichiers de configuration, journaux.
+  text('Texte');
 
   const CodeLanguage(this.label);
 
@@ -142,7 +145,7 @@ List<CodeToken> highlightCode(String source, CodeLanguage language) {
   final isXml = language == CodeLanguage.xml;
   final pattern = switch (language) {
     CodeLanguage.xml => _xmlPattern,
-    CodeLanguage.shell => _shellPattern,
+    CodeLanguage.shell || CodeLanguage.text => _shellPattern,
     _ => _codePattern,
   };
   final keywords = _keywords[language] ?? const <String>{};
@@ -162,7 +165,8 @@ List<CodeToken> highlightCode(String source, CodeLanguage language) {
       _ when match.namedGroup('string') != null => CodeTokenKind.string,
       _ when isXml && match.namedGroup('tag') != null => CodeTokenKind.tag,
       _ when isXml => CodeTokenKind.annotation,
-      _ when language == CodeLanguage.shell => CodeTokenKind.plain,
+      _ when language == CodeLanguage.shell || language == CodeLanguage.text =>
+        CodeTokenKind.plain,
       _ when match.namedGroup('annotation') != null => CodeTokenKind.annotation,
       _ when match.namedGroup('number') != null => CodeTokenKind.number,
       _ when keywords.contains(text) => CodeTokenKind.keyword,

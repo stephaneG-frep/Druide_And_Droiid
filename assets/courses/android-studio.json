@@ -1,0 +1,1597 @@
+{
+ "moduleId": "android-studio",
+ "lessons": [
+  {
+   "id": "studio-01-installation",
+   "title": "Installer Android Studio sous Linux",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Android Studio** est l'environnement officiel de développement Android. Il réunit l'éditeur, le SDK, l'émulateur et les outils de diagnostic."
+    },
+    {
+     "type": "heading",
+     "text": "Avant de commencer"
+    },
+    {
+     "type": "paragraph",
+     "text": "Consultez la configuration requise sur la page de téléchargement : elle évolue d'une version à l'autre. Prévoyez surtout de la mémoire vive et de l'espace disque, car le SDK et les images d'émulateur prennent vite plusieurs dizaines de gigaoctets."
+    },
+    {
+     "type": "info",
+     "text": "Android Studio embarque son propre JDK, le **JBR**, dans `jbr/`. Vous n'avez rien à installer pour Java, mais ce JDK n'est pas ajouté à votre `PATH`."
+    },
+    {
+     "type": "heading",
+     "text": "Installer depuis l'archive"
+    },
+    {
+     "type": "paragraph",
+     "text": "Téléchargez l'archive Linux depuis developer.android.com/studio, puis extrayez-la. Le dossier `/opt` convient bien à une installation pour toute la machine."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Extraire l'archive téléchargée\nsudo tar -xzf ~/Téléchargements/android-studio-*-linux.tar.gz -C /opt\n\n# Lancer Android Studio\n/opt/android-studio/bin/studio"
+    },
+    {
+     "type": "paragraph",
+     "text": "Au premier lancement, l'assistant télécharge le SDK, par défaut dans `~/Android/Sdk`. Laissez-le faire et acceptez les licences."
+    },
+    {
+     "type": "heading",
+     "text": "Accélérer l'émulateur avec KVM"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'émulateur a besoin de la virtualisation matérielle pour être fluide. Sous Linux, il passe par **KVM**. Vérifiez qu'elle est disponible :"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Un résultat de 1 ou plus : le processeur prend en charge la virtualisation\negrep -c '(vmx|svm)' /proc/cpuinfo\n\n# Vérifier que l'émulateur peut utiliser KVM\n~/Android/Sdk/emulator/emulator -accel-check"
+    },
+    {
+     "type": "paragraph",
+     "text": "Si tout va bien, la dernière commande affiche un message du type `KVM (version 12) is installed and usable.`"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sinon, vérifiez que la virtualisation est activée dans le BIOS, puis installez KVM :"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils"
+    },
+    {
+     "type": "warning",
+     "text": "Un émulateur accéléré ne fonctionne pas à l'intérieur d'une machine virtuelle comme VirtualBox. Lancez-le directement sur votre système."
+    },
+    {
+     "type": "heading",
+     "text": "Connecter un vrai téléphone"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Sur le téléphone, ouvrez **À propos du téléphone** et touchez sept fois **Numéro de build** : les options pour les développeurs apparaissent.",
+      "Dans ces options, activez le **débogage USB**.",
+      "Branchez le téléphone, puis acceptez la clé RSA qui s'affiche sur son écran."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Sous Ubuntu, deux réglages sont nécessaires : appartenir au groupe `plugdev`, et disposer des règles `udev` pour les appareils Android."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Ajouter votre compte au groupe, puis fermer votre session\nsudo usermod -aG plugdev $LOGNAME\n\n# Installer les règles udev\nsudo apt-get install android-sdk-platform-tools-common\n\n# Vérifier la connexion\nadb devices"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'appareil doit apparaître avec l'état `device`. L'état `unauthorized` signifie que vous n'avez pas encore accepté la clé RSA sur le téléphone."
+    },
+    {
+     "type": "heading",
+     "text": "Rendre les outils accessibles"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ajoutez ces lignes à votre `~/.bashrc` pour utiliser les outils depuis n'importe quel terminal."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "export ANDROID_HOME=\"$HOME/Android/Sdk\"\nexport JAVA_HOME=\"/opt/android-studio/jbr\"\nexport PATH=\"$PATH:$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator\""
+    },
+    {
+     "type": "tip",
+     "text": "Si `adb devices` n'affiche rien, changez d'abord de câble : beaucoup ne servent qu'à la charge !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel composant Linux accélère l'émulateur ?",
+     "options": [
+      "KVM",
+      "Zygote",
+      "Gradle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "KVM exploite la virtualisation du processeur."
+    },
+    {
+     "prompt": "Que vérifie `emulator -accel-check` ?",
+     "options": [
+      "Qu'un hyperviseur est installé et utilisable",
+      "Que le téléphone est branché",
+      "Que le code compile"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sous Linux, il s'agit de KVM."
+    },
+    {
+     "prompt": "Que signifie l'état `unauthorized` dans `adb devices` ?",
+     "options": [
+      "La clé RSA n'a pas été acceptée sur le téléphone",
+      "Le câble est mauvais",
+      "Android Studio est absent"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Acceptez le dialogue sur l'appareil."
+    },
+    {
+     "prompt": "Quel groupe Linux est nécessaire pour ADB sous Ubuntu ?",
+     "options": [
+      "plugdev",
+      "docker",
+      "root"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Déconnectez-vous ensuite pour l'appliquer."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-01-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande liste les appareils Android connectés ?",
+     "accepted": [
+      "adb devices"
+     ],
+     "solution": "adb devices."
+    },
+    {
+     "id": "studio-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les commandes qui ajoutent votre utilisateur au groupe `plugdev`, puis installent les règles `udev`.",
+     "solution": "sudo usermod -aG plugdev $LOGNAME\nsudo apt-get install android-sdk-platform-tools-common",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "studio-02-sdk",
+   "title": "Le SDK et le SDK Manager",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le **SDK Android** rassemble ce qu'il faut pour compiler et tester : les plateformes, les outils de compilation et les outils de la ligne de commande."
+    },
+    {
+     "type": "heading",
+     "text": "Le contenu du SDK"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`platforms/` : une version d'Android par dossier, comme `android-36`, pour compiler.",
+      "`build-tools/` : les outils de construction, comme `apksigner` ou `zipalign`.",
+      "`platform-tools/` : `adb` et `fastboot`.",
+      "`emulator/` : l'émulateur.",
+      "`cmdline-tools/` : les outils en ligne de commande.",
+      "`system-images/` : les images système des émulateurs.",
+      "`ndk/` : le kit pour le code natif."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le SDK Manager"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ouvrez **Tools > SDK Manager**. L'onglet **SDK Platforms** liste les versions d'Android, et **SDK Tools** les outils. Cochez ce qu'il vous faut, puis validez."
+    },
+    {
+     "type": "info",
+     "text": "Installez la plateforme correspondant au `compileSdk` de votre projet. Android Studio vous propose d'ailleurs de la télécharger si elle manque."
+    },
+    {
+     "type": "heading",
+     "text": "En ligne de commande"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur un serveur de compilation, sans interface graphique, on passe par la ligne de commande."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister les paquets installés\nsdkmanager --list_installed\n\n# Installer une plateforme et les outils\nsdkmanager \"platform-tools\" \"platforms;android-36\"\n\n# Accepter les licences\nsdkmanager --licenses"
+    },
+    {
+     "type": "warning",
+     "text": "Google a déprécié `sdkmanager` au profit de la commande `android sdk` de la nouvelle Android CLI. `sdkmanager` reste très présent dans les projets et les scripts existants, mais vérifiez la documentation actuelle pour un nouveau projet."
+    },
+    {
+     "type": "paragraph",
+     "text": "Si `sdkmanager` affiche un avertissement sur une version de XML inconnue, vos outils en ligne de commande sont plus anciens que votre Android Studio. Mettez-les à jour depuis l'onglet **SDK Tools**."
+    },
+    {
+     "type": "tip",
+     "text": "Les plateformes et les images d'émulateur prennent beaucoup de place. Faites du tri de temps en temps dans le SDK Manager !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où se trouve adb ?",
+     "options": [
+      "platform-tools",
+      "build-tools",
+      "platforms"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Avec fastboot."
+    },
+    {
+     "prompt": "Que contient le dossier platforms ?",
+     "options": [
+      "Les versions d'Android pour compiler",
+      "Les applications installées",
+      "Les clés de signature"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une version par dossier."
+    },
+    {
+     "prompt": "Quelle commande a remplacé sdkmanager selon Google ?",
+     "options": [
+      "android sdk",
+      "gradle sdk",
+      "adb sdk"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "sdkmanager est déprécié, mais reste répandu."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle option de `sdkmanager` permet d'accepter les licences ?",
+     "accepted": [
+      "--licenses"
+     ],
+     "solution": "--licenses."
+    },
+    {
+     "id": "studio-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande `sdkmanager` qui installe les outils `build-tools` 36.0.0.",
+     "solution": "sdkmanager \"build-tools;36.0.0\"",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "studio-03-emulateur",
+   "title": "AVD et émulateurs",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un **AVD**, ou Android Virtual Device, est un appareil virtuel : il définit le matériel, la version d'Android et le stockage. L'**émulateur** est le programme qui l'exécute."
+    },
+    {
+     "type": "heading",
+     "text": "Créer un appareil"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ouvrez **View > Tool Windows > Device Manager**.",
+      "Cliquez sur l'ajout d'un appareil, puis choisissez un modèle de téléphone.",
+      "Choisissez une image système, et téléchargez-la si besoin.",
+      "Validez, puis lancez l'appareil."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Quelle image choisir ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**x86_64** sur un PC classique, ou **arm64-v8a** sur un processeur ARM : l'architecture doit correspondre à celle de votre machine pour bénéficier de l'accélération.",
+      "**Google APIs** : avec les services Google Play.",
+      "**Google Play** : avec, en plus, le Play Store."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Une image ARM sur un processeur Intel ou AMD ne peut pas utiliser l'accélération. L'émulation est alors très lente."
+    },
+    {
+     "type": "heading",
+     "text": "En ligne de commande"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister les modèles et créer un AVD\navdmanager list device -c\navdmanager create avd -n Test36 -k \"system-images;android-36;google_apis;x86_64\"\n\n# Lister puis démarrer\nemulator -list-avds\nemulator -avd Test36"
+    },
+    {
+     "type": "paragraph",
+     "text": "Si l'affichage pose problème, forcez le mode de rendu avec l'option `-gpu`. Les modes `auto`, `host` et `software` sont les plus courants."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "emulator -avd Test36 -gpu software"
+    },
+    {
+     "type": "heading",
+     "text": "Émulateur ou vrai téléphone ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "L'**émulateur** teste facilement plusieurs versions d'Android et tailles d'écran.",
+      "Le **vrai téléphone** révèle les vraies performances, la surcouche du constructeur et le comportement réel des capteurs."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Testez toujours sur un appareil réel avant de publier. Comme le dit la documentation, l'émulateur complète le test sur appareil, il ne le remplace pas."
+    },
+    {
+     "type": "tip",
+     "text": "Gardez un AVD ancien, proche de votre `minSdk`. C'est là que se cachent les plantages que vous ne verrez jamais sur votre téléphone récent !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que signifie AVD ?",
+     "options": [
+      "Android Virtual Device",
+      "Android Video Driver",
+      "Application Verified Download"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un appareil virtuel."
+    },
+    {
+     "prompt": "Quelle image choisir sur un PC Intel ?",
+     "options": [
+      "x86_64",
+      "arm64-v8a"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'architecture doit correspondre pour bénéficier de l'accélération."
+    },
+    {
+     "prompt": "Quelle image contient le Play Store ?",
+     "options": [
+      "Google Play",
+      "Google APIs",
+      "AOSP"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Google APIs n'inclut que les services."
+    },
+    {
+     "prompt": "Que lancer pour démarrer l'AVD Test36 ?",
+     "options": [
+      "emulator -avd Test36",
+      "adb start Test36",
+      "gradlew Test36"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'option -avd désigne l'appareil."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle option de `emulator` liste les AVD disponibles ?",
+     "accepted": [
+      "-list-avds"
+     ],
+     "solution": "-list-avds."
+    },
+    {
+     "id": "studio-03-ex2",
+     "kind": "self",
+     "prompt": "Citez deux raisons de tester sur un vrai téléphone, même avec un émulateur qui fonctionne bien.",
+     "solution": "Le vrai téléphone montre les performances réelles et la surcouche du constructeur, et il permet de tester les capteurs, la batterie et le comportement du réseau en conditions réelles."
+    }
+   ]
+  },
+  {
+   "id": "studio-04-projet",
+   "title": "Créer un projet et lire sa structure",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un projet Android contient beaucoup de fichiers, mais chacun a un rôle précis. Une fois la carte en tête, on ne s'y perd plus."
+    },
+    {
+     "type": "heading",
+     "text": "Créer un projet"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Choisissez **File > New > New Project**.",
+      "Prenez le modèle **Empty Activity**, une base simple avec Jetpack Compose.",
+      "Indiquez le nom et l'identifiant de paquet, par exemple `com.exemple.notes`.",
+      "Choisissez le SDK minimum : l'assistant indique la part d'appareils couverts.",
+      "Validez, puis attendez la fin de la synchronisation Gradle."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Choisissez bien l'identifiant dès le départ : il ne peut plus changer après la publication. C'est lui qui identifie votre application sur le Play Store."
+    },
+    {
+     "type": "heading",
+     "text": "La carte du projet"
+    },
+    {
+     "type": "paragraph",
+     "text": "La vue **Android** du panneau Project simplifie l'affichage. Voici l'organisation réelle sur le disque, visible avec la vue **Project**."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "MonProjet/\n├── settings.gradle.kts      # Modules et dépôts\n├── build.gradle.kts         # Plugins communs\n├── gradle.properties        # Réglages de Gradle\n├── local.properties         # Chemin du SDK, à ne pas partager\n├── gradlew                  # Lanceur Gradle\n├── gradle/\n│   ├── libs.versions.toml   # Catalogue de versions\n│   └── wrapper/             # Version de Gradle\n└── app/\n    ├── build.gradle.kts     # Réglages du module\n    ├── proguard-rules.pro   # Règles de réduction du code\n    └── src/\n        ├── main/\n        │   ├── AndroidManifest.xml\n        │   ├── java/        # Code Kotlin et Java\n        │   └── res/         # Ressources\n        ├── test/            # Tests sur l'ordinateur\n        └── androidTest/     # Tests sur appareil"
+    },
+    {
+     "type": "heading",
+     "text": "Les ressources"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le dossier `res/` sépare le contenu du code. Android choisit automatiquement la bonne variante selon l'appareil."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`drawable/` : les images et formes.",
+      "`mipmap-*/` : les icônes de l'application.",
+      "`values/` : les textes, couleurs et thèmes.",
+      "`values-fr/` : les textes français. C'est ainsi qu'une application se traduit.",
+      "`values-night/` : les ressources du thème sombre.",
+      "`layout/` : les écrans XML, dans les projets sans Compose."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les deux dossiers de tests"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`test/` : des tests unitaires qui tournent sur votre ordinateur, très rapides.",
+      "`androidTest/` : des tests qui tournent sur un appareil ou un émulateur."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Ce qui ne va pas dans Git"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le fichier `.gitignore` généré exclut déjà l'essentiel. Ne partagez jamais `local.properties`, ni le dossier `build/`, ni vos clés de signature."
+    },
+    {
+     "type": "tip",
+     "text": "Perdu dans un projet ? Partez toujours du manifeste : il vous dit quel écran s'ouvre en premier !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où se trouve le code d'une application ?",
+     "options": [
+      "app/src/main/java",
+      "gradle/wrapper",
+      "res/values"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le Kotlin y est aussi placé, par convention."
+    },
+    {
+     "prompt": "Quel fichier contient le chemin du SDK et reste hors de Git ?",
+     "options": [
+      "local.properties",
+      "settings.gradle.kts",
+      "gradlew"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est propre à chaque machine."
+    },
+    {
+     "prompt": "Où placer les textes français ?",
+     "options": [
+      "res/values-fr",
+      "src/test",
+      "gradle/"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Android choisit la ressource selon la langue."
+    },
+    {
+     "prompt": "Où s'exécutent les tests de `androidTest` ?",
+     "options": [
+      "Sur un appareil ou un émulateur",
+      "Sur le Play Store",
+      "Sur Gradle uniquement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ceux de test/ tournent sur l'ordinateur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-04-ex1",
+     "kind": "fill",
+     "prompt": "Dans quel dossier se placent les ressources de thème sombre ?",
+     "accepted": [
+      "values-night",
+      "res/values-night"
+     ],
+     "solution": "res/values-night."
+    },
+    {
+     "id": "studio-04-ex2",
+     "kind": "self",
+     "prompt": "Un nouveau collègue clone votre projet et obtient une erreur « SDK location not found ». Expliquez pourquoi, et comment la résoudre.",
+     "solution": "Le fichier local.properties, qui indique le chemin du SDK, n'est pas dans Git car il est propre à chaque machine. Il suffit d'ouvrir le projet dans Android Studio, qui le crée, ou de définir ANDROID_HOME, ou encore d'écrire sdk.dir dans ce fichier."
+    }
+   ]
+  },
+  {
+   "id": "studio-05-gradle",
+   "title": "Gradle",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Gradle** construit votre application : il compile le code, assemble les ressources, télécharge les dépendances et produit l'APK. L'**Android Gradle Plugin**, ou AGP, lui apprend à construire pour Android."
+    },
+    {
+     "type": "heading",
+     "text": "Le wrapper"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le fichier `gradlew` lance la version de Gradle fixée par le projet, et la télécharge si besoin. Tout le monde compile ainsi avec la même version. Utilisez toujours `./gradlew`, plutôt qu'un Gradle installé sur la machine."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister les tâches disponibles\n./gradlew tasks\n\n# Compiler et installer sur l'appareil connecté\n./gradlew installDebug"
+    },
+    {
+     "type": "heading",
+     "text": "Les fichiers de configuration"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`settings.gradle.kts` : les dépôts, et la liste des modules.",
+      "`build.gradle.kts` à la racine : les plugins communs.",
+      "`app/build.gradle.kts` : les réglages du module.",
+      "`gradle.properties` : les réglages de Gradle, comme sa mémoire."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "plugins {\n    id(\"com.android.application\")\n}\n\nandroid {\n    namespace = \"com.exemple.notes\"\n    compileSdk = 36\n\n    defaultConfig {\n        applicationId = \"com.exemple.notes\"\n        minSdk = 24\n        targetSdk = 36\n        versionCode = 1\n        versionName = \"1.0\"\n    }\n}\n\ndependencies {\n    implementation(\"androidx.appcompat:appcompat:1.8.0\")\n    testImplementation(\"junit:junit:4.13.2\")\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`versionCode` est un entier qui doit augmenter à chaque publication, et `versionName` est le numéro affiché à l'utilisateur."
+    },
+    {
+     "type": "heading",
+     "text": "Les dépendances"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`implementation` : disponible pour le code de l'application.",
+      "`testImplementation` : réservée aux tests unitaires.",
+      "`androidTestImplementation` : réservée aux tests sur appareil."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **catalogue de versions** centralise les numéros dans `gradle/libs.versions.toml`, ce qui évite de les répéter dans plusieurs modules."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "[versions]\nappcompat = \"1.8.0\"\n\n[libraries]\nandroidx-appcompat = { group = \"androidx.appcompat\", name = \"appcompat\", version.ref = \"appcompat\" }"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "dependencies {\n    implementation(libs.androidx.appcompat)\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Types de compilation et saveurs"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un **type de compilation** décrit une étape du cycle : `debug` pour développer, `release` pour distribuer.",
+      "Une **saveur** décrit une version du produit, par exemple gratuite ou payante.",
+      "Une **variante** est la combinaison des deux, comme `gratuitDebug`."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    buildTypes {\n        getByName(\"release\") {\n            isMinifyEnabled = true\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\"\n            )\n        }\n    }\n\n    flavorDimensions += \"offre\"\n    productFlavors {\n        create(\"gratuit\") {\n            dimension = \"offre\"\n            applicationIdSuffix = \".gratuit\"\n        }\n        create(\"payant\") {\n            dimension = \"offre\"\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "La synchronisation"
+    },
+    {
+     "type": "paragraph",
+     "text": "Après toute modification d'un fichier Gradle, cliquez sur **Sync Now**. Android Studio relit alors la configuration et signale les erreurs."
+    },
+    {
+     "type": "info",
+     "text": "Google Play impose un `targetSdk` récent. Le `compileSdk` et le `targetSdk` sont indépendants : le premier donne accès aux nouvelles API, le second fixe le comportement à l'exécution."
+    },
+    {
+     "type": "warning",
+     "text": "Une version de Gradle, d'AGP et de Kotlin doivent être compatibles entre elles. Si la compilation casse après une mise à jour, vérifiez d'abord leurs tableaux de compatibilité."
+    },
+    {
+     "type": "tip",
+     "text": "Quand Gradle se plaint, lisez le premier message d'erreur, pas le dernier. Les suivants ne sont souvent que des conséquences !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi utiliser ./gradlew ?",
+     "options": [
+      "Pour compiler avec la version fixée par le projet",
+      "Parce que Gradle est payant",
+      "Pour éviter Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le wrapper rend la compilation reproductible."
+    },
+    {
+     "prompt": "Que doit faire versionCode à chaque publication ?",
+     "options": [
+      "Augmenter",
+      "Rester à 1",
+      "Diminuer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un entier croissant."
+    },
+    {
+     "prompt": "Quelle configuration ajoute une bibliothèque de tests unitaires ?",
+     "options": [
+      "testImplementation",
+      "implementation",
+      "compileOnly"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle reste hors de l'application."
+    },
+    {
+     "prompt": "Qu'est-ce qu'une variante ?",
+     "options": [
+      "La combinaison d'un type de compilation et d'une saveur",
+      "Une version de Gradle",
+      "Une branche Git"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple gratuitDebug."
+    },
+    {
+     "prompt": "Où déclare-t-on les modules d'un projet ?",
+     "options": [
+      "settings.gradle.kts",
+      "gradle.properties",
+      "AndroidManifest.xml"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Avec include."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle tâche Gradle compile et installe la version de debug sur l'appareil ?",
+     "accepted": [
+      "installDebug",
+      "./gradlew installDebug",
+      "gradlew installDebug"
+     ],
+     "solution": "installDebug."
+    },
+    {
+     "id": "studio-05-ex2",
+     "kind": "self",
+     "prompt": "Dans `build.gradle.kts`, ajoutez la dépendance `com.squareup.retrofit2:retrofit:2.11.0` pour l'application, et `junit:junit:4.13.2` pour les tests unitaires.",
+     "solution": "dependencies {\n    implementation(\"com.squareup.retrofit2:retrofit:2.11.0\")\n    testImplementation(\"junit:junit:4.13.2\")\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "studio-06-manifest",
+   "title": "Le manifeste",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "`AndroidManifest.xml` présente votre application au système : ses composants, ses permissions et ses besoins matériels."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-feature android:name=\"android.hardware.camera\" android:required=\"false\" />\n\n    <application\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:theme=\"@style/Theme.Notes\">\n\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n\n        <activity\n            android:name=\".DetailActivity\"\n            android:exported=\"false\" />\n    </application>\n</manifest>"
+    },
+    {
+     "type": "heading",
+     "text": "Les éléments essentiels"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`<uses-permission>` : les permissions demandées.",
+      "`<uses-feature>` : le matériel utilisé. Avec `required=\"false\"`, l'application reste installable sans lui.",
+      "`<application>` : l'icône, le nom et le thème.",
+      "`<activity>` : chaque écran, à déclarer ici.",
+      "`<intent-filter>` : les actions auxquelles répond le composant."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le couple `MAIN` et `LAUNCHER` place l'activité dans le lanceur d'applications : c'est l'écran de démarrage."
+    },
+    {
+     "type": "heading",
+     "text": "L'attribut exported"
+    },
+    {
+     "type": "paragraph",
+     "text": "`android:exported` indique si d'autres applications peuvent lancer le composant. Depuis Android 12, il est obligatoire pour tout composant qui déclare un `intent-filter`."
+    },
+    {
+     "type": "warning",
+     "text": "N'exportez que ce qui doit l'être. Une activité exportée par erreur peut être ouverte par n'importe quelle application : le module 9 revient sur ce risque."
+    },
+    {
+     "type": "heading",
+     "text": "Identifiant et namespace"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`applicationId`, dans Gradle, identifie votre application sur l'appareil et sur le Play Store.",
+      "`namespace`, dans Gradle, sert à générer la classe `R` et à résoudre les noms de classes relatifs."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le point de `.MainActivity` est remplacé par le `namespace`."
+    },
+    {
+     "type": "heading",
+     "text": "Le manifeste fusionné"
+    },
+    {
+     "type": "paragraph",
+     "text": "Vos bibliothèques apportent leurs propres manifestes, parfois avec des permissions. Gradle fusionne le tout. Ouvrez votre manifeste, puis l'onglet **Merged Manifest** en bas de l'éditeur, pour voir le résultat final."
+    },
+    {
+     "type": "tip",
+     "text": "Une permission que vous n'avez jamais écrite apparaît dans votre application ? L'onglet Merged Manifest vous dira quelle bibliothèque l'a ajoutée !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle combinaison place une activité dans le lanceur ?",
+     "options": [
+      "MAIN et LAUNCHER",
+      "VIEW et BROWSABLE",
+      "SEND et DEFAULT"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est l'écran de démarrage."
+    },
+    {
+     "prompt": "Que signifie android:exported=\"false\" ?",
+     "options": [
+      "Les autres applications ne peuvent pas lancer ce composant",
+      "Le composant est supprimé",
+      "L'application n'est pas publiée"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est le réglage le plus sûr par défaut."
+    },
+    {
+     "prompt": "Que se passe-t-il pour une activité non déclarée ?",
+     "options": [
+      "Son lancement provoque une exception",
+      "Elle s'ouvre normalement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le système exige la déclaration."
+    },
+    {
+     "prompt": "Où voir le manifeste final avec celui des bibliothèques ?",
+     "options": [
+      "L'onglet Merged Manifest",
+      "Logcat",
+      "Le Profiler"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Gradle fusionne tous les manifestes."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle balise déclare un matériel utilisé par l'application ?",
+     "accepted": [
+      "uses-feature",
+      "<uses-feature>"
+     ],
+     "solution": "uses-feature."
+    },
+    {
+     "id": "studio-06-ex2",
+     "kind": "self",
+     "prompt": "Déclarez une activité `ReglagesActivity`, privée à l'application.",
+     "solution": "<activity\n    android:name=\".ReglagesActivity\"\n    android:exported=\"false\" />",
+     "language": "xml"
+    }
+   ]
+  },
+  {
+   "id": "studio-07-logcat",
+   "title": "Logcat",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Logcat** affiche en direct les messages de votre application et du système. C'est le premier réflexe pour comprendre un problème."
+    },
+    {
+     "type": "heading",
+     "text": "Écrire dans les journaux"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "private const val TAG = \"Connexion\"\n\nfun connecter(nom: String) {\n    Log.d(TAG, \"Connexion de $nom\")\n    try {\n        ouvrirSession(nom)\n    } catch (erreur: IOException) {\n        Log.e(TAG, \"Connexion impossible\", erreur)\n    }\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Log.v` : verbeux.",
+      "`Log.d` : débogage.",
+      "`Log.i` : information.",
+      "`Log.w` : avertissement.",
+      "`Log.e` : erreur."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "N'écrivez jamais de mot de passe, de jeton ou de donnée personnelle dans les journaux. Ils sont lisibles avec ADB, et se retrouvent dans les rapports d'erreur."
+    },
+    {
+     "type": "heading",
+     "text": "Filtrer dans Android Studio"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ouvrez **View > Tool Windows > Logcat**. Le champ de recherche accepte des requêtes par clé, et `Ctrl` + `Espace` propose des suggestions."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "package:mine                 # Votre application\nlevel:WARN                   # Avertissements et plus graves\ntag:Connexion                # Un tag précis\n-tag:Choreographer           # Exclure un tag\nmessage:~\"erreur.*réseau\"    # Expression régulière sur le message\nis:crash                     # Plantages uniquement\nage:5m                       # Les 5 dernières minutes\npackage:mine level:ERROR     # Combinaison"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les requêtes se combinent, et `&`, `|` et les parenthèses sont disponibles. Commencez presque toujours par `package:mine`."
+    },
+    {
+     "type": "heading",
+     "text": "Filtrer en ligne de commande"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Effacer le tampon, reproduire le bug, puis lire\nadb logcat -c\nadb logcat -d\n\n# Seulement un tag, au niveau Debug et plus\nadb logcat -s Connexion:D\n\n# Seulement les erreurs\nadb logcat '*:E'"
+    },
+    {
+     "type": "heading",
+     "text": "Lire une pile d'appels"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand une application plante, Logcat affiche une **pile d'appels** : le chemin suivi par le code jusqu'à l'erreur."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "FATAL EXCEPTION: main\nProcess: com.exemple.notes, PID: 4242\njava.lang.RuntimeException: Unable to start activity\n    at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4024)\nCaused by: java.lang.NullPointerException: titre must not be null\n    at com.exemple.notes.Ecran.afficher(Ecran.kt:42)\n    at com.exemple.notes.MainActivity.onCreate(MainActivity.kt:18)"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Cherchez `FATAL EXCEPTION`.",
+      "Descendez jusqu'au dernier `Caused by` : c'est la vraie cause.",
+      "Trouvez la première ligne qui mentionne **votre** paquet. Ici, `Ecran.kt:42`."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Dans Android Studio, cliquez sur le nom de fichier pour ouvrir directement la ligne concernée."
+    },
+    {
+     "type": "tip",
+     "text": "Ne lisez pas toute la pile : le dernier « Caused by » et votre premier fichier suffisent neuf fois sur dix !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle requête affiche seulement votre application ?",
+     "options": [
+      "package:mine",
+      "tag:app",
+      "is:mine"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "mine désigne les paquets du projet ouvert."
+    },
+    {
+     "prompt": "Où chercher la vraie cause d'un plantage ?",
+     "options": [
+      "Au dernier Caused by",
+      "À la première ligne de Logcat",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les premières lignes ne sont souvent que l'enveloppe."
+    },
+    {
+     "prompt": "Que ne faut-il jamais journaliser ?",
+     "options": [
+      "Un mot de passe",
+      "Le nom d'un écran",
+      "Une durée"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les journaux sont lisibles avec ADB."
+    },
+    {
+     "prompt": "Que fait `adb logcat -c` ?",
+     "options": [
+      "Il efface le tampon de logs",
+      "Il compile",
+      "Il redémarre l'appareil"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pratique avant de reproduire un bug."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode de `Log` écrit un message d'erreur ?",
+     "accepted": [
+      "Log.e",
+      "e",
+      "Log.e()"
+     ],
+     "solution": "Log.e."
+    },
+    {
+     "id": "studio-07-ex2",
+     "kind": "self",
+     "prompt": "Dans la pile d'appels de la leçon, quelle ligne de votre code faut-il ouvrir en premier, et pourquoi ?",
+     "solution": "Ecran.kt:42 : c'est la première ligne de votre paquet sous le dernier Caused by, donc l'endroit précis où l'erreur s'est produite. La ligne MainActivity.kt:18 indique seulement qui a appelé ce code."
+    }
+   ]
+  },
+  {
+   "id": "studio-08-debogage",
+   "title": "Debugger et Profiler",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Logcat raconte ce qui s'est passé. Le **debugger** vous permet d'arrêter le temps pour regarder, et le **Profiler** mesure où partent les ressources."
+    },
+    {
+     "type": "heading",
+     "text": "Démarrer le debugger"
+    },
+    {
+     "type": "paragraph",
+     "text": "Il vous faut une variante débogable, comme `debug`, et un appareil avec le débogage activé. Cliquez dans la marge à gauche d'une ligne pour poser un **point d'arrêt**, puis lancez l'application en mode débogage."
+    },
+    {
+     "type": "heading",
+     "text": "Avancer pas à pas"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Step Over** (F8) : exécute la ligne, sans entrer dans les fonctions.",
+      "**Step Into** (F7) : entre dans la fonction appelée.",
+      "**Step Out** (Maj + F8) : termine la fonction courante.",
+      "**Resume** (F9) : reprend jusqu'au prochain point d'arrêt."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le panneau **Variables** montre l'état du programme. **Evaluate Expression** exécute une expression, par exemple pour tester une hypothèse sans recompiler."
+    },
+    {
+     "type": "heading",
+     "text": "Des points d'arrêt plus malins"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un **point d'arrêt conditionnel** ne s'arrête que si une condition est vraie, comme `index == 42`. C'est idéal dans une boucle.",
+      "Un **point de journalisation** écrit un message sans arrêter le programme et sans modifier le code.",
+      "**Attach Debugger** se connecte à une application déjà lancée."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Faites un clic droit sur un point d'arrêt pour en modifier les options."
+    },
+    {
+     "type": "heading",
+     "text": "Le Profiler"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand l'application est lente ou consomme trop, ne devinez pas : mesurez. Le Profiler suit le processeur, la mémoire et l'énergie."
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Profile with low overhead** utilise une application *profileable*, basée sur la version `release`. Les mesures de temps sont réalistes.",
+      "**Profile with complete data** utilise une application *debuggable*. Il permet les vidages de mémoire et le suivi des allocations, mais il coûte en performances."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Choisissez un processus, une tâche, puis lancez l'enregistrement. Si vous ne savez pas par où commencer, inspectez l'application en direct pour une vue d'ensemble."
+    },
+    {
+     "type": "warning",
+     "text": "Une version `debug` est bien plus lente qu'une version `release`. Ne tirez aucune conclusion sur les performances à partir d'un build debug : le test vaut surtout pour repérer des fuites de mémoire."
+    },
+    {
+     "type": "heading",
+     "text": "Chercher une fuite de mémoire"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ouvrez puis fermez plusieurs fois l'écran suspect.",
+      "Lancez le ramasse-miettes depuis le Profiler.",
+      "Capturez un vidage de mémoire.",
+      "Cherchez une activité qui devrait avoir disparu, et regardez qui la retient."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Le debugger d'abord, les `println` ensuite. Vous gagnerez un temps fou, et votre code restera propre !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel raccourci exécute la ligne sans entrer dans la fonction ?",
+     "options": [
+      "F8 (Step Over)",
+      "F7 (Step Into)",
+      "F9 (Resume)"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "F7 entrerait dans la fonction."
+    },
+    {
+     "prompt": "Quel point d'arrêt utiliser au tour 500 d'une boucle ?",
+     "options": [
+      "Un point d'arrêt conditionnel",
+      "Un point d'arrêt normal, 500 fois"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple index == 500."
+    },
+    {
+     "prompt": "Quel mode du Profiler permet un vidage de mémoire ?",
+     "options": [
+      "Complete data, avec une application debuggable",
+      "Low overhead"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le mode low overhead ne couvre pas ces tâches."
+    },
+    {
+     "prompt": "Pourquoi éviter de juger les performances sur un build debug ?",
+     "options": [
+      "Il est nettement plus lent que le release",
+      "Il est plus rapide",
+      "Il ne contient pas de code"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le mode debug ajoute un coût important."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel raccourci entre dans la fonction appelée ?",
+     "accepted": [
+      "F7"
+     ],
+     "solution": "F7, Step Into."
+    },
+    {
+     "id": "studio-08-ex2",
+     "kind": "self",
+     "prompt": "Votre liste saccade sur le téléphone d'un utilisateur. Décrivez votre démarche avec le Profiler.",
+     "solution": "Je compile une variante release profileable, pour des mesures réalistes, puis je lance Profile with low overhead sur un appareil réel. J'enregistre pendant le défilement, j'identifie ce qui occupe le fil principal, je corrige, puis je mesure à nouveau pour comparer."
+    }
+   ]
+  },
+  {
+   "id": "studio-09-compilation",
+   "title": "Compilation, signature et export",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Dernière étape de l'atelier : produire un fichier installable, correctement signé."
+    },
+    {
+     "type": "heading",
+     "text": "Compiler"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# APK de debug, signé avec la clé de debug\n./gradlew assembleDebug\n\n# APK de release\n./gradlew assembleRelease\n\n# AAB pour Google Play\n./gradlew bundleRelease\n\n# Analyse statique du code\n./gradlew lintDebug"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les fichiers produits arrivent dans `app/build/outputs/`, sous `apk/` et `bundle/`."
+    },
+    {
+     "type": "heading",
+     "text": "La clé de debug"
+    },
+    {
+     "type": "paragraph",
+     "text": "Android Studio signe automatiquement les versions de debug avec une clé générée dans `~/.android/debug.keystore`. Cette clé n'est pas sûre par nature, et Google Play refuse les applications signées avec elle."
+    },
+    {
+     "type": "heading",
+     "text": "Créer une clé de signature"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **keystore** est un fichier qui contient vos clés. Vous pouvez le créer depuis **Build > Generate Signed Bundle / APK**, ou en ligne de commande."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "keytool -genkeypair -v \\\n  -keystore ma-cle.jks \\\n  -alias envoi \\\n  -keyalg RSA -keysize 2048 \\\n  -validity 10000\n\n# Vérifier le contenu du keystore\nkeytool -list -keystore ma-cle.jks"
+    },
+    {
+     "type": "paragraph",
+     "text": "La documentation recommande une validité d'au moins 25 ans, et 10 000 jours y correspondent à peu près. Pour Google Play, la clé doit rester valide après le 22 octobre 2033."
+    },
+    {
+     "type": "warning",
+     "text": "Si vous perdez votre clé d'une application autopubliée, vous ne pourrez plus jamais la mettre à jour. Sauvegardez le keystore et ses mots de passe séparément, et ne le mettez jamais dans Git."
+    },
+    {
+     "type": "heading",
+     "text": "Signer sans exposer ses secrets"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ne mettez pas de mots de passe dans `build.gradle.kts`. Placez-les dans un fichier `keystore.properties`, exclu de Git."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "# keystore.properties, à ajouter au .gitignore\nstoreFile=/chemin/vers/ma-cle.jks\nstorePassword=...\nkeyAlias=envoi\nkeyPassword=..."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.FileInputStream\nimport java.util.Properties\n\nval proprietes = Properties().apply {\n    load(FileInputStream(rootProject.file(\"keystore.properties\")))\n}\n\nandroid {\n    signingConfigs {\n        create(\"publication\") {\n            storeFile = file(proprietes[\"storeFile\"] as String)\n            storePassword = proprietes[\"storePassword\"] as String\n            keyAlias = proprietes[\"keyAlias\"] as String\n            keyPassword = proprietes[\"keyPassword\"] as String\n        }\n    }\n    buildTypes {\n        getByName(\"release\") {\n            signingConfig = signingConfigs.getByName(\"publication\")\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Play App Signing"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour les nouvelles applications, Google Play conserve la **clé de signature de l'application**. Vous gardez une **clé d'envoi**, qui prouve que l'AAB vient bien de vous. Si cette clé d'envoi est perdue, vous pouvez demander sa réinitialisation dans la Play Console."
+    },
+    {
+     "type": "layers",
+     "title": "Le trajet de la signature",
+     "layers": [
+      {
+       "name": "Vous",
+       "detail": "Vous signez l'AAB avec votre clé d'envoi."
+      },
+      {
+       "name": "Play Console",
+       "detail": "Google vérifie la clé d'envoi."
+      },
+      {
+       "name": "Google Play",
+       "detail": "Il génère les APK et les signe avec la clé de l'application."
+      },
+      {
+       "name": "Appareil",
+       "detail": "Il vérifie que la signature correspond à celle de l'application installée."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Vérifier le résultat"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Vérifier la signature d'un APK\napksigner verify --print-certs app-release.apk\n\n# Rapport de signature de chaque variante\n./gradlew signingReport"
+    },
+    {
+     "type": "info",
+     "text": "`apksigner` se trouve dans `build-tools/` et a besoin de Java. Si vous obtenez `java: not found`, ajoutez le JDK d'Android Studio à votre `PATH`."
+    },
+    {
+     "type": "tip",
+     "text": "Installez votre APK de release sur un vrai téléphone avant de publier. La réduction du code peut casser ce que le debug laissait passer !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle tâche produit un AAB ?",
+     "options": [
+      "bundleRelease",
+      "assembleDebug",
+      "lintDebug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "assemble produit des APK."
+    },
+    {
+     "prompt": "Peut-on publier sur Google Play avec la clé de debug ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle n'est pas sûre par nature."
+    },
+    {
+     "prompt": "Avec Play App Signing, que conservez-vous ?",
+     "options": [
+      "La clé d'envoi",
+      "La clé de chaque utilisateur",
+      "Rien du tout"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Google conserve la clé de signature de l'application."
+    },
+    {
+     "prompt": "Où ranger les mots de passe de signature ?",
+     "options": [
+      "Dans un fichier exclu de Git",
+      "Dans build.gradle.kts",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple keystore.properties."
+    },
+    {
+     "prompt": "Quel outil vérifie la signature d'un APK ?",
+     "options": [
+      "apksigner",
+      "adb logcat",
+      "R8"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il se trouve dans build-tools."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "studio-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle tâche Gradle affiche les informations de signature de chaque variante ?",
+     "accepted": [
+      "signingReport",
+      "./gradlew signingReport",
+      "gradlew signingReport"
+     ],
+     "solution": "signingReport."
+    },
+    {
+     "id": "studio-09-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande `keytool` qui crée `publication.jks`, avec l'alias `notes`, une clé RSA de 2048 bits et 10 000 jours de validité.",
+     "solution": "keytool -genkeypair -v -keystore publication.jks -alias notes -keyalg RSA -keysize 2048 -validity 10000",
+     "language": "shell"
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Quel composant accélère l'émulateur sous Linux ?",
+    "options": [
+     "KVM",
+     "Zygote"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il exploite la virtualisation du processeur."
+   },
+   {
+    "prompt": "Où se trouve adb dans le SDK ?",
+    "options": [
+     "platform-tools",
+     "platforms"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Avec fastboot."
+   },
+   {
+    "prompt": "Quelle architecture choisir pour un AVD sur un PC Intel ?",
+    "options": [
+     "x86_64",
+     "armeabi-v7a"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Pour bénéficier de l'accélération."
+   },
+   {
+    "prompt": "Quel fichier de configuration est propre à chaque machine ?",
+    "options": [
+     "local.properties",
+     "settings.gradle.kts"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il reste hors de Git."
+   },
+   {
+    "prompt": "Que fixe le fichier gradle-wrapper.properties ?",
+    "options": [
+     "La version de Gradle du projet",
+     "La clé de signature"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le champ distributionUrl l'indique."
+   },
+   {
+    "prompt": "Que déclenche l'absence de déclaration d'une activité dans le manifeste ?",
+    "options": [
+     "Une exception à son lancement",
+     "Rien"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Toute activité doit être déclarée."
+   },
+   {
+    "prompt": "Dans une pile d'appels, où se trouve la vraie cause ?",
+    "options": [
+     "Au dernier Caused by",
+     "Tout en haut"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Cherchez ensuite votre premier fichier."
+   },
+   {
+    "prompt": "Quels éléments ne doivent pas entrer dans Git ?",
+    "options": [
+     "Le keystore",
+     "local.properties",
+     "settings.gradle.kts"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "settings.gradle.kts est partagé avec l'équipe."
+   },
+   {
+    "prompt": "Quel mode de profilage utiliser pour mesurer des temps réalistes ?",
+    "options": [
+     "Low overhead, sur une variante release",
+     "Complete data, sur une variante debug"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le debug ajoute un coût important."
+   },
+   {
+    "prompt": "Que signez-vous pour Google Play avec Play App Signing ?",
+    "options": [
+     "L'AAB, avec la clé d'envoi",
+     "Chaque APK, avec la clé de debug"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Google signe ensuite les APK distribués."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Télécharger Android Studio",
+   "url": "https://developer.android.com/studio"
+  },
+  {
+   "title": "Accélération de l'émulateur",
+   "url": "https://developer.android.com/studio/run/emulator-acceleration"
+  },
+  {
+   "title": "Exécuter sur un appareil",
+   "url": "https://developer.android.com/studio/run/device"
+  },
+  {
+   "title": "Configurer la compilation",
+   "url": "https://developer.android.com/build"
+  },
+  {
+   "title": "Logcat",
+   "url": "https://developer.android.com/studio/debug/logcat"
+  },
+  {
+   "title": "Déboguer une application",
+   "url": "https://developer.android.com/studio/debug"
+  },
+  {
+   "title": "Profiler",
+   "url": "https://developer.android.com/studio/profile"
+  },
+  {
+   "title": "Signer une application",
+   "url": "https://developer.android.com/studio/publish/app-signing"
+  }
+ ]
+}

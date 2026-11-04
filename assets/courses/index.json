@@ -1,6 +1,8 @@
 {
   "modules": [
     "fondations",
-    "kotlin"
+    "kotlin",
+    "java",
+    "android-studio"
   ]
 }
