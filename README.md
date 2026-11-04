@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 1 (fondations) terminée.** La navigation fonctionne, mais les rubriques n'ont pas encore de contenu. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 5 (contenus) en cours.** Les modules 1 et 2 sont rédigés sur douze. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 
@@ -27,11 +27,29 @@ flutter test
 flutter test integration_test -d linux
 ```
 
+**Attention :** lancés sur un téléphone, les tests d'intégration désinstallent l'application à la fin, ce qui efface ses données. L'APK produit par ces tests démarre sur les tests : refaites `flutter build apk --debug` avant de réinstaller.
+
 Après toute modification des tables Drift, régénérer le code :
 
 ```bash
 dart run build_runner build
 ```
+
+Après toute modification d'un cours, contrôlez les exemples Kotlin (il faut `kotlinc`, fourni avec Android Studio) :
+
+```bash
+python3 tool/check_course_code.py
+```
+
+Pour régénérer l'icône et des aperçus PNG des écrans :
+
+```bash
+FLUTTER_ROOT=<dossier de Flutter> RENDER_DIR=build/render flutter test tool/render_brand_test.dart
+```
+
+## Licences des polices
+
+Chakra Petch, Atkinson Hyperlegible et IBM Plex Mono sont distribuées sous licence SIL Open Font License. Les textes de licence sont dans [assets/fonts/](assets/fonts/).
 
 ## Documents
 

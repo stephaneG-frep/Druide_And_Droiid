@@ -57,6 +57,7 @@ dev_dependencies:
   build_runner: ^2.17.1
   integration_test:
     sdk: flutter
+  sqlite3: ^3.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -68,6 +69,31 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/courses/
+
+  fonts:
+    - family: ChakraPetch
+      fonts:
+        - asset: assets/fonts/ChakraPetch-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ChakraPetch-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ChakraPetch-Bold.ttf
+          weight: 700
+    - family: AtkinsonHyperlegible
+      fonts:
+        - asset: assets/fonts/AtkinsonHyperlegible-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/AtkinsonHyperlegible-Bold.ttf
+          weight: 700
+    - family: IBMPlexMono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexMono-SemiBold.ttf
+          weight: 600
 
   # To add assets to your application, add an assets section, like this:
   # assets:

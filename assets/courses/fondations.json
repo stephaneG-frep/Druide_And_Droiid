@@ -1,0 +1,1307 @@
+{
+ "moduleId": "fondations",
+ "lessons": [
+  {
+   "id": "fondations-01-histoire",
+   "title": "D'où vient Android ?",
+   "minutes": 8,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Android équipe aujourd'hui la majorité des smartphones de la planète, mais il n'a pas été créé par Google. Connaître son histoire aide à comprendre pourquoi il fonctionne comme il fonctionne."
+    },
+    {
+     "type": "heading",
+     "text": "Une petite société, puis Google"
+    },
+    {
+     "type": "paragraph",
+     "text": "La société **Android Inc.** est fondée en 2003 à Palo Alto, notamment par Andy Rubin. Google la rachète en 2005 et poursuit le développement du système."
+    },
+    {
+     "type": "paragraph",
+     "text": "En novembre 2007, Google présente Android avec l'**Open Handset Alliance**, un groupement de constructeurs, d'opérateurs et d'entreprises du logiciel. Le premier téléphone commercial, le HTC Dream, aussi vendu sous le nom T-Mobile G1, sort à l'automne 2008 avec Android 1.0."
+    },
+    {
+     "type": "heading",
+     "text": "Un système ouvert"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le cœur d'Android est publié dans l'**Android Open Source Project**, ou AOSP. N'importe qui peut lire ce code, le modifier et le compiler. C'est ce qui permet à de nombreux constructeurs d'adapter le système à leurs appareils."
+    },
+    {
+     "type": "info",
+     "text": "AOSP n'est pas tout Android tel que vous le connaissez. Le Play Store, Gmail ou les services Google Play sont des composants propriétaires, ajoutés par les constructeurs sous licence."
+    },
+    {
+     "type": "paragraph",
+     "text": "Cette organisation explique une réalité que vous rencontrerez sans cesse en développement : il existe beaucoup d'appareils différents, avec des tailles d'écran, des versions et des surcouches variées. Une bonne application doit composer avec cette diversité."
+    },
+    {
+     "type": "tip",
+     "text": "Retenez ceci, jeune apprenti : quand une application marche sur votre téléphone, cela ne prouve pas qu'elle marche sur tous les autres !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui a créé Android à l'origine ?",
+     "options": [
+      "Google",
+      "La société Android Inc.",
+      "Samsung"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Android Inc. est fondée en 2003 ; Google la rachète en 2005."
+    },
+    {
+     "prompt": "Que désigne AOSP ?",
+     "options": [
+      "Le magasin d'applications de Google",
+      "La partie open source d'Android",
+      "Un langage de programmation"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "L'Android Open Source Project publie le code du système."
+    },
+    {
+     "prompt": "Lesquels de ces éléments ne font pas partie d'AOSP ?",
+     "options": [
+      "Le Play Store",
+      "Les services Google Play",
+      "Le code ouvert du système"
+     ],
+     "answers": [
+      0,
+      1
+     ],
+     "explanation": "Le Play Store et les services Google Play sont propriétaires, contrairement au code publié dans AOSP."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel est le sigle du projet qui publie le code ouvert d'Android ?",
+     "accepted": [
+      "AOSP",
+      "Android Open Source Project"
+     ],
+     "solution": "AOSP, pour Android Open Source Project."
+    },
+    {
+     "id": "fondations-01-ex2",
+     "kind": "self",
+     "prompt": "En deux ou trois phrases, expliquez pourquoi une application qui fonctionne sur votre téléphone peut échouer sur un autre.",
+     "solution": "Les appareils Android diffèrent par leur version du système, leur taille d'écran, leur matériel et les surcouches ajoutées par le constructeur. Tester sur un seul appareil ne couvre donc pas toutes ces situations."
+    }
+   ]
+  },
+  {
+   "id": "fondations-02-versions",
+   "title": "Versions et niveaux d'API",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Chaque version d'Android possède deux identités : un numéro destiné au public, comme Android 14, et un **niveau d'API**, un entier utilisé par les développeurs."
+    },
+    {
+     "type": "heading",
+     "text": "Le niveau d'API"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le niveau d'API identifie l'ensemble des fonctions offertes par une version du système. C'est lui que vous manipulerez dans vos projets, parce qu'il augmente de façon régulière et sans ambiguïté. Voici quelques repères :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Android 8.0 : API 26",
+      "Android 10 : API 29",
+      "Android 12 : API 31",
+      "Android 13 : API 33",
+      "Android 14 : API 34",
+      "Android 15 : API 35",
+      "Android 16 : API 36"
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Jusqu'à Android 9 « Pie », les versions portaient publiquement un nom de friandise, dans l'ordre alphabétique. Google a abandonné cet usage public avec Android 10."
+    },
+    {
+     "type": "heading",
+     "text": "Trois réglages à ne pas confondre"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un projet Android déclare trois valeurs, qui répondent à trois questions différentes."
+    },
+    {
+     "type": "list",
+     "items": [
+      "**minSdk** : la version la plus ancienne sur laquelle l'application accepte de s'installer.",
+      "**targetSdk** : la version pour laquelle l'application a été prévue et testée. Elle active les comportements récents du système.",
+      "**compileSdk** : la version des API utilisée pour compiler le code."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    compileSdk = 36\n\n    defaultConfig {\n        minSdk = 24\n        targetSdk = 36\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Avec cette configuration, l'application s'installe à partir d'Android 7.0 (API 24), et elle est prévue pour fonctionner avec les comportements d'Android 16."
+    },
+    {
+     "type": "warning",
+     "text": "Appeler une fonction plus récente que le minSdk provoque un plantage sur les anciens appareils si vous ne vérifiez pas la version au moment de l'exécution."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n    // Fonction disponible à partir de l'API 33\n}"
+    },
+    {
+     "type": "tip",
+     "text": "Abaisser le minSdk gagne des appareils, mais coûte du travail de test. Choisissez-le en connaissance de cause !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel réglage fixe la version la plus ancienne sur laquelle l'application s'installe ?",
+     "options": [
+      "compileSdk",
+      "minSdk",
+      "targetSdk"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Sous le minSdk, l'application ne peut pas être installée."
+    },
+    {
+     "prompt": "À quel niveau d'API correspond Android 14 ?",
+     "options": [
+      "30",
+      "33",
+      "34"
+     ],
+     "answers": [
+      2
+     ],
+     "explanation": "Android 14 correspond à l'API 34."
+    },
+    {
+     "prompt": "Que risque-t-on en appelant une fonction de l'API 33 avec un minSdk de 24, sans vérification ?",
+     "options": [
+      "Rien, Android l'adapte tout seul",
+      "Un plantage sur les appareils plus anciens",
+      "Un refus de compilation sur tous les projets"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "La fonction n'existe pas sur les anciens systèmes : il faut vérifier la version à l'exécution."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-02-ex1",
+     "kind": "fill",
+     "prompt": "Complétez : « if (Build.VERSION.____ >= 33) ». Quel champ contient le niveau d'API de l'appareil ?",
+     "accepted": [
+      "SDK_INT"
+     ],
+     "solution": "SDK_INT : Build.VERSION.SDK_INT donne le niveau d'API de l'appareil."
+    },
+    {
+     "id": "fondations-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez le bloc defaultConfig d'une application qui s'installe à partir de l'API 26 et cible l'API 36.",
+     "solution": "defaultConfig {\n    minSdk = 26\n    targetSdk = 36\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "fondations-03-architecture",
+   "title": "L'architecture en couches",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Android n'est pas un bloc unique. C'est un empilement de couches : chacune utilise celle du dessous et offre des services à celle du dessus."
+    },
+    {
+     "type": "layers",
+     "title": "Les couches d'Android",
+     "layers": [
+      {
+       "name": "Applications",
+       "detail": "Vos applications et celles du système : Téléphone, Appareil photo, Paramètres."
+      },
+      {
+       "name": "Framework Java",
+       "detail": "Les API que vous appelez : Activity, notifications, ressources, gestion des paquets."
+      },
+      {
+       "name": "ART et bibliothèques natives",
+       "detail": "L'exécution du code des applications, et des bibliothèques en C/C++ comme SQLite."
+      },
+      {
+       "name": "Couche d'abstraction matérielle",
+       "detail": "HAL : une interface commune vers l'appareil photo, le Bluetooth ou les capteurs."
+      },
+      {
+       "name": "Noyau Linux",
+       "detail": "Processus, mémoire, sécurité de base et pilotes matériels."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le noyau Linux"
+    },
+    {
+     "type": "paragraph",
+     "text": "Tout en bas, le **noyau Linux** gère le matériel, les processus et la mémoire. Chaque application tourne avec son propre utilisateur Linux, ce qui sert de base à l'isolation entre applications."
+    },
+    {
+     "type": "heading",
+     "text": "La couche d'abstraction matérielle"
+    },
+    {
+     "type": "paragraph",
+     "text": "La **HAL** présente une interface standard au-dessus du matériel. Grâce à elle, le framework peut piloter un appareil photo sans connaître le modèle exact installé dans le téléphone."
+    },
+    {
+     "type": "heading",
+     "text": "Android Runtime"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le code Kotlin ou Java d'une application est compilé en **bytecode DEX**, exécuté par **ART**, l'Android Runtime. Depuis Android 5.0, ART a remplacé l'ancienne machine virtuelle Dalvik."
+    },
+    {
+     "type": "heading",
+     "text": "Le framework"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **framework** est la couche avec laquelle vous dialoguez le plus. Quand votre code affiche une notification, il appelle une API du framework, qui s'adresse à un service du système."
+    },
+    {
+     "type": "info",
+     "text": "Une application Flutter suit un chemin un peu différent : son code Dart est compilé en code machine, et le moteur Flutter dessine lui-même l'interface. Elle reste une application Android, qui passe par le framework pour les services du système."
+    },
+    {
+     "type": "tip",
+     "text": "Lorsqu'un bug vous résiste, demandez-vous dans quelle couche il se cache. C'est la moitié du diagnostic !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle couche se trouve tout en bas de la pile ?",
+     "options": [
+      "Le framework",
+      "Le noyau Linux",
+      "ART"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Le noyau Linux gère directement le matériel, les processus et la mémoire."
+    },
+    {
+     "prompt": "À quoi sert la HAL ?",
+     "options": [
+      "À présenter une interface standard vers le matériel",
+      "À compiler le code Kotlin",
+      "À afficher les notifications"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La HAL évite au framework de dépendre d'un composant matériel précis."
+    },
+    {
+     "prompt": "Quel format de bytecode exécute ART ?",
+     "options": [
+      "JAR",
+      "DEX",
+      "APK"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Le code est compilé en DEX. Un APK est le paquet qui contient, entre autres, ces fichiers."
+    },
+    {
+     "prompt": "Qu'apporte chaque utilisateur Linux distinct attribué aux applications ?",
+     "options": [
+      "Une isolation entre applications",
+      "Une accélération de l'affichage",
+      "Une connexion à Internet"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cette séparation sert de base au bac à sable d'Android."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-03-ex1",
+     "kind": "fill",
+     "prompt": "Quel environnement d'exécution a remplacé Dalvik depuis Android 5.0 ?",
+     "accepted": [
+      "ART",
+      "Android Runtime"
+     ],
+     "solution": "ART, l'Android Runtime."
+    },
+    {
+     "id": "fondations-03-ex2",
+     "kind": "self",
+     "prompt": "Votre application affiche une notification. Décrivez, de haut en bas, les couches traversées par cette demande.",
+     "solution": "L'application appelle une API du framework, exécutée dans ART. Le framework s'adresse à un service du système, qui s'appuie sur les bibliothèques natives et la HAL, puis le noyau Linux pilote le matériel, ici l'écran."
+    }
+   ]
+  },
+  {
+   "id": "fondations-04-apk",
+   "title": "APK, AAB et installation",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application Android voyage sous forme de paquet. Comprendre ce paquet aide à diagnostiquer bien des pannes d'installation."
+    },
+    {
+     "type": "heading",
+     "text": "Dans un APK"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **APK** est une archive ZIP que le système sait installer. On y trouve notamment :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**AndroidManifest.xml** : la carte d'identité de l'application, ses composants et ses permissions.",
+      "**classes.dex** : le code compilé, exécuté par ART.",
+      "**res/** et **resources.arsc** : les ressources et leur table d'index.",
+      "**assets/** : des fichiers bruts embarqués.",
+      "**lib/** : les bibliothèques natives, une par architecture, comme `arm64-v8a`."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister le contenu d'un APK\nunzip -l app-release.apk\n\n# Lire son identité avec un outil du SDK\naapt dump badging app-release.apk"
+    },
+    {
+     "type": "heading",
+     "text": "L'AAB, un format de publication"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **Android App Bundle** (AAB) contient tout le code et les ressources, mais il ne s'installe pas directement. Google Play s'en sert pour générer des APK optimisés pour chaque appareil, qui ne téléchargent que le nécessaire."
+    },
+    {
+     "type": "info",
+     "text": "Depuis août 2021, les nouvelles applications doivent être publiées sur Google Play au format AAB. L'APK reste utile pour distribuer hors du Play Store ou pour tester."
+    },
+    {
+     "type": "heading",
+     "text": "La signature"
+    },
+    {
+     "type": "paragraph",
+     "text": "Tout APK doit être signé pour s'installer. Une mise à jour n'est acceptée que si elle porte la même signature que la version en place : c'est ce qui empêche un tiers de remplacer votre application."
+    },
+    {
+     "type": "warning",
+     "text": "Perdre la clé de signature d'une application distribuée hors de Google Play signifie ne plus pouvoir la mettre à jour. Sauvegardez-la en lieu sûr, jamais dans un dépôt de code."
+    },
+    {
+     "type": "heading",
+     "text": "L'installation"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand vous installez un APK, le système vérifie sa signature, lit le manifeste, enregistre l'application sous son **identifiant de paquet** et lui crée un dossier de données privé. L'identifiant, par exemple `com.exemple.notes`, doit être unique sur l'appareil."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Installer, ou mettre à jour en gardant les données (-r)\nadb install -r app-debug.apk\n\n# Vérifier que le paquet est présent\nadb shell pm list packages | grep exemple"
+    },
+    {
+     "type": "warning",
+     "text": "N'installez un APK que depuis une source de confiance. Un APK modifié peut contenir n'importe quel code malveillant."
+    },
+    {
+     "type": "tip",
+     "text": "L'erreur `INSTALL_FAILED_UPDATE_INCOMPATIBLE` signifie presque toujours que les signatures diffèrent. Désinstallez l'ancienne version, mais souvenez-vous que cela efface ses données !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel fichier d'un APK contient le code compilé ?",
+     "options": [
+      "classes.dex",
+      "resources.arsc",
+      "AndroidManifest.xml"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le fichier DEX contient le bytecode exécuté par ART."
+    },
+    {
+     "prompt": "Que fait Google Play d'un AAB ?",
+     "options": [
+      "Il l'installe tel quel sur l'appareil",
+      "Il génère des APK adaptés à chaque appareil",
+      "Il le convertit en code source"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "L'AAB est un format de publication, pas un format d'installation."
+    },
+    {
+     "prompt": "Pourquoi une mise à jour peut-elle être refusée ?",
+     "options": [
+      "Sa signature diffère de la version installée",
+      "Son fichier s'appelle autrement",
+      "Elle est plus volumineuse"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le système exige la même signature pour accepter une mise à jour."
+    },
+    {
+     "prompt": "Que trouve-t-on dans le dossier lib/ d'un APK ?",
+     "options": [
+      "Les bibliothèques natives, par architecture",
+      "Les images de l'application",
+      "Les leçons de Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque architecture, comme arm64-v8a, a ses propres bibliothèques natives."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle option de `adb install` met à jour une application en conservant ses données ?",
+     "accepted": [
+      "-r",
+      "r"
+     ],
+     "solution": "-r, comme dans adb install -r app-debug.apk."
+    },
+    {
+     "id": "fondations-04-ex2",
+     "kind": "self",
+     "prompt": "Un collègue vous demande pourquoi il ne peut pas installer directement le fichier .aab que vous lui avez envoyé. Expliquez-lui, et dites ce que vous pouvez lui envoyer à la place.",
+     "solution": "Un AAB est un format de publication : il ne s'installe pas directement, c'est Google Play qui en tire des APK adaptés à chaque appareil. Pour lui permettre de tester, envoyez-lui plutôt un APK signé."
+    }
+   ]
+  },
+  {
+   "id": "fondations-05-permissions",
+   "title": "Les permissions",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Par défaut, une application vit dans son bac à sable. Pour accéder à des données ou à des actions protégées, elle doit obtenir une **permission**."
+    },
+    {
+     "type": "heading",
+     "text": "Les grandes familles"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Normales** : peu risquées, accordées à l'installation. Exemple : `INTERNET`.",
+      "**Signature** : accordées seulement aux applications signées avec le même certificat que celui qui les définit.",
+      "**D'exécution** : dites aussi dangereuses, elles sont demandées à l'utilisateur pendant l'utilisation. Exemples : caméra, micro, localisation.",
+      "**Spéciales** : pour des actions puissantes, comme dessiner par-dessus les autres applications. Elles s'activent dans les réglages du système."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Déclarer"
+    },
+    {
+     "type": "paragraph",
+     "text": "Toute permission utilisée doit d'abord être déclarée dans le manifeste."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.CAMERA\" />\n    <application />\n</manifest>"
+    },
+    {
+     "type": "heading",
+     "text": "Demander à l'exécution"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 6.0, déclarer ne suffit plus pour les permissions d'exécution : il faut aussi les demander. L'utilisateur peut refuser, et il peut retirer son accord à tout moment. Vérifiez donc avant chaque accès."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "// Dans une activité : préparer la demande\nval demande = registerForActivityResult(\n    ActivityResultContracts.RequestPermission()\n) { accordee ->\n    if (accordee) ouvrirCamera() else expliquerLeRefus()\n}\n\n// Au moment où l'utilisateur en a besoin\nif (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)\n    == PackageManager.PERMISSION_GRANTED\n) {\n    ouvrirCamera()\n} else {\n    demande.launch(Manifest.permission.CAMERA)\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les bonnes pratiques"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ne demandez que ce dont vous avez réellement besoin.",
+      "Demandez au moment de l'action, pas au démarrage de l'application.",
+      "Expliquez pourquoi, et prévoyez un fonctionnement dégradé en cas de refus.",
+      "Surveillez vos bibliothèques : elles peuvent ajouter leurs propres permissions."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Depuis Android 11, l'utilisateur peut accorder certaines permissions pour une seule fois, et le système peut retirer celles des applications inutilisées depuis plusieurs mois. Ne supposez jamais qu'une permission est acquise."
+    },
+    {
+     "type": "tip",
+     "text": "Une application qui réclame la caméra dès l'ouverture inquiète. Attendez que l'utilisateur touche le bouton Photo : il comprendra tout de suite pourquoi !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment la permission INTERNET est-elle accordée ?",
+     "options": [
+      "À l'installation, sans dialogue",
+      "Par un dialogue à l'exécution",
+      "Par le constructeur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "INTERNET est une permission normale."
+    },
+    {
+     "prompt": "Lesquelles sont des permissions d'exécution ?",
+     "options": [
+      "La caméra",
+      "Le micro",
+      "INTERNET"
+     ],
+     "answers": [
+      0,
+      1
+     ],
+     "explanation": "Caméra et micro exigent l'accord de l'utilisateur pendant l'utilisation."
+    },
+    {
+     "prompt": "Quand demander une permission d'exécution ?",
+     "options": [
+      "Au démarrage, pour en finir",
+      "Au moment où l'action en a besoin",
+      "Dans le Play Store uniquement"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Demander en contexte permet à l'utilisateur de comprendre pourquoi."
+    },
+    {
+     "prompt": "Une permission accordée hier l'est-elle forcément aujourd'hui ?",
+     "options": [
+      "Oui, définitivement",
+      "Non, l'utilisateur ou le système a pu la retirer"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Il faut vérifier avant chaque accès."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle balise du manifeste déclare une permission ?",
+     "accepted": [
+      "uses-permission",
+      "<uses-permission>"
+     ],
+     "solution": "uses-permission, par exemple <uses-permission android:name=\"android.permission.CAMERA\" />."
+    },
+    {
+     "id": "fondations-05-ex2",
+     "kind": "self",
+     "prompt": "L'utilisateur refuse la caméra dans une application de notes qui permet d'ajouter des photos. Que doit faire l'application ?",
+     "solution": "Elle continue de fonctionner : les notes restent utilisables sans photo. Elle peut désactiver la fonction, expliquer brièvement pourquoi la caméra sert à cet usage, et proposer d'en reparler quand l'utilisateur retouche le bouton Photo. Elle ne doit ni se fermer, ni redemander en boucle."
+    }
+   ]
+  },
+  {
+   "id": "fondations-06-stockage",
+   "title": "Stockage et fichiers",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Où ranger les données d'une application ? La réponse dépend de leur nature, et de ce qui doit se passer à la désinstallation."
+    },
+    {
+     "type": "heading",
+     "text": "Les options"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Fichiers propres à l'application** : pour ses seuls besoins. Aucune permission requise, ils sont supprimés à la désinstallation.",
+      "**Médias partagés** : images, sons et vidéos, accessibles par l'API `MediaStore`. Ils survivent à la désinstallation.",
+      "**Documents** : l'utilisateur choisit un fichier via le sélecteur du système, le Storage Access Framework. Aucune permission requise.",
+      "**Préférences** : de petites paires clé/valeur, avec DataStore.",
+      "**Base de données** : des données structurées, avec Room, sur SQLite."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Stockage interne et externe"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le stockage **interne** est toujours disponible et privé : c'est la bonne place pour les données sensibles. Le stockage **externe** offre souvent plus de place, mais il peut être absent, par exemple s'il s'agit d'une carte amovible."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`filesDir` : fichiers durables, stockage interne.",
+      "`cacheDir` : fichiers recréables, que le système peut effacer.",
+      "`getExternalFilesDir()` : fichiers propres à l'application, stockage externe."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le stockage cloisonné"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les applications qui ciblent Android 10 ou plus utilisent par défaut le **stockage cloisonné** : sur le stockage externe, elles n'accèdent qu'à leur propre dossier et à leurs propres médias. Ce modèle protège la vie privée, et limite le désordre."
+    },
+    {
+     "type": "info",
+     "text": "Pour une application ciblant Android 11 ou plus, `WRITE_EXTERNAL_STORAGE` n'a plus d'effet. Si vous la voyez dans un vieux projet, le code qui l'utilise est probablement à revoir."
+    },
+    {
+     "type": "heading",
+     "text": "Manipuler un fichier"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'API `File` de Kotlin simplifie les opérations courantes. Ce programme s'exécute sur un ordinateur, mais les appels sont les mêmes sur Android, avec un chemin issu de `filesDir`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.File\n\nfun main() {\n    val fichier = File.createTempFile(\"note\", \".txt\")\n\n    fichier.writeText(\"Première ligne\\n\")\n    fichier.appendText(\"Deuxième ligne\\n\")\n\n    println(fichier.readLines().size)\n    println(fichier.readText().lines().first())\n\n    fichier.delete()\n    println(fichier.exists())\n}",
+     "output": "2\nPremière ligne\nfalse"
+    },
+    {
+     "type": "warning",
+     "text": "Ne codez jamais un chemin comme `/sdcard/...` en dur : l'emplacement réel varie selon les appareils. Demandez-le toujours au système."
+    },
+    {
+     "type": "tip",
+     "text": "Posez-vous une seule question : si l'utilisateur désinstalle l'application, ces données doivent-elles rester ? La réponse vous oriente aussitôt !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où ranger un jeton de connexion sensible ?",
+     "options": [
+      "Dans les médias partagés",
+      "Dans le stockage interne de l'application",
+      "Sur la carte SD"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Le stockage interne est privé et toujours disponible."
+    },
+    {
+     "prompt": "Que deviennent les fichiers propres à l'application à sa désinstallation ?",
+     "options": [
+      "Ils sont supprimés",
+      "Ils restent indéfiniment",
+      "Ils partent dans le cloud"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Seuls les médias et documents partagés survivent."
+    },
+    {
+     "prompt": "Quelle API permet de partager une photo avec les autres applications ?",
+     "options": [
+      "cacheDir",
+      "MediaStore",
+      "DataStore"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "MediaStore gère les médias partagés."
+    },
+    {
+     "prompt": "Que peut faire le système du contenu de cacheDir ?",
+     "options": [
+      "L'effacer s'il manque de place",
+      "L'envoyer à Google",
+      "Rien, il n'y touche jamais"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le cache ne doit contenir que des données recréables."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle propriété du contexte donne le dossier interne des fichiers durables ?",
+     "accepted": [
+      "filesDir",
+      "getFilesDir",
+      "getFilesDir()"
+     ],
+     "solution": "filesDir, soit getFilesDir() en Java."
+    },
+    {
+     "id": "fondations-06-ex2",
+     "kind": "self",
+     "prompt": "Pour chaque donnée, indiquez où la ranger : le thème choisi, une liste de 500 recettes, une miniature téléchargée, une photo prise par l'utilisateur.",
+     "solution": "Le thème : DataStore, car c'est une petite préférence. Les recettes : une base Room, car elles sont structurées. La miniature : cacheDir, car elle peut être retéléchargée. La photo : MediaStore, pour qu'elle reste disponible en dehors de l'application."
+    }
+   ]
+  },
+  {
+   "id": "fondations-07-processus",
+   "title": "Processus et mémoire",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Sur un ordinateur, une application vit tant que vous ne la fermez pas. Sur Android, c'est le **système** qui décide de la durée de vie des processus."
+    },
+    {
+     "type": "heading",
+     "text": "Un processus par application"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans la plupart des cas, chaque application tourne dans son propre processus Linux. Pour démarrer vite, Android ne part pas de zéro : chaque processus est créé par duplication de **Zygote**, un processus déjà chargé avec le code commun du framework. Une grande partie de la mémoire est ainsi partagée."
+    },
+    {
+     "type": "heading",
+     "text": "La hiérarchie d'importance"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand la mémoire manque, Android tue des processus en commençant par les moins importants."
+    },
+    {
+     "type": "layers",
+     "title": "Du plus protégé au premier sacrifié",
+     "layers": [
+      {
+       "name": "Premier plan",
+       "detail": "L'activité que l'utilisateur manipule. Tuée seulement en dernier recours."
+      },
+      {
+       "name": "Visible",
+       "detail": "Une activité visible mais pas au premier plan, ou un service de premier plan."
+      },
+      {
+       "name": "Service",
+       "detail": "Un service démarré, sans lien visible avec l'utilisateur."
+      },
+      {
+       "name": "En cache",
+       "detail": "Une application quittée, gardée pour redémarrer vite. Tuée à tout moment."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Une application en cache peut être tuée sans prévenir, et `onDestroy()` n'est alors pas garanti. Enregistrez les données importantes avant de passer en arrière-plan."
+    },
+    {
+     "type": "heading",
+     "text": "Le ramasse-miettes"
+    },
+    {
+     "type": "paragraph",
+     "text": "En Kotlin ou en Java, vous ne libérez pas la mémoire vous-même. Le **ramasse-miettes** récupère les objets devenus inaccessibles. Son travail peut toutefois interrompre brièvement l'application : créer beaucoup d'objets dans une boucle d'animation peut donc produire des saccades."
+    },
+    {
+     "type": "heading",
+     "text": "Une limite par application"
+    },
+    {
+     "type": "paragraph",
+     "text": "Android impose à chaque application une taille maximale de tas, qui varie selon l'appareil. Si elle est dépassée, l'application reçoit une `OutOfMemoryError`. La méthode `ActivityManager.getMemoryClass()` indique cette limite en mégaoctets."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "val gestionnaire = getSystemService(ActivityManager::class.java)\nval limiteEnMo = gestionnaire.memoryClass"
+    },
+    {
+     "type": "heading",
+     "text": "Les fuites de mémoire"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **fuite** survient quand un objet inutile reste référencé : le ramasse-miettes ne peut plus le récupérer. Le cas classique est une activité détruite mais retenue par un objet qui vit plus longtemps qu'elle."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "object Cache {\n    // Fuite : cet objet vit aussi longtemps que le processus\n    // et retient l'activité, même après sa destruction.\n    var derniereActivite: Activity? = null\n}"
+    },
+    {
+     "type": "tip",
+     "text": "Faites pivoter l'écran plusieurs fois en surveillant le Profiler. Si la mémoire grimpe sans jamais redescendre, cherchez une fuite !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui décide de la fin d'un processus d'application ?",
+     "options": [
+      "Le système",
+      "Le Play Store",
+      "L'application uniquement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une particularité fondamentale d'Android."
+    },
+    {
+     "prompt": "Quel type de processus est tué en premier ?",
+     "options": [
+      "Premier plan",
+      "Visible",
+      "En cache"
+     ],
+     "answers": [
+      2
+     ],
+     "explanation": "Les processus en cache sont les premiers sacrifiés."
+    },
+    {
+     "prompt": "À quoi sert Zygote ?",
+     "options": [
+      "À accélérer le démarrage et partager la mémoire",
+      "À compiler le code",
+      "À gérer les notifications"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les processus sont créés par duplication de Zygote."
+    },
+    {
+     "prompt": "Que se passe-t-il si une application dépasse sa limite de tas ?",
+     "options": [
+      "Android ajoute de la mémoire",
+      "Elle reçoit une OutOfMemoryError",
+      "Rien"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "La limite de tas est stricte."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-07-ex1",
+     "kind": "fill",
+     "prompt": "Quel processus sert de modèle à la création de tous les processus d'application ?",
+     "accepted": [
+      "Zygote"
+     ],
+     "solution": "Zygote."
+    },
+    {
+     "id": "fondations-07-ex2",
+     "kind": "self",
+     "prompt": "Votre application perd le brouillon de l'utilisateur quand il revient après plusieurs heures. Expliquez la cause probable et la solution.",
+     "solution": "Le processus, passé en cache, a été tué par le système pour récupérer de la mémoire, et le brouillon n'existait qu'en mémoire. Il faut l'enregistrer sur le stockage, par exemple dès que l'application passe en arrière-plan, sans compter sur onDestroy()."
+    }
+   ]
+  },
+  {
+   "id": "fondations-08-services",
+   "title": "Services et notifications",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Certaines tâches doivent continuer sans écran. C'est le rôle des **services**, et les **notifications** permettent de garder le contact avec l'utilisateur."
+    },
+    {
+     "type": "heading",
+     "text": "Les types de services"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Premier plan** : une tâche perceptible, comme la lecture de musique. Elle affiche obligatoirement une notification.",
+      "**Arrière-plan** : une tâche que l'utilisateur ne remarque pas directement. Ces services sont fortement limités.",
+      "**Lié** : il répond à des composants connectés, et s'arrête quand plus aucun ne l'est."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Un service n'est pas un fil d'exécution séparé : par défaut, il tourne sur le fil principal. Une opération bloquante y provoquerait un gel de l'application, un ANR."
+    },
+    {
+     "type": "heading",
+     "text": "Des règles de plus en plus strictes"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour préserver la batterie, les applications ciblant Android 8.0 ou plus ne peuvent plus lancer librement de services en arrière-plan. Depuis Android 14, chaque service de premier plan doit aussi déclarer son **type**, avec la permission correspondante."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n<uses-permission android:name=\"android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK\" />\n\n<application>\n    <service\n        android:name=\".LecteurService\"\n        android:exported=\"false\"\n        android:foregroundServiceType=\"mediaPlayback\" />\n</application>"
+    },
+    {
+     "type": "info",
+     "text": "Pour la plupart des tâches différées, comme une synchronisation, préférez **WorkManager**. Il respecte les contraintes de batterie et de réseau, et il survit aux redémarrages. Le module 8 y revient en détail."
+    },
+    {
+     "type": "heading",
+     "text": "Les notifications"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 8.0, toute notification appartient à un **canal**. L'utilisateur règle chaque canal séparément. Sans canal, la notification n'apparaît pas."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun creerCanal(context: Context) {\n    val canal = NotificationChannel(\n        \"rappels\",\n        \"Rappels de révision\",\n        NotificationManager.IMPORTANCE_DEFAULT\n    )\n    context.getSystemService(NotificationManager::class.java)\n        .createNotificationChannel(canal)\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une fois le canal créé, vous ne pouvez plus changer son importance : la décision appartient à l'utilisateur. Recréer un canal existant ne fait rien, ce code peut donc s'exécuter à chaque démarrage."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "val notification = NotificationCompat.Builder(context, \"rappels\")\n    .setSmallIcon(R.drawable.ic_grimoire)\n    .setContentTitle(\"C'est l'heure de réviser !\")\n    .setContentText(\"Votre quiz du jour vous attend.\")\n    .setAutoCancel(true)\n    .build()"
+    },
+    {
+     "type": "heading",
+     "text": "La permission de notifier"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 13, envoyer une notification requiert la permission d'exécution `POST_NOTIFICATIONS`. Sur une nouvelle installation, les notifications sont désactivées tant que l'utilisateur ne les a pas accordées."
+    },
+    {
+     "type": "tip",
+     "text": "Chaque notification inutile rapproche l'utilisateur du bouton Désactiver. Notifiez peu, et notifiez utile !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel service doit afficher une notification ?",
+     "options": [
+      "Le service de premier plan",
+      "Le service lié",
+      "Aucun"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'utilisateur doit savoir qu'il est en cours d'exécution."
+    },
+    {
+     "prompt": "Sur quel fil s'exécute un service par défaut ?",
+     "options": [
+      "Sur un fil dédié",
+      "Sur le fil principal",
+      "Sur le fil de Google"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Les opérations bloquantes doivent donc partir sur un autre fil."
+    },
+    {
+     "prompt": "Que se passe-t-il pour une notification sans canal, si l'application cible Android 8.0 ou plus ?",
+     "options": [
+      "Elle s'affiche normalement",
+      "Elle n'apparaît pas",
+      "Le système crée un canal"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Le système consigne une erreur et n'affiche rien."
+    },
+    {
+     "prompt": "Depuis quelle version faut-il demander POST_NOTIFICATIONS ?",
+     "options": [
+      "Android 8.0",
+      "Android 11",
+      "Android 13"
+     ],
+     "answers": [
+      2
+     ],
+     "explanation": "Android 13, soit l'API 33."
+    },
+    {
+     "prompt": "Que recommander pour une synchronisation différée ?",
+     "options": [
+      "WorkManager",
+      "Un service d'arrière-plan sans fin",
+      "Une boucle dans une activité"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "WorkManager respecte les contraintes du système."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fondations-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle bibliothèque est recommandée pour planifier une tâche différée fiable ?",
+     "accepted": [
+      "WorkManager",
+      "Work Manager"
+     ],
+     "solution": "WorkManager."
+    },
+    {
+     "id": "fondations-08-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la déclaration de manifeste d'un service `MeteoService`, privé à l'application.",
+     "solution": "<service\n    android:name=\".MeteoService\"\n    android:exported=\"false\" />",
+     "language": "xml"
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "En quelle année Google rachète-t-il Android Inc. ?",
+    "options": [
+     "2003",
+     "2005",
+     "2008"
+    ],
+    "answers": [
+     1
+    ],
+    "explanation": "La société naît en 2003, Google la rachète en 2005 et le premier téléphone sort en 2008."
+   },
+   {
+    "prompt": "Quelle affirmation sur AOSP est exacte ?",
+    "options": [
+     "Il contient le Play Store",
+     "Il permet aux constructeurs d'adapter le système",
+     "Il n'est accessible qu'à Google"
+    ],
+    "answers": [
+     1
+    ],
+    "explanation": "Le code est ouvert : c'est ce qui permet ces adaptations."
+   },
+   {
+    "prompt": "Quel réglage active les comportements récents du système pour votre application ?",
+    "options": [
+     "minSdk",
+     "targetSdk",
+     "versionName"
+    ],
+    "answers": [
+     1
+    ],
+    "explanation": "Le targetSdk indique la version pour laquelle l'application est prévue."
+   },
+   {
+    "prompt": "Quel réglage ne détermine pas sur quels appareils l'application s'installe ?",
+    "options": [
+     "minSdk",
+     "compileSdk"
+    ],
+    "answers": [
+     1
+    ],
+    "explanation": "Le compileSdk ne concerne que la compilation."
+   },
+   {
+    "prompt": "Lesquelles de ces couches font partie de la pile Android ?",
+    "options": [
+     "La HAL",
+     "ART",
+     "Le noyau Linux",
+     "Le Play Store"
+    ],
+    "answers": [
+     0,
+     1,
+     2
+    ],
+    "explanation": "Le Play Store est une application propriétaire, pas une couche du système."
+   },
+   {
+    "prompt": "Quelle couche appelez-vous le plus souvent directement depuis votre code ?",
+    "options": [
+     "Le noyau Linux",
+     "La HAL",
+     "Le framework"
+    ],
+    "answers": [
+     2
+    ],
+    "explanation": "Le framework expose les API destinées aux développeurs."
+   },
+   {
+    "prompt": "Quel format faut-il utiliser pour publier une nouvelle application sur Google Play ?",
+    "options": [
+     "AAB",
+     "DEX",
+     "ZIP"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Obligatoire pour les nouvelles applications depuis août 2021."
+   },
+   {
+    "prompt": "Quelle permission est demandée à l'utilisateur pendant l'utilisation ?",
+    "options": [
+     "ACCESS_FINE_LOCATION",
+     "La permission Internet"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La localisation est une permission d'exécution."
+   },
+   {
+    "prompt": "Où placer une photo que l'utilisateur doit retrouver après avoir désinstallé l'application ?",
+    "options": [
+     "Dans cacheDir",
+     "Dans filesDir",
+     "Via MediaStore"
+    ],
+    "answers": [
+     2
+    ],
+    "explanation": "Les médias partagés survivent à la désinstallation."
+   },
+   {
+    "prompt": "Quels éléments sont nécessaires pour afficher une notification sur Android 14 ?",
+    "options": [
+     "Un canal",
+     "La permission POST_NOTIFICATIONS accordée",
+     "Un service de premier plan"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Canal et permission sont requis ; un service n'est pas nécessaire."
+   },
+   {
+    "prompt": "Pourquoi enregistrer un brouillon avant le passage en arrière-plan ?",
+    "options": [
+     "Le processus peut être tué sans prévenir",
+     "Pour accélérer l'écran",
+     "Pour économiser l'écran"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Un processus en cache peut disparaître sans appel à onDestroy()."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Architecture de la plateforme Android",
+   "url": "https://developer.android.com/guide/platform"
+  },
+  {
+   "title": "Android Open Source Project",
+   "url": "https://source.android.com/"
+  },
+  {
+   "title": "Niveaux d'API et versions",
+   "url": "https://developer.android.com/tools/releases/platforms"
+  },
+  {
+   "title": "Android App Bundle",
+   "url": "https://developer.android.com/guide/app-bundle"
+  },
+  {
+   "title": "Permissions sur Android",
+   "url": "https://developer.android.com/guide/topics/permissions/overview"
+  },
+  {
+   "title": "Stockage des données",
+   "url": "https://developer.android.com/training/data-storage"
+  },
+  {
+   "title": "Processus et cycle de vie",
+   "url": "https://developer.android.com/guide/components/activities/process-lifecycle"
+  },
+  {
+   "title": "Vue d'ensemble de la mémoire",
+   "url": "https://developer.android.com/topic/performance/memory-overview"
+  },
+  {
+   "title": "Services",
+   "url": "https://developer.android.com/develop/background-work/services"
+  },
+  {
+   "title": "Canaux de notification",
+   "url": "https://developer.android.com/develop/ui/views/notifications/channels"
+  }
+ ]
+}

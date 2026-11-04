@@ -3,10 +3,10 @@
 | Phase | Sujet | État |
 | --- | --- | --- |
 | 1 | Fondations | Terminée le 2026-11-04 |
-| 2 | Design | À faire |
-| 3 | Persistance | À faire |
-| 4 | Moteur pédagogique | À faire |
-| 5 | Contenus Android | À faire |
+| 2 | Design | Terminée le 2026-11-04 |
+| 3 | Persistance | Terminée le 2026-11-04 |
+| 4 | Moteur pédagogique | Terminée le 2026-11-04 |
+| 5 | Contenus Android | En cours : modules 1 et 2 rédigés sur 12 |
 | 6 | Professeur IA | À faire |
 | 7 | Android Lab | À faire |
 | 8 | Chaudron des Bugs | À faire |
@@ -18,6 +18,9 @@
 
 ## Points ouverts
 
-- Publication GitHub en attente : remote `origin` à ajouter.
-- Rendu Linux à vérifier à l'œil (voir [TEST_REPORT.md](TEST_REPORT.md)).
+- Branches `phase-2-design` à `phase-5-content` à fusionner dans `main`.
+- Barème d'expérience provisoire (`rewards.dart`), à ajuster en phase 10.
+- Tables des projets personnels et de l'historique IA : à créer par migration dans leurs phases.
+- Icône de la fenêtre et du paquet Linux : à faire avec le `.deb` en phase 13.
+- Seuils d'expérience des grades provisoires, à ajuster en phase 10.
 - Signature release Android : encore la clé de debug, à remplacer en phase 13.

@@ -1,0 +1,1464 @@
+{
+ "moduleId": "kotlin",
+ "lessons": [
+  {
+   "id": "kotlin-01-bases",
+   "title": "Variables et types",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Kotlin** est le langage recommandé par Google pour Android. Il est concis, sûr, et compatible avec Java. Commençons par le commencement : ranger des valeurs."
+    },
+    {
+     "type": "heading",
+     "text": "Un premier programme"
+    },
+    {
+     "type": "paragraph",
+     "text": "Tout programme démarre par la fonction `main`, et `println` affiche une ligne."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    println(\"Bonjour, jeune apprenti !\")\n}",
+     "output": "Bonjour, jeune apprenti !"
+    },
+    {
+     "type": "heading",
+     "text": "val et var"
+    },
+    {
+     "type": "paragraph",
+     "text": "`val` crée une référence en lecture seule, `var` une variable réassignable. Préférez `val` par défaut : un code dont les valeurs ne changent pas est plus simple à comprendre."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val nom = \"Merlin\"\n    var niveau = 1\n\n    niveau = niveau + 1\n    // nom = \"Viviane\" ne compilerait pas : nom est un val\n\n    println(\"$nom est au niveau $niveau\")\n    println(\"Niveau suivant : ${niveau + 1}\")\n}",
+     "output": "Merlin est au niveau 2\nNiveau suivant : 3"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans une chaîne, `$nom` insère une variable, et `${...}` une expression. C'est l'**interpolation**."
+    },
+    {
+     "type": "heading",
+     "text": "Les types"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque valeur a un type. Le compilateur le déduit souvent tout seul, mais vous pouvez l'écrire."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Int`, `Long` : nombres entiers.",
+      "`Double`, `Float` : nombres à virgule.",
+      "`Boolean` : `true` ou `false`.",
+      "`Char` : un caractère.",
+      "`String` : du texte."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val age: Int = 12\n    val taille = 1.45\n    val majeur = age >= 18\n    val initiale = 'M'\n\n    println(age / 5)\n    println(age / 5.0)\n    println(majeur)\n    println(initiale)\n    println(taille.toInt())\n    println(\"42\".toInt() + 1)\n}",
+     "output": "2\n2.4\nfalse\nM\n1\n43"
+    },
+    {
+     "type": "warning",
+     "text": "La division de deux entiers donne un entier : `12 / 5` vaut `2`. Pour garder la partie décimale, utilisez au moins un `Double`."
+    },
+    {
+     "type": "info",
+     "text": "Kotlin ne convertit jamais un nombre implicitement vers un autre type. Vous devez appeler `toInt()`, `toDouble()` et leurs semblables. Cela évite des erreurs discrètes."
+    },
+    {
+     "type": "tip",
+     "text": "Écrivez `val` d'abord. Ne passez à `var` que si le compilateur vous le réclame !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle déclaration interdit la réassignation ?",
+     "options": [
+      "val",
+      "var",
+      "fun"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "val crée une référence en lecture seule."
+    },
+    {
+     "prompt": "Que vaut 7 / 2 en Kotlin, avec deux Int ?",
+     "options": [
+      "3",
+      "3.5",
+      "4"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La division entière abandonne la partie décimale."
+    },
+    {
+     "prompt": "Comment insérer une expression dans une chaîne ?",
+     "options": [
+      "\"${a + 1}\"",
+      "\"%a + 1%\"",
+      "\"{{a + 1}}\""
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est l'interpolation de chaînes."
+    },
+    {
+     "prompt": "Que fait `\"42\".toInt()` ?",
+     "options": [
+      "Il convertit le texte en entier",
+      "Il lit la longueur du texte",
+      "Il ne compile pas"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le résultat est l'entier 42."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé utiliser pour une valeur qui ne change jamais ?",
+     "accepted": [
+      "val"
+     ],
+     "solution": "val."
+    },
+    {
+     "id": "kotlin-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui stocke un prix de 20.0 et une remise de 25 %, puis affiche le prix final.",
+     "solution": "fun main() {\n    val prix = 20.0\n    val remise = 0.25\n    val prixFinal = prix * (1 - remise)\n    println(\"Prix final : $prixFinal\")\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-02-controle",
+   "title": "Conditions et boucles",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un programme doit décider et répéter. Kotlin offre pour cela des outils expressifs."
+    },
+    {
+     "type": "heading",
+     "text": "if est une expression"
+    },
+    {
+     "type": "paragraph",
+     "text": "En Kotlin, `if` renvoie une valeur. Il remplace ainsi l'opérateur ternaire d'autres langages."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val xp = 120\n    val statut = if (xp >= 100) \"Initié\" else \"Apprenti\"\n    println(statut)\n}",
+     "output": "Initié"
+    },
+    {
+     "type": "heading",
+     "text": "when"
+    },
+    {
+     "type": "paragraph",
+     "text": "`when` choisit parmi plusieurs cas, et sait tester des valeurs, des intervalles et des types. C'est aussi une expression."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val note = 14\n    val mention = when (note) {\n        20 -> \"Parfait\"\n        in 16..19 -> \"Très bien\"\n        in 12..15 -> \"Bien\"\n        else -> \"À retravailler\"\n    }\n    println(mention)\n}",
+     "output": "Bien"
+    },
+    {
+     "type": "heading",
+     "text": "Les boucles"
+    },
+    {
+     "type": "paragraph",
+     "text": "`for` parcourt un intervalle ou une collection. `..` inclut la borne de fin, `until` l'exclut."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    for (i in 1..3) print(\"$i \")\n    println()\n\n    for (i in 0 until 3) print(\"$i \")\n    println()\n\n    for (i in 10 downTo 0 step 5) print(\"$i \")\n    println()\n\n    var essais = 0\n    while (essais < 2) {\n        essais++\n    }\n    println(essais)\n}",
+     "output": "1 2 3 \n0 1 2 \n10 5 0 \n2"
+    },
+    {
+     "type": "paragraph",
+     "text": "`break` sort d'une boucle, et `continue` passe au tour suivant."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    for (i in 1..10) {\n        if (i % 2 == 0) continue\n        if (i > 5) break\n        println(i)\n    }\n}",
+     "output": "1\n3\n5"
+    },
+    {
+     "type": "tip",
+     "text": "Dès que vous alignez trois `else if`, pensez à `when` : votre futur vous dira merci !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que vaut `if (2 > 1) \"a\" else \"b\"` ?",
+     "options": [
+      "\"a\"",
+      "\"b\"",
+      "Cela ne compile pas"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "if est une expression en Kotlin."
+    },
+    {
+     "prompt": "Combien de tours fait `for (i in 0 until 3)` ?",
+     "options": [
+      "2",
+      "3",
+      "4"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "until exclut la borne de fin : 0, 1 et 2."
+    },
+    {
+     "prompt": "Que fait `continue` ?",
+     "options": [
+      "Il quitte la boucle",
+      "Il passe au tour suivant",
+      "Il relance le programme"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "break quitte, continue saute au tour suivant."
+    },
+    {
+     "prompt": "Lesquels peut tester `when` ?",
+     "options": [
+      "Une valeur précise",
+      "Un intervalle",
+      "Un type"
+     ],
+     "answers": [
+      0,
+      1,
+      2
+     ],
+     "explanation": "when accepte ces trois formes."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-02-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé crée un intervalle excluant sa borne de fin : `0 ____ 10` ?",
+     "accepted": [
+      "until"
+     ],
+     "solution": "until."
+    },
+    {
+     "id": "kotlin-02-ex2",
+     "kind": "self",
+     "prompt": "Affichez les nombres de 1 à 15, en remplaçant les multiples de 3 par « Sort ».",
+     "solution": "fun main() {\n    for (i in 1..15) {\n        println(if (i % 3 == 0) \"Sort\" else \"$i\")\n    }\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-03-fonctions",
+   "title": "Les fonctions",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une fonction donne un nom à un traitement, pour le réutiliser et le tester."
+    },
+    {
+     "type": "heading",
+     "text": "Déclarer une fonction"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun saluer(nom: String): String {\n    return \"Salut, $nom !\"\n}\n\nfun carre(n: Int) = n * n\n\nfun main() {\n    println(saluer(\"Viviane\"))\n    println(carre(4))\n}",
+     "output": "Salut, Viviane !\n16"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand une fonction tient en une expression, la forme courte avec `=` évite les accolades, et le type de retour peut être déduit. Une fonction sans résultat renvoie `Unit`, que l'on n'écrit pas."
+    },
+    {
+     "type": "heading",
+     "text": "Paramètres par défaut et nommés"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un paramètre peut avoir une valeur par défaut, et un appel peut nommer ses arguments. On évite ainsi d'écrire plusieurs variantes de la même fonction."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun potion(nom: String, doses: Int = 1, magique: Boolean = false): String {\n    val type = if (magique) \"magique\" else \"simple\"\n    return \"$doses dose(s) de $nom, $type\"\n}\n\nfun main() {\n    println(potion(\"Sommeil\"))\n    println(potion(\"Force\", doses = 3))\n    println(potion(\"Vision\", magique = true))\n}",
+     "output": "1 dose(s) de Sommeil, simple\n3 dose(s) de Force, simple\n1 dose(s) de Vision, magique"
+    },
+    {
+     "type": "heading",
+     "text": "Fonctions d'extension"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **extension** ajoute une fonction à un type existant, sans le modifier. Android KTX en fournit beaucoup."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun String.initiales(): String =\n    split(\" \").map { it.first() }.joinToString(\"\")\n\nfun main() {\n    println(\"Maître And Droiid\".initiales())\n}",
+     "output": "MAD"
+    },
+    {
+     "type": "tip",
+     "text": "Une bonne fonction fait une seule chose, et son nom dit laquelle. Si le mot « et » apparaît dans le nom, coupez-la en deux !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que renvoie une fonction sans type de retour indiqué et avec un corps en accolades ?",
+     "options": [
+      "Unit",
+      "null",
+      "0"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Unit signifie qu'il n'y a pas de résultat utile."
+    },
+    {
+     "prompt": "Quel est l'intérêt des paramètres par défaut ?",
+     "options": [
+      "Éviter d'écrire plusieurs variantes d'une fonction",
+      "Accélérer le programme",
+      "Rendre un paramètre privé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un seul corps de fonction couvre plusieurs appels."
+    },
+    {
+     "prompt": "Que fait une fonction d'extension ?",
+     "options": [
+      "Elle modifie le code source de la classe",
+      "Elle ajoute une fonction appelable sur un type existant",
+      "Elle hérite de la classe"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "La classe d'origine n'est pas modifiée."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-03-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé déclare une fonction ?",
+     "accepted": [
+      "fun"
+     ],
+     "solution": "fun."
+    },
+    {
+     "id": "kotlin-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une extension `estPair()` sur `Int`, et affichez le résultat pour 10.",
+     "solution": "fun Int.estPair() = this % 2 == 0\n\nfun main() {\n    println(10.estPair())\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-04-classes",
+   "title": "Classes et objets",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une **classe** décrit un modèle : des données et des comportements. Un **objet** est une instance concrète de ce modèle."
+    },
+    {
+     "type": "heading",
+     "text": "Déclarer une classe"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Apprenti(val nom: String, var xp: Int = 0) {\n    val niveau: Int\n        get() = xp / 100 + 1\n\n    fun gagner(points: Int) {\n        xp += points\n    }\n}\n\nfun main() {\n    val merlin = Apprenti(\"Merlin\")\n    merlin.gagner(250)\n    println(\"${merlin.nom} : niveau ${merlin.niveau}\")\n}",
+     "output": "Merlin : niveau 3"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **constructeur principal** se place après le nom de la classe. `val` et `var` y créent directement des propriétés. Une propriété peut aussi être calculée, avec `get()`."
+    },
+    {
+     "type": "heading",
+     "text": "Les classes de données"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une `data class` sert à porter des données. Kotlin génère pour elle `equals`, `toString` et `copy`. Elles sont partout dans le code Android moderne."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Sort(val nom: String, val puissance: Int)\n\nfun main() {\n    val feu = Sort(\"Feu\", 10)\n    val plusFort = feu.copy(puissance = 20)\n\n    println(feu)\n    println(plusFort)\n    println(feu == Sort(\"Feu\", 10))\n}",
+     "output": "Sort(nom=Feu, puissance=10)\nSort(nom=Feu, puissance=20)\ntrue"
+    },
+    {
+     "type": "heading",
+     "text": "Les objets"
+    },
+    {
+     "type": "paragraph",
+     "text": "`object` crée un singleton : une seule instance, disponible partout. Un `companion object` joue le rôle des membres statiques de Java."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "object Grimoire {\n    val sorts = mutableListOf<String>()\n}\n\nclass Potion private constructor(val nom: String) {\n    companion object {\n        fun soin() = Potion(\"Soin\")\n    }\n}\n\nfun main() {\n    Grimoire.sorts.add(\"Lumière\")\n    println(Grimoire.sorts)\n    println(Potion.soin().nom)\n}",
+     "output": "[Lumière]\nSoin"
+    },
+    {
+     "type": "heading",
+     "text": "Les énumérations et classes scellées"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une `enum class` liste des valeurs fixes. Une `sealed class` ou `sealed interface` limite les sous-types possibles, ce qui permet à `when` de vérifier que tous les cas sont traités. C'est idéal pour décrire l'état d'un écran."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "sealed interface EtatEcran\nobject Chargement : EtatEcran\ndata class Succes(val texte: String) : EtatEcran\ndata class Erreur(val message: String) : EtatEcran\n\nfun afficher(etat: EtatEcran) = when (etat) {\n    Chargement -> \"Patientez...\"\n    is Succes -> etat.texte\n    is Erreur -> \"Oups : ${etat.message}\"\n}\n\nfun main() {\n    println(afficher(Chargement))\n    println(afficher(Succes(\"Bienvenue\")))\n    println(afficher(Erreur(\"réseau\")))\n}",
+     "output": "Patientez...\nBienvenue\nOups : réseau"
+    },
+    {
+     "type": "tip",
+     "text": "Une donnée qui circule ? Une `data class`. Un ensemble fermé d'états ? Une `sealed interface`. Deux réflexes précieux !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que génère automatiquement une data class ?",
+     "options": [
+      "equals",
+      "copy",
+      "Une interface graphique"
+     ],
+     "answers": [
+      0,
+      1
+     ],
+     "explanation": "Elle génère aussi toString et hashCode, mais aucune interface."
+    },
+    {
+     "prompt": "Que crée le mot-clé object ?",
+     "options": [
+      "Un singleton",
+      "Une liste",
+      "Une interface"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il n'existe qu'une seule instance."
+    },
+    {
+     "prompt": "Quel avantage apporte une sealed interface dans un when ?",
+     "options": [
+      "Le compilateur vérifie que tous les cas sont traités",
+      "Le code s'exécute plus vite",
+      "Elle remplace les tests"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les sous-types possibles sont connus à la compilation."
+    },
+    {
+     "prompt": "Où déclarer une propriété directement ?",
+     "options": [
+      "Dans le constructeur principal, avec val ou var",
+      "Uniquement dans une fonction",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "class A(val b: Int) crée la propriété b."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode d'une data class crée une copie avec un champ modifié ?",
+     "accepted": [
+      "copy",
+      "copy()"
+     ],
+     "solution": "copy, par exemple sort.copy(puissance = 20)."
+    },
+    {
+     "id": "kotlin-04-ex2",
+     "kind": "self",
+     "prompt": "Créez une data class `Livre` avec un titre et un nombre de pages, puis affichez-en une copie comptant 100 pages de plus.",
+     "solution": "data class Livre(val titre: String, val pages: Int)\n\nfun main() {\n    val livre = Livre(\"Grimoire\", 200)\n    println(livre.copy(pages = livre.pages + 100))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-05-heritage",
+   "title": "Héritage et interfaces",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'héritage partage du comportement entre classes. Les interfaces définissent un contrat."
+    },
+    {
+     "type": "heading",
+     "text": "L'héritage"
+    },
+    {
+     "type": "paragraph",
+     "text": "En Kotlin, les classes sont **fermées** par défaut. Pour hériter, la classe mère doit être marquée `open`. De même, une méthode ne se redéfinit que si elle est `open`, et avec `override`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "open class Creature(val nom: String) {\n    open fun crier() = \"...\"\n    fun presenter() = \"$nom dit : ${crier()}\"\n}\n\nclass Dragon(nom: String) : Creature(nom) {\n    override fun crier() = \"Grrr !\"\n}\n\nfun main() {\n    println(Creature(\"Ombre\").presenter())\n    println(Dragon(\"Braise\").presenter())\n}",
+     "output": "Ombre dit : ...\nBraise dit : Grrr !"
+    },
+    {
+     "type": "heading",
+     "text": "Les classes abstraites"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une classe `abstract` ne s'instancie pas, et peut laisser des membres à implémenter."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "abstract class Forme {\n    abstract fun aire(): Double\n    fun decrire() = \"Aire : ${aire()}\"\n}\n\nclass Carre(val cote: Double) : Forme() {\n    override fun aire() = cote * cote\n}\n\nfun main() {\n    println(Carre(3.0).decrire())\n}",
+     "output": "Aire : 9.0"
+    },
+    {
+     "type": "heading",
+     "text": "Les interfaces"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **interface** décrit ce qu'un type sait faire. Une classe peut en implémenter plusieurs, mais n'hériter que d'une seule classe. Elles sont au cœur de l'architecture Android : elles permettent de remplacer une implémentation par une autre, notamment en test."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "interface Volant {\n    fun voler() = \"Je vole\"\n}\n\ninterface Nageur {\n    fun nager(): String\n}\n\nclass Canard : Volant, Nageur {\n    override fun nager() = \"Je nage\"\n}\n\nfun main() {\n    val canard = Canard()\n    println(canard.voler())\n    println(canard.nager())\n}",
+     "output": "Je vole\nJe nage"
+    },
+    {
+     "type": "heading",
+     "text": "Tester un type"
+    },
+    {
+     "type": "paragraph",
+     "text": "`is` vérifie un type, et Kotlin convertit ensuite la variable automatiquement : c'est le **smart cast**."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun taille(valeur: Any): Int = when (valeur) {\n    is String -> valeur.length\n    is List<*> -> valeur.size\n    else -> 0\n}\n\nfun main() {\n    println(taille(\"Druide\"))\n    println(taille(listOf(1, 2)))\n    println(taille(3.14))\n}",
+     "output": "6\n2\n0"
+    },
+    {
+     "type": "tip",
+     "text": "Avant d'hériter, demandez-vous si une interface ou une simple composition ne suffirait pas. L'héritage est un lien solide, difficile à défaire !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que faut-il pour hériter d'une classe Kotlin ?",
+     "options": [
+      "Elle doit être marquée open ou abstract",
+      "Rien de particulier",
+      "Elle doit être une data class"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les classes sont fermées par défaut."
+    },
+    {
+     "prompt": "Combien d'interfaces une classe peut-elle implémenter ?",
+     "options": [
+      "Une seule",
+      "Plusieurs"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Elle n'hérite que d'une classe, mais peut implémenter plusieurs interfaces."
+    },
+    {
+     "prompt": "Quel mot-clé redéfinit une méthode ?",
+     "options": [
+      "override",
+      "open",
+      "super"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "override est obligatoire pour redéfinir."
+    },
+    {
+     "prompt": "Qu'est-ce qu'un smart cast ?",
+     "options": [
+      "Une conversion automatique après un test de type",
+      "Un cast vers Int",
+      "Une option du compilateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Après `is String`, la variable est traitée comme une String."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-05-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé autorise l'héritage d'une classe ?",
+     "accepted": [
+      "open"
+     ],
+     "solution": "open."
+    },
+    {
+     "id": "kotlin-05-ex2",
+     "kind": "self",
+     "prompt": "Créez une interface `Lanceur` avec une méthode `lancer()`, puis une classe `Mage` qui l'implémente en renvoyant « Boule de feu ».",
+     "solution": "interface Lanceur {\n    fun lancer(): String\n}\n\nclass Mage : Lanceur {\n    override fun lancer() = \"Boule de feu\"\n}\n\nfun main() {\n    println(Mage().lancer())\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-06-collections",
+   "title": "Collections et lambdas",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Afficher une liste, filtrer des résultats, trier des données : les collections et les lambdas sont le pain quotidien du développeur."
+    },
+    {
+     "type": "heading",
+     "text": "Listes, ensembles et tables"
+    },
+    {
+     "type": "paragraph",
+     "text": "Kotlin distingue les collections en lecture seule des collections modifiables."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val sorts = listOf(\"Feu\", \"Eau\")\n    val inventaire = mutableListOf(\"Bâton\")\n    inventaire.add(\"Grimoire\")\n\n    val uniques = setOf(1, 2, 2, 3)\n    val niveaux = mapOf(\"Merlin\" to 7, \"Viviane\" to 9)\n\n    println(sorts[0])\n    println(inventaire)\n    println(uniques)\n    println(niveaux[\"Viviane\"])\n}",
+     "output": "Feu\n[Bâton, Grimoire]\n[1, 2, 3]\n9"
+    },
+    {
+     "type": "heading",
+     "text": "Les lambdas"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **lambda** est une fonction sans nom, que l'on peut passer en paramètre. Quand elle a un seul paramètre, il s'appelle implicitement `it`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun appliquer(n: Int, operation: (Int) -> Int) = operation(n)\n\nfun main() {\n    val double = { x: Int -> x * 2 }\n\n    println(double(21))\n    println(appliquer(5) { it + 1 })\n}",
+     "output": "42\n6"
+    },
+    {
+     "type": "paragraph",
+     "text": "Si le dernier paramètre d'une fonction est une lambda, elle peut s'écrire hors des parenthèses. C'est cette syntaxe qui rend possibles les écrans Jetpack Compose."
+    },
+    {
+     "type": "heading",
+     "text": "Transformer une collection"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Sort(val nom: String, val puissance: Int)\n\nfun main() {\n    val sorts = listOf(\n        Sort(\"Feu\", 30),\n        Sort(\"Eau\", 10),\n        Sort(\"Foudre\", 50),\n    )\n\n    println(sorts.filter { it.puissance > 20 }.map { it.nom })\n    println(sorts.maxBy { it.puissance }.nom)\n    println(sorts.sumOf { it.puissance })\n    println(sorts.sortedBy { it.nom }.first().nom)\n    println(sorts.any { it.puissance > 40 })\n    println(sorts.groupBy { it.puissance > 20 }.keys)\n}",
+     "output": "[Feu, Foudre]\nFoudre\n90\nEau\ntrue\n[true, false]"
+    },
+    {
+     "type": "heading",
+     "text": "Les fonctions de portée"
+    },
+    {
+     "type": "paragraph",
+     "text": "`let`, `apply`, `also`, `run` et `with` exécutent un bloc sur un objet. Les deux plus utilisées sont `apply`, pour configurer un objet, et `let`, souvent avec les valeurs nullables."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Fenetre {\n    var titre = \"\"\n    var largeur = 0\n}\n\nfun main() {\n    val fenetre = Fenetre().apply {\n        titre = \"Grimoire\"\n        largeur = 400\n    }\n    val longueur = fenetre.titre.let { it.length * 2 }\n\n    println(fenetre.titre)\n    println(longueur)\n}",
+     "output": "Grimoire\n16"
+    },
+    {
+     "type": "warning",
+     "text": "Enchaîner beaucoup de transformations sur une liste énorme crée des listes intermédiaires. Pour de très gros volumes, `asSequence()` évite ce coût."
+    },
+    {
+     "type": "tip",
+     "text": "Lisez `filter { ... }.map { ... }` comme une phrase : garde ceux-ci, puis transforme-les. Le code raconte alors l'intention !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle collection accepte `add` ?",
+     "options": [
+      "listOf(1)",
+      "mutableListOf(1)"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "listOf renvoie une liste en lecture seule."
+    },
+    {
+     "prompt": "Que contient `setOf(1, 1, 2)` ?",
+     "options": [
+      "1, 1 et 2",
+      "1 et 2",
+      "Rien, c'est une erreur"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Un ensemble ne garde pas de doublons."
+    },
+    {
+     "prompt": "Comment s'appelle le paramètre implicite d'une lambda ?",
+     "options": [
+      "it",
+      "this",
+      "self"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est disponible quand la lambda a un seul paramètre."
+    },
+    {
+     "prompt": "Que renvoie `listOf(1, 2, 3).map { it * 2 }` ?",
+     "options": [
+      "[2, 4, 6]",
+      "[1, 2, 3]",
+      "12"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "map transforme chaque élément."
+    },
+    {
+     "prompt": "Quelle fonction garde uniquement certains éléments ?",
+     "options": [
+      "filter",
+      "map",
+      "sumOf"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "filter conserve les éléments qui vérifient la condition."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction applique une transformation à chaque élément d'une liste ?",
+     "accepted": [
+      "map"
+     ],
+     "solution": "map."
+    },
+    {
+     "id": "kotlin-06-ex2",
+     "kind": "self",
+     "prompt": "À partir de `listOf(3, 8, 12, 5)`, affichez la somme des nombres supérieurs à 4.",
+     "solution": "fun main() {\n    val nombres = listOf(3, 8, 12, 5)\n    println(nombres.filter { it > 4 }.sum())\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-07-null-safety",
+   "title": "La sécurité face à null",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La référence nulle est l'une des causes de plantage les plus répandues. Kotlin la traite dans son système de types : le compilateur vous empêche d'oublier le cas `null`."
+    },
+    {
+     "type": "heading",
+     "text": "Les types nullables"
+    },
+    {
+     "type": "paragraph",
+     "text": "Par défaut, une variable ne peut pas être nulle. Le suffixe `?` l'autorise, et le compilateur exige alors que vous gériez ce cas."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun main() {\n    val nom: String = \"Merlin\"\n    val surnom: String? = null\n\n    println(nom.length)\n    // surnom.length ne compilerait pas\n    println(surnom?.length)\n}",
+     "output": "6\nnull"
+    },
+    {
+     "type": "heading",
+     "text": "Les opérateurs"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`?.` : appel sûr, qui renvoie `null` si la valeur est nulle.",
+      "`?:` : l'opérateur Elvis, qui fournit une valeur de repli.",
+      "`!!` : force l'accès, et plante si la valeur est nulle."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun longueur(texte: String?): Int = texte?.length ?: 0\n\nfun main() {\n    println(longueur(\"Druide\"))\n    println(longueur(null))\n\n    val ville: String? = \"Brocéliande\"\n    ville?.let { println(\"Direction $it\") }\n}",
+     "output": "6\n0\nDirection Brocéliande"
+    },
+    {
+     "type": "heading",
+     "text": "Le smart cast"
+    },
+    {
+     "type": "paragraph",
+     "text": "Après un test `!= null`, le compilateur sait que la valeur existe. Un retour anticipé garde le code lisible."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun saluer(nom: String?): String {\n    if (nom == null) return \"Bonjour, inconnu\"\n    return \"Bonjour, ${nom.uppercase()}\"\n}\n\nfun main() {\n    println(saluer(\"Viviane\"))\n    println(saluer(null))\n}",
+     "output": "Bonjour, VIVIANE\nBonjour, inconnu"
+    },
+    {
+     "type": "warning",
+     "text": "Chaque `!!` est un plantage en puissance : vous dites au compilateur de ne plus vous protéger. Il n'est presque jamais nécessaire."
+    },
+    {
+     "type": "info",
+     "text": "Le code Java appelé depuis Kotlin ne dit pas toujours si une valeur peut être nulle. Une valeur venue de Java mérite donc la prudence, le module 3 y revient."
+    },
+    {
+     "type": "tip",
+     "text": "Le `!!` n'est pas une incantation de confiance, jeune apprenti : c'est une promesse que l'application tiendra en plantant !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment déclarer un texte qui peut être nul ?",
+     "options": [
+      "String?",
+      "String!",
+      "Nullable<String>"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le suffixe ? rend un type nullable."
+    },
+    {
+     "prompt": "Que vaut `null ?: 5` ?",
+     "options": [
+      "null",
+      "5",
+      "Une erreur"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "L'opérateur Elvis fournit la valeur de repli."
+    },
+    {
+     "prompt": "Que fait `?.` sur une valeur nulle ?",
+     "options": [
+      "Il plante",
+      "Il renvoie null",
+      "Il renvoie une chaîne vide"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "L'appel n'est pas effectué et le résultat est null."
+    },
+    {
+     "prompt": "Quel opérateur faut-il éviter ?",
+     "options": [
+      "?.",
+      "?:",
+      "!!"
+     ],
+     "answers": [
+      2
+     ],
+     "explanation": "!! lève une exception si la valeur est nulle."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-07-ex1",
+     "kind": "fill",
+     "prompt": "Quel est le nom de l'opérateur `?:` ?",
+     "accepted": [
+      "Elvis",
+      "opérateur Elvis",
+      "l'opérateur Elvis"
+     ],
+     "solution": "L'opérateur Elvis."
+    },
+    {
+     "id": "kotlin-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez `prenom(nom: String?): String`, qui renvoie le nom reçu, ou « Apprenti » s'il est nul.",
+     "solution": "fun prenom(nom: String?): String = nom ?: \"Apprenti\"\n\nfun main() {\n    println(prenom(\"Merlin\"))\n    println(prenom(null))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-08-coroutines",
+   "title": "Coroutines et programmation asynchrone",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application Android dessine son interface sur le **fil principal**. Si une requête réseau le bloque, l'écran se fige, et Android finit par afficher un message d'application bloquée : un ANR. Les opérations longues doivent donc se faire de façon **asynchrone**."
+    },
+    {
+     "type": "heading",
+     "text": "Les coroutines"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **coroutine** est un traitement qui peut se suspendre sans bloquer son fil, puis reprendre plus tard. Le code s'écrit de haut en bas, comme un programme ordinaire."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.*\n\nsuspend fun chargerNom(): String {\n    delay(100)\n    return \"Merlin\"\n}\n\nfun main() = runBlocking {\n    println(\"Début\")\n    val nom = chargerNom()\n    println(\"Bonjour, $nom\")\n}",
+     "output": "Début\nBonjour, Merlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une fonction `suspend` peut se mettre en pause. `delay` attend sans bloquer le fil, contrairement à `Thread.sleep`. `runBlocking` sert ici à relier le monde normal aux coroutines : on le réserve aux tests et aux petits exemples, pas au code Android."
+    },
+    {
+     "type": "heading",
+     "text": "Lancer plusieurs tâches"
+    },
+    {
+     "type": "paragraph",
+     "text": "`launch` démarre une tâche sans résultat, et `async` une tâche dont on récupère le résultat avec `await`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.*\n\nsuspend fun prix(article: String): Int {\n    delay(100)\n    return article.length * 10\n}\n\nfun main() = runBlocking {\n    val a = async { prix(\"Potion\") }\n    val b = async { prix(\"Bâton\") }\n    println(a.await() + b.await())\n\n    launch { println(\"Tâche terminée\") }.join()\n    println(\"Fin\")\n}",
+     "output": "110\nTâche terminée\nFin"
+    },
+    {
+     "type": "heading",
+     "text": "Les dispatchers"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Dispatchers.Main` : le fil principal, pour l'interface.",
+      "`Dispatchers.IO` : les accès réseau et disque.",
+      "`Dispatchers.Default` : les calculs intensifs."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "`withContext` change de dispatcher le temps d'un bloc."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.*\n\nsuspend fun calcul(): Int = withContext(Dispatchers.Default) {\n    (1..1000).sum()\n}\n\nfun main() = runBlocking {\n    println(calcul())\n}",
+     "output": "500500"
+    },
+    {
+     "type": "heading",
+     "text": "La concurrence structurée"
+    },
+    {
+     "type": "paragraph",
+     "text": "Toute coroutine appartient à une **portée**. Si la portée est annulée, ses coroutines le sont aussi, et rien ne fuit. Sur Android, `viewModelScope` s'annule à la destruction du ViewModel, et `lifecycleScope` suit le cycle de vie de l'écran."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ProfilViewModel(private val depot: Depot) : ViewModel() {\n    fun charger() {\n        viewModelScope.launch {\n            val profil = depot.chargerProfil()\n            afficher(profil)\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'annulation est coopérative : les fonctions de suspension comme `delay` la détectent, puis lèvent une `CancellationException`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.*\n\nfun main() = runBlocking {\n    val tache = launch {\n        try {\n            delay(10_000)\n            println(\"Jamais affiché\")\n        } catch (e: CancellationException) {\n            println(\"Annulée\")\n            throw e\n        }\n    }\n    delay(50)\n    tache.cancelAndJoin()\n    println(\"Fin\")\n}",
+     "output": "Annulée\nFin"
+    },
+    {
+     "type": "heading",
+     "text": "Flow : un flux de valeurs"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une fonction `suspend` renvoie **une** valeur. Un `Flow` en émet **plusieurs** au fil du temps : des positions GPS, le contenu d'une base qui change, une progression."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.flow.*\nimport kotlinx.coroutines.*\n\nfun compteur(): Flow<Int> = flow {\n    for (i in 1..3) {\n        delay(10)\n        emit(i)\n    }\n}\n\nfun main() = runBlocking {\n    compteur()\n        .filter { it != 2 }\n        .map { it * 10 }\n        .collect { println(it) }\n}",
+     "output": "10\n30"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `Flow` est **froid** : rien ne s'exécute avant `collect`. Pour l'état d'un écran, on utilise un `StateFlow`, qui garde toujours sa dernière valeur."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.flow.*\n\nfun main() {\n    val etat = MutableStateFlow(\"Chargement\")\n    println(etat.value)\n\n    etat.value = \"Prêt\"\n    println(etat.value)\n}",
+     "output": "Chargement\nPrêt"
+    },
+    {
+     "type": "warning",
+     "text": "N'appelez jamais `Thread.sleep` ou une opération réseau bloquante sur le fil principal. Android lève d'ailleurs une `NetworkOnMainThreadException` si vous tentez un accès réseau dessus."
+    },
+    {
+     "type": "tip",
+     "text": "Ne créez pas de portée sans lien avec le cycle de vie. Une coroutine orpheline erre sans fin dans vos circuits !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qu'est-ce qui distingue `delay` de `Thread.sleep` ?",
+     "options": [
+      "delay suspend sans bloquer le fil",
+      "delay est plus précis",
+      "Aucune différence"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le fil reste libre pour d'autres travaux."
+    },
+    {
+     "prompt": "Quel dispatcher utiliser pour une requête réseau ?",
+     "options": [
+      "Dispatchers.Main",
+      "Dispatchers.IO",
+      "Dispatchers.Default"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "IO est prévu pour le réseau et le disque."
+    },
+    {
+     "prompt": "Que se passe-t-il pour les coroutines de viewModelScope quand le ViewModel est détruit ?",
+     "options": [
+      "Elles continuent",
+      "Elles sont annulées",
+      "Elles sont relancées"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "C'est le principe de la concurrence structurée."
+    },
+    {
+     "prompt": "Quand un Flow froid commence-t-il à émettre ?",
+     "options": [
+      "À sa création",
+      "À l'appel de collect"
+     ],
+     "answers": [
+      1
+     ],
+     "explanation": "Sans collecteur, rien ne s'exécute."
+    },
+    {
+     "prompt": "Que choisir pour récupérer le résultat d'une tâche parallèle ?",
+     "options": [
+      "async et await",
+      "launch seul"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "launch ne renvoie pas de résultat."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé marque une fonction pouvant se mettre en pause ?",
+     "accepted": [
+      "suspend"
+     ],
+     "solution": "suspend."
+    },
+    {
+     "id": "kotlin-08-ex2",
+     "kind": "self",
+     "prompt": "Lancez deux tâches en parallèle qui renvoient 2 et 3 après un court délai, puis affichez leur somme.",
+     "solution": "import kotlinx.coroutines.*\n\nfun main() = runBlocking {\n    val a = async { delay(50); 2 }\n    val b = async { delay(50); 3 }\n    println(a.await() + b.await())\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "kotlin-09-architecture",
+   "title": "Architecture applicative",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le langage ne suffit pas : encore faut-il organiser le code. Une bonne architecture sépare les responsabilités, pour que l'application reste testable et facile à faire évoluer."
+    },
+    {
+     "type": "heading",
+     "text": "Les couches recommandées"
+    },
+    {
+     "type": "layers",
+     "title": "Organisation d'une application",
+     "layers": [
+      {
+       "name": "Interface",
+       "detail": "Les écrans et le ViewModel : afficher l'état, transmettre les actions."
+      },
+      {
+       "name": "Domaine (facultatif)",
+       "detail": "Les règles métier partagées entre plusieurs écrans."
+      },
+      {
+       "name": "Données",
+       "detail": "Les dépôts, qui cachent l'origine des données : réseau, base, fichiers."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Les dépendances vont de haut en bas : l'interface connaît le dépôt, jamais l'inverse."
+    },
+    {
+     "type": "heading",
+     "text": "Le flux de données unidirectionnel"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'interface envoie des événements, et reçoit un état. Les données circulent toujours dans le même sens, ce qui rend les bugs plus faciles à suivre."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.coroutines.flow.*\n\ndata class Note(val titre: String)\n\ninterface DepotNotes {\n    fun toutes(): List<Note>\n}\n\nclass DepotMemoire : DepotNotes {\n    override fun toutes() = listOf(Note(\"Kotlin\"), Note(\"Gradle\"))\n}\n\nclass FauxDepotVide : DepotNotes {\n    override fun toutes() = emptyList<Note>()\n}\n\ndata class EtatNotes(val titres: List<String> = emptyList())\n\nclass NotesViewModel(private val depot: DepotNotes) {\n    private val _etat = MutableStateFlow(EtatNotes())\n    val etat: StateFlow<EtatNotes> = _etat\n\n    fun actualiser() {\n        _etat.value = EtatNotes(depot.toutes().map { it.titre })\n    }\n}\n\nfun main() {\n    val vm = NotesViewModel(DepotMemoire())\n    vm.actualiser()\n    println(vm.etat.value.titres)\n\n    val test = NotesViewModel(FauxDepotVide())\n    test.actualiser()\n    println(test.etat.value.titres.isEmpty())\n}",
+     "output": "[Kotlin, Gradle]\ntrue"
+    },
+    {
+     "type": "paragraph",
+     "text": "Cet exemple rassemble plusieurs idées du module :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le ViewModel expose un `StateFlow` en lecture seule, et garde la version modifiable privée.",
+      "L'état est une `data class`, qu'on remplace au lieu de la modifier.",
+      "Le ViewModel dépend d'une **interface** : on lui injecte un faux dépôt en test, sans réseau ni base."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "L'injection de dépendances"
+    },
+    {
+     "type": "paragraph",
+     "text": "Passer une dépendance par le constructeur, plutôt que de la créer à l'intérieur de la classe, s'appelle l'**injection de dépendances**. Des bibliothèques comme Hilt automatisent ce câblage, mais le principe tient en une ligne : `NotesViewModel(depot)`."
+    },
+    {
+     "type": "info",
+     "text": "Dans une vraie application, `NotesViewModel` hérite de `ViewModel` d'AndroidX. Il est ici simplifié pour s'exécuter hors d'Android."
+    },
+    {
+     "type": "tip",
+     "text": "Un test difficile à écrire révèle souvent une architecture à revoir. Écoutez ce que vos tests vous disent !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui connaît qui dans une architecture en couches ?",
+     "options": [
+      "L'interface connaît les données",
+      "Les données connaissent l'interface",
+      "Tout le monde connaît tout"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les dépendances vont vers le bas."
+    },
+    {
+     "prompt": "Pourquoi faire dépendre un ViewModel d'une interface ?",
+     "options": [
+      "Pour lui injecter un faux dépôt en test",
+      "Pour accélérer l'affichage",
+      "Parce que le compilateur l'exige"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'implémentation devient remplaçable."
+    },
+    {
+     "prompt": "Que signifie un flux de données unidirectionnel ?",
+     "options": [
+      "L'état descend, les événements remontent",
+      "Les données n'ont pas de sens précis",
+      "L'application n'a qu'un écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ce sens unique rend le comportement prévisible."
+    },
+    {
+     "prompt": "Que fait un dépôt ?",
+     "options": [
+      "Il cache l'origine des données",
+      "Il dessine les écrans",
+      "Il signe l'APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le reste de l'application ignore si la donnée vient du réseau ou de la base."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "kotlin-09-ex1",
+     "kind": "fill",
+     "prompt": "Quel type de Flow garde toujours sa dernière valeur, et sert à exposer un état ?",
+     "accepted": [
+      "StateFlow"
+     ],
+     "solution": "StateFlow."
+    },
+    {
+     "id": "kotlin-09-ex2",
+     "kind": "self",
+     "prompt": "Pourquoi exposer `val etat: StateFlow` en gardant `_etat` privé en `MutableStateFlow` ?",
+     "solution": "Seul le ViewModel doit pouvoir modifier l'état. L'interface reçoit une version en lecture seule, ce qui garantit que tous les changements passent par le ViewModel et restent faciles à suivre."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Que vaut `10 / 4` avec deux Int ?",
+    "options": [
+     "2",
+     "2.5",
+     "3"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La division entière abandonne la partie décimale."
+   },
+   {
+    "prompt": "Quelle construction préférer à plusieurs else if ?",
+    "options": [
+     "when",
+     "try",
+     "object"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "when est lisible et sait tester des intervalles et des types."
+   },
+   {
+    "prompt": "Quelle boucle affiche 1, 2 et 3 ?",
+    "options": [
+     "for (i in 1..3)",
+     "for (i in 1 until 3)",
+     "for (i in 3 downTo 2)"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": ".. inclut la borne de fin."
+   },
+   {
+    "prompt": "Quels éléments une data class fournit-elle ?",
+    "options": [
+     "copy",
+     "toString",
+     "Une base de données"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Elle génère copy, toString, equals et hashCode."
+   },
+   {
+    "prompt": "Que faut-il pour redéfinir une méthode ?",
+    "options": [
+     "Qu'elle soit open, et utiliser override",
+     "Rien",
+     "La rendre private"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Tout est fermé par défaut en Kotlin."
+   },
+   {
+    "prompt": "Que renvoie `listOf(1, 2, 3, 4).filter { it % 2 == 0 }` ?",
+    "options": [
+     "[2, 4]",
+     "[1, 3]",
+     "6"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "filter garde les éléments pairs."
+   },
+   {
+    "prompt": "Que vaut `val s: String? = null; s?.length ?: 0` ?",
+    "options": [
+     "0",
+     "null",
+     "Un plantage"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'appel sûr donne null, puis Elvis fournit 0."
+   },
+   {
+    "prompt": "Où lancer une coroutine liée à un ViewModel ?",
+    "options": [
+     "viewModelScope",
+     "GlobalScope",
+     "Thread"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "viewModelScope annule ses coroutines à la destruction."
+   },
+   {
+    "prompt": "Que faut-il pour émettre plusieurs valeurs au fil du temps ?",
+    "options": [
+     "Un Flow",
+     "Une fonction suspend simple"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Une fonction suspend ne renvoie qu'une valeur."
+   },
+   {
+    "prompt": "Pourquoi injecter un dépôt par le constructeur ?",
+    "options": [
+     "Pour pouvoir le remplacer, notamment en test",
+     "Pour réduire la taille de l'APK"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est l'injection de dépendances."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Documentation officielle de Kotlin",
+   "url": "https://kotlinlang.org/docs/home.html"
+  },
+  {
+   "title": "Tester Kotlin en ligne",
+   "url": "https://play.kotlinlang.org/"
+  },
+  {
+   "title": "Coroutines Kotlin sur Android",
+   "url": "https://developer.android.com/kotlin/coroutines"
+  },
+  {
+   "title": "Flow sur Android",
+   "url": "https://developer.android.com/kotlin/flow"
+  },
+  {
+   "title": "Guide de l'architecture des applications",
+   "url": "https://developer.android.com/topic/architecture"
+  }
+ ]
+}
