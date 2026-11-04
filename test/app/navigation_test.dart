@@ -76,7 +76,7 @@ void main() {
   testWidgets('une carte de module ouvre son programme et permet le retour', (
     tester,
   ) async {
-    final container = await pumpApp(tester);
+    final container = await pumpApp(tester, size: const Size(390, 3000));
     final module = academyModules.first;
 
     await tester.tap(inNavigationBar(AppSection.academie.label));
@@ -98,9 +98,9 @@ void main() {
   ) async {
     final container = await pumpApp(tester);
 
-    await tester.tap(find.text('Découvrir l\'Académie'));
+    await tester.tap(find.textContaining('Continuer :'));
     await tester.pumpAndSettle();
-    expect(location(container), AppSection.academie.path);
+    expect(location(container), contains('/lecon/'));
 
     await tester.tap(inNavigationBar(AppSection.accueil.label));
     await tester.pumpAndSettle();

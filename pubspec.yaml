@@ -70,6 +70,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/courses/
+
   fonts:
     - family: ChakraPetch
       fonts:

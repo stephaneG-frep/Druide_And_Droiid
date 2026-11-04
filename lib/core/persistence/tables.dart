@@ -48,6 +48,18 @@ class Notes extends Table {
   DateTimeColumn get updatedAt => dateTime()();
 }
 
+/// Réponse de l'apprenant à un exercice, conservée entre deux sessions.
+class ExerciseAnswers extends Table {
+  TextColumn get exerciseId => text()();
+  TextColumn get moduleId => text()();
+  TextColumn get answer => text()();
+  TextColumn get status => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {exerciseId};
+}
+
 class Favorites extends Table {
   TextColumn get kind => text()();
   TextColumn get targetId => text()();

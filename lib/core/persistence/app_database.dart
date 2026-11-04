@@ -10,7 +10,15 @@ import 'tables.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [AppMeta, LessonProgress, QuizAttempts, XpEvents, Notes, Favorites],
+  tables: [
+    AppMeta,
+    LessonProgress,
+    QuizAttempts,
+    XpEvents,
+    Notes,
+    Favorites,
+    ExerciseAnswers,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
@@ -18,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   /// Toute hausse de version exige une étape dans [migration] et un test sur
   /// une base réelle de l'ancienne version.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -30,6 +38,9 @@ class AppDatabase extends _$AppDatabase {
         await migrator.createTable(xpEvents);
         await migrator.createTable(notes);
         await migrator.createTable(favorites);
+      }
+      if (from < 3) {
+        await migrator.createTable(exerciseAnswers);
       }
     },
   );

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../features/academie/domain/module_catalog.dart';
 import '../features/academie/presentation/academie_page.dart';
+import '../features/academie/presentation/evaluation_page.dart';
+import '../features/academie/presentation/lesson_page.dart';
 import '../features/academie/presentation/module_page.dart';
 import '../features/accueil/presentation/accueil_page.dart';
 import '../features/chaudron/presentation/chaudron_page.dart';
@@ -76,6 +78,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                               ? NotFoundPage(uri: state.uri)
                               : ModulePage(module: module);
                         },
+                        routes: [
+                          GoRoute(
+                            path: 'lecon/:lessonId',
+                            builder: (context, state) => LessonPage(
+                              moduleId: state.pathParameters['moduleId']!,
+                              lessonId: state.pathParameters['lessonId']!,
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'evaluation',
+                            builder: (context, state) => EvaluationPage(
+                              moduleId: state.pathParameters['moduleId']!,
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),

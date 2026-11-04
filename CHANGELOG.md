@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## Phase 4 — 2026-11-04
+
+- Cours au format JSON embarqué, avec validation stricte du contenu.
+- Écran de leçon : texte, code, encadrés, conseils et schémas en couches.
+- Quiz notés à une ou plusieurs réponses, avec correction détaillée.
+- Exercices à réponse courte corrigée, et exercices autoévalués avec corrigé.
+- Réponses aux exercices enregistrées automatiquement.
+- Évaluation de module, ouverte une fois les leçons terminées.
+- Avancement sur les cartes de modules et bouton « Continuer » sur l'accueil.
+- Ressources complémentaires par module.
+- Schéma SQLite en version 3 : réponses aux exercices.
+- Sauvegarde automatique mutualisée entre notes et exercices.
+- Module 1 : trois premières leçons rédigées, le reste suit en phase 5.
+
 ## Phase 3 — 2026-11-04
 
 - Schéma SQLite en version 2, avec migration depuis la version 1.

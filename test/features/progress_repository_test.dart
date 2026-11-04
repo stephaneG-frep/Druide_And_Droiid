@@ -118,6 +118,37 @@ void main() {
     });
   });
 
+  test('watchCompletedLessons liste les leçons terminées', () async {
+    await repository.completeLesson(
+      lessonId: 'kotlin-1',
+      moduleId: 'kotlin',
+      xp: 0,
+    );
+
+    expect(await repository.watchCompletedLessons().first, {'kotlin-1'});
+  });
+
+  test(
+    'watchBestAttempts garde la meilleure tentative de chaque quiz',
+    () async {
+      Future<void> record(int score) => repository.recordQuizAttempt(
+        quizId: 'quiz',
+        score: score,
+        maxScore: 5,
+        passed: score >= 4,
+        xp: 0,
+      );
+
+      await record(2);
+      await record(5);
+      await record(1);
+
+      final best = (await repository.watchBestAttempts().first)['quiz'];
+      expect(best?.score, 5);
+      expect(best?.passed, isTrue);
+    },
+  );
+
   test('la progression réagit aux écritures', () async {
     final values = <int>[];
     final subscription = repository.watch().listen((p) => values.add(p.xp));

@@ -1,5 +1,46 @@
 # Rapport de tests
 
+## Phase 4 — 2026-11-04
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 190 tests sur 190 réussis |
+| Intégration sur Linux | 5 tests sur 5 réussis |
+| Intégration sur Honor MTN-NX1M (Android 16, arm64) | 5 tests sur 5 réussis |
+
+Couvert par les tests :
+
+- **Lecture des cours** : chaque type de bloc, et onze formes de contenu invalide avec localisation de l'erreur.
+- **Vrais fichiers de cours** : concordance avec le programme, identifiants uniques, leçons complètes, solutions acceptées, évaluation réalisable.
+- **Notation** : questions multiples, seuil inclusif, calcul entier sans erreur d'arrondi.
+- **Leçon** : affichage, fin de leçon, passage à la suivante, retour au module, leçon inconnue, cours illisible.
+- **Quiz** : réussite, échec, reprise, expérience créditée une fois, réponses conservées au défilement.
+- **Exercices** : réponse juste ou fausse, autoévaluation, texte retrouvé en rouvrant la leçon.
+- **Évaluation** : fermée tant que des leçons manquent, réussite, échec puis nouvel essai.
+- **Reprise** : le bouton Continuer suit la progression.
+- **Migration** : d'un vrai fichier v2 vers v3, sans perte, et même schéma qu'une base neuve.
+
+Vérifié à la main sur le Honor :
+
+| Vérification | Résultat |
+| --- | --- |
+| Mise à jour de la version phase 3 par-dessus | Fichier passé de v2 à v3 |
+| Accueil, lecture d'une leçon, défilement | Corrects |
+| Réponse à un exercice, validation | « Exercice réussi », +10 XP |
+| Fin de leçon, arrêt forcé, relance | 30 XP affichés, Continuer propose la leçon 2, données correctes en base |
+| Logcat | Aucun crash ni erreur Flutter |
+
+La base du téléphone ne contenait que des données de test. Elle a été effacée par les tests d'intégration, et l'application réinstallée repart de zéro.
+
+### Non vérifié
+
+- **Contenu** : les trois leçons n'ont pas été relues par un tiers. Les faits, notamment les dates et niveaux d'API, viennent de mes connaissances, sans contrôle en ligne.
+- **Quiz et évaluation sur le téléphone** : testés par widgets, pas parcourus à la main sur le Honor.
+- **Liens des ressources** : affichés et sélectionnables, ils ne s'ouvrent pas. Leur validité n'a pas été contrôlée.
+- **Performances** de longues leçons.
+- **Lecteur d'écran** sur les leçons.
+
 ## Phase 3 — 2026-11-04
 
 | Vérification | Résultat |

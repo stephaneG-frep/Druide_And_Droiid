@@ -1,0 +1,228 @@
+{
+  "moduleId": "fondations",
+  "lessons": [
+    {
+      "id": "fondations-01-histoire",
+      "title": "D'où vient Android ?",
+      "minutes": 8,
+      "blocks": [
+        { "type": "paragraph", "text": "Android équipe aujourd'hui la majorité des smartphones de la planète, mais il n'a pas été créé par Google. Connaître son histoire aide à comprendre pourquoi il fonctionne comme il fonctionne." },
+        { "type": "heading", "text": "Une petite société, puis Google" },
+        { "type": "paragraph", "text": "La société **Android Inc.** est fondée en 2003 à Palo Alto, notamment par Andy Rubin. Google la rachète en 2005 et poursuit le développement du système." },
+        { "type": "paragraph", "text": "En novembre 2007, Google présente Android avec l'**Open Handset Alliance**, un groupement de constructeurs, d'opérateurs et d'entreprises du logiciel. Le premier téléphone commercial, le HTC Dream, aussi vendu sous le nom T-Mobile G1, sort à l'automne 2008 avec Android 1.0." },
+        { "type": "heading", "text": "Un système ouvert" },
+        { "type": "paragraph", "text": "Le cœur d'Android est publié dans l'**Android Open Source Project**, ou AOSP. N'importe qui peut lire ce code, le modifier et le compiler. C'est ce qui permet à de nombreux constructeurs d'adapter le système à leurs appareils." },
+        { "type": "info", "text": "AOSP n'est pas tout Android tel que vous le connaissez. Le Play Store, Gmail ou les services Google Play sont des composants propriétaires, ajoutés par les constructeurs sous licence." },
+        { "type": "paragraph", "text": "Cette organisation explique une réalité que vous rencontrerez sans cesse en développement : il existe beaucoup d'appareils différents, avec des tailles d'écran, des versions et des surcouches variées. Une bonne application doit composer avec cette diversité." },
+        { "type": "tip", "text": "Retenez ceci, jeune apprenti : quand une application marche sur votre téléphone, cela ne prouve pas qu'elle marche sur tous les autres !" }
+      ],
+      "quiz": [
+        {
+          "prompt": "Qui a créé Android à l'origine ?",
+          "options": ["Google", "La société Android Inc.", "Samsung"],
+          "answers": [1],
+          "explanation": "Android Inc. est fondée en 2003 ; Google la rachète en 2005."
+        },
+        {
+          "prompt": "Que désigne AOSP ?",
+          "options": ["Le magasin d'applications de Google", "La partie open source d'Android", "Un langage de programmation"],
+          "answers": [1],
+          "explanation": "L'Android Open Source Project publie le code du système."
+        },
+        {
+          "prompt": "Lesquels de ces éléments ne font pas partie d'AOSP ?",
+          "options": ["Le Play Store", "Les services Google Play", "Le code ouvert du système"],
+          "answers": [0, 1],
+          "explanation": "Le Play Store et les services Google Play sont propriétaires, contrairement au code publié dans AOSP."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "fondations-01-ex1",
+          "kind": "fill",
+          "prompt": "Quel est le sigle du projet qui publie le code ouvert d'Android ?",
+          "accepted": ["AOSP", "Android Open Source Project"],
+          "solution": "AOSP, pour Android Open Source Project."
+        },
+        {
+          "id": "fondations-01-ex2",
+          "kind": "self",
+          "prompt": "En deux ou trois phrases, expliquez pourquoi une application qui fonctionne sur votre téléphone peut échouer sur un autre.",
+          "solution": "Les appareils Android diffèrent par leur version du système, leur taille d'écran, leur matériel et les surcouches ajoutées par le constructeur. Tester sur un seul appareil ne couvre donc pas toutes ces situations."
+        }
+      ]
+    },
+    {
+      "id": "fondations-02-versions",
+      "title": "Versions et niveaux d'API",
+      "minutes": 10,
+      "blocks": [
+        { "type": "paragraph", "text": "Chaque version d'Android possède deux identités : un numéro destiné au public, comme Android 14, et un **niveau d'API**, un entier utilisé par les développeurs." },
+        { "type": "heading", "text": "Le niveau d'API" },
+        { "type": "paragraph", "text": "Le niveau d'API identifie l'ensemble des fonctions offertes par une version du système. C'est lui que vous manipulerez dans vos projets, parce qu'il augmente de façon régulière et sans ambiguïté." },
+        { "type": "list", "items": ["Android 8.0 : API 26", "Android 10 : API 29", "Android 12 : API 31", "Android 13 : API 33", "Android 14 : API 34", "Android 15 : API 35", "Android 16 : API 36"] },
+        { "type": "info", "text": "Jusqu'à Android 9 « Pie », les versions portaient publiquement un nom de friandise, dans l'ordre alphabétique. Google a abandonné cet usage public avec Android 10." },
+        { "type": "heading", "text": "Trois réglages à ne pas confondre" },
+        { "type": "paragraph", "text": "Un projet Android déclare trois valeurs, qui répondent à trois questions différentes." },
+        { "type": "list", "items": ["**minSdk** : la version la plus ancienne sur laquelle l'application accepte de s'installer.", "**targetSdk** : la version pour laquelle l'application a été prévue et testée. Elle active les comportements récents du système.", "**compileSdk** : la version des API utilisée pour compiler le code."] },
+        { "type": "code", "language": "kotlin", "code": "android {\n    compileSdk = 36\n\n    defaultConfig {\n        minSdk = 24\n        targetSdk = 36\n    }\n}" },
+        { "type": "paragraph", "text": "Avec cette configuration, l'application s'installe à partir d'Android 7.0 (API 24), et elle est prévue pour fonctionner avec les comportements d'Android 16." },
+        { "type": "warning", "text": "Appeler une fonction plus récente que le minSdk provoque un plantage sur les anciens appareils si vous ne vérifiez pas la version au moment de l'exécution." },
+        { "type": "code", "language": "kotlin", "code": "if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n    // Fonction disponible à partir de l'API 33\n}" },
+        { "type": "tip", "text": "Abaisser le minSdk gagne des appareils, mais coûte du travail de test. Choisissez-le en connaissance de cause !" }
+      ],
+      "quiz": [
+        {
+          "prompt": "Quel réglage fixe la version la plus ancienne sur laquelle l'application s'installe ?",
+          "options": ["compileSdk", "minSdk", "targetSdk"],
+          "answers": [1],
+          "explanation": "Sous le minSdk, l'application ne peut pas être installée."
+        },
+        {
+          "prompt": "À quel niveau d'API correspond Android 14 ?",
+          "options": ["30", "33", "34"],
+          "answers": [2],
+          "explanation": "Android 14 correspond à l'API 34."
+        },
+        {
+          "prompt": "Que risque-t-on en appelant une fonction de l'API 33 avec un minSdk de 24, sans vérification ?",
+          "options": ["Rien, Android l'adapte tout seul", "Un plantage sur les appareils plus anciens", "Un refus de compilation sur tous les projets"],
+          "answers": [1],
+          "explanation": "La fonction n'existe pas sur les anciens systèmes : il faut vérifier la version à l'exécution."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "fondations-02-ex1",
+          "kind": "fill",
+          "prompt": "Complétez : « if (Build.VERSION.____ >= 33) ». Quel champ contient le niveau d'API de l'appareil ?",
+          "accepted": ["SDK_INT"],
+          "solution": "SDK_INT : Build.VERSION.SDK_INT donne le niveau d'API de l'appareil."
+        },
+        {
+          "id": "fondations-02-ex2",
+          "kind": "self",
+          "prompt": "Écrivez le bloc defaultConfig d'une application qui s'installe à partir de l'API 26 et cible l'API 36.",
+          "solution": "defaultConfig {\n    minSdk = 26\n    targetSdk = 36\n}",
+          "language": "kotlin"
+        }
+      ]
+    },
+    {
+      "id": "fondations-03-architecture",
+      "title": "L'architecture en couches",
+      "minutes": 12,
+      "blocks": [
+        { "type": "paragraph", "text": "Android n'est pas un bloc unique. C'est un empilement de couches : chacune utilise celle du dessous et offre des services à celle du dessus." },
+        {
+          "type": "layers",
+          "title": "Les couches d'Android",
+          "layers": [
+            { "name": "Applications", "detail": "Vos applications et celles du système : Téléphone, Appareil photo, Paramètres." },
+            { "name": "Framework Java", "detail": "Les API que vous appelez : Activity, notifications, ressources, gestion des paquets." },
+            { "name": "ART et bibliothèques natives", "detail": "L'exécution du code des applications, et des bibliothèques en C/C++ comme SQLite." },
+            { "name": "Couche d'abstraction matérielle", "detail": "HAL : une interface commune vers l'appareil photo, le Bluetooth ou les capteurs." },
+            { "name": "Noyau Linux", "detail": "Processus, mémoire, sécurité de base et pilotes matériels." }
+          ]
+        },
+        { "type": "heading", "text": "Le noyau Linux" },
+        { "type": "paragraph", "text": "Tout en bas, le **noyau Linux** gère le matériel, les processus et la mémoire. Chaque application tourne avec son propre utilisateur Linux, ce qui sert de base à l'isolation entre applications." },
+        { "type": "heading", "text": "La couche d'abstraction matérielle" },
+        { "type": "paragraph", "text": "La **HAL** présente une interface standard au-dessus du matériel. Grâce à elle, le framework peut piloter un appareil photo sans connaître le modèle exact installé dans le téléphone." },
+        { "type": "heading", "text": "Android Runtime" },
+        { "type": "paragraph", "text": "Le code Kotlin ou Java d'une application est compilé en **bytecode DEX**, exécuté par **ART**, l'Android Runtime. Depuis Android 5.0, ART a remplacé l'ancienne machine virtuelle Dalvik." },
+        { "type": "heading", "text": "Le framework" },
+        { "type": "paragraph", "text": "Le **framework** est la couche avec laquelle vous dialoguez le plus. Quand votre code affiche une notification, il appelle une API du framework, qui s'adresse à un service du système." },
+        { "type": "info", "text": "Une application Flutter suit un chemin un peu différent : son code Dart est compilé en code machine, et le moteur Flutter dessine lui-même l'interface. Elle reste une application Android, qui passe par le framework pour les services du système." },
+        { "type": "tip", "text": "Lorsqu'un bug vous résiste, demandez-vous dans quelle couche il se cache. C'est la moitié du diagnostic !" }
+      ],
+      "quiz": [
+        {
+          "prompt": "Quelle couche se trouve tout en bas de la pile ?",
+          "options": ["Le framework", "Le noyau Linux", "ART"],
+          "answers": [1],
+          "explanation": "Le noyau Linux gère directement le matériel, les processus et la mémoire."
+        },
+        {
+          "prompt": "À quoi sert la HAL ?",
+          "options": ["À présenter une interface standard vers le matériel", "À compiler le code Kotlin", "À afficher les notifications"],
+          "answers": [0],
+          "explanation": "La HAL évite au framework de dépendre d'un composant matériel précis."
+        },
+        {
+          "prompt": "Quel format de bytecode exécute ART ?",
+          "options": ["JAR", "DEX", "APK"],
+          "answers": [1],
+          "explanation": "Le code est compilé en DEX. Un APK est le paquet qui contient, entre autres, ces fichiers."
+        },
+        {
+          "prompt": "Qu'apporte chaque utilisateur Linux distinct attribué aux applications ?",
+          "options": ["Une isolation entre applications", "Une accélération de l'affichage", "Une connexion à Internet"],
+          "answers": [0],
+          "explanation": "Cette séparation sert de base au bac à sable d'Android."
+        }
+      ],
+      "exercises": [
+        {
+          "id": "fondations-03-ex1",
+          "kind": "fill",
+          "prompt": "Quel environnement d'exécution a remplacé Dalvik depuis Android 5.0 ?",
+          "accepted": ["ART", "Android Runtime"],
+          "solution": "ART, l'Android Runtime."
+        },
+        {
+          "id": "fondations-03-ex2",
+          "kind": "self",
+          "prompt": "Votre application affiche une notification. Décrivez, de haut en bas, les couches traversées par cette demande.",
+          "solution": "L'application appelle une API du framework, exécutée dans ART. Le framework s'adresse à un service du système, qui s'appuie sur les bibliothèques natives et la HAL, puis le noyau Linux pilote le matériel, ici l'écran."
+        }
+      ]
+    }
+  ],
+  "evaluation": {
+    "passPercent": 80,
+    "questions": [
+      {
+        "prompt": "En quelle année Google rachète-t-il Android Inc. ?",
+        "options": ["2003", "2005", "2008"],
+        "answers": [1],
+        "explanation": "La société naît en 2003, Google la rachète en 2005 et le premier téléphone sort en 2008."
+      },
+      {
+        "prompt": "Quelle affirmation sur AOSP est exacte ?",
+        "options": ["Il contient le Play Store", "Il permet aux constructeurs d'adapter le système", "Il n'est accessible qu'à Google"],
+        "answers": [1],
+        "explanation": "Le code est ouvert : c'est ce qui permet ces adaptations."
+      },
+      {
+        "prompt": "Quel réglage active les comportements récents du système pour votre application ?",
+        "options": ["minSdk", "targetSdk", "versionName"],
+        "answers": [1],
+        "explanation": "Le targetSdk indique la version pour laquelle l'application est prévue."
+      },
+      {
+        "prompt": "Quel réglage ne détermine pas sur quels appareils l'application s'installe ?",
+        "options": ["minSdk", "compileSdk"],
+        "answers": [1],
+        "explanation": "Le compileSdk ne concerne que la compilation."
+      },
+      {
+        "prompt": "Lesquelles de ces couches font partie de la pile Android ?",
+        "options": ["La HAL", "ART", "Le noyau Linux", "Le Play Store"],
+        "answers": [0, 1, 2],
+        "explanation": "Le Play Store est une application propriétaire, pas une couche du système."
+      },
+      {
+        "prompt": "Quelle couche appelez-vous le plus souvent directement depuis votre code ?",
+        "options": ["Le noyau Linux", "La HAL", "Le framework"],
+        "answers": [2],
+        "explanation": "Le framework expose les API destinées aux développeurs."
+      }
+    ]
+  },
+  "resources": [
+    { "title": "Architecture de la plateforme Android", "url": "https://developer.android.com/guide/platform" },
+    { "title": "Android Open Source Project", "url": "https://source.android.com/" },
+    { "title": "Niveaux d'API et versions", "url": "https://developer.android.com/tools/releases/platforms" }
+  ]
+}

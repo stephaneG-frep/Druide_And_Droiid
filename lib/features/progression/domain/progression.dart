@@ -47,6 +47,19 @@ class ProgressSnapshot {
   Rank get rank => Rank.forXp(xp);
 }
 
+/// Meilleure tentative à un quiz.
+class QuizBest {
+  const QuizBest({
+    required this.score,
+    required this.maxScore,
+    required this.passed,
+  });
+
+  final int score;
+  final int maxScore;
+  final bool passed;
+}
+
 /// Résultat de l'enregistrement d'une tentative de quiz.
 class QuizOutcome {
   const QuizOutcome({required this.recorded, required this.xpEarned});

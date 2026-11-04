@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 3 (persistance) terminée.** La progression, les notes et les favoris sont enregistrés, mais les leçons, l'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 4 (moteur pédagogique) terminée.** Les cours, quiz, exercices et évaluations fonctionnent, mais seules trois leçons du module 1 sont rédigées. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:druide_and_droiid/core/persistence/app_database.dart';
 import 'package:druide_and_droiid/features/notes/data/notes_repository.dart';
+import 'package:druide_and_droiid/features/progression/data/progress_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
@@ -11,6 +12,26 @@ import 'package:sqlite3/sqlite3.dart';
 const _schemaV1 =
     'CREATE TABLE IF NOT EXISTS "app_meta" ("key" TEXT NOT NULL, '
     '"value" TEXT NOT NULL, PRIMARY KEY ("key"));';
+
+/// Schéma exact de la version 2, livrée à la phase 3.
+const _schemaV2 = [
+  'CREATE TABLE "app_meta" ("key" TEXT NOT NULL, "value" TEXT NOT NULL, '
+      'PRIMARY KEY ("key"))',
+  'CREATE TABLE "lesson_progress" ("lesson_id" TEXT NOT NULL, "module_id" TEXT '
+      'NOT NULL, "completed_at" INTEGER NOT NULL, PRIMARY KEY ("lesson_id"))',
+  'CREATE TABLE "quiz_attempts" ("id" INTEGER NOT NULL PRIMARY KEY '
+      'AUTOINCREMENT, "quiz_id" TEXT NOT NULL, "score" INTEGER NOT NULL, '
+      '"max_score" INTEGER NOT NULL, "passed" INTEGER NOT NULL CHECK ("passed" '
+      'IN (0, 1)), "attempted_at" INTEGER NOT NULL)',
+  'CREATE TABLE "xp_events" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, '
+      '"source" TEXT NOT NULL UNIQUE, "amount" INTEGER NOT NULL, "earned_at" '
+      'INTEGER NOT NULL)',
+  'CREATE TABLE "notes" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, '
+      '"title" TEXT NOT NULL, "body" TEXT NOT NULL, "module_id" TEXT NULL, '
+      '"created_at" INTEGER NOT NULL, "updated_at" INTEGER NOT NULL)',
+  'CREATE TABLE "favorites" ("kind" TEXT NOT NULL, "target_id" TEXT NOT NULL, '
+      '"created_at" INTEGER NOT NULL, PRIMARY KEY ("kind", "target_id"))',
+];
 
 Map<String, String> schemaOf(String path) {
   final database = sqlite3.open(path);
@@ -47,7 +68,7 @@ void main() {
     database.close();
   }
 
-  test('la version 1 passe en version 2 sans perdre les réglages', () async {
+  test('la version 1 passe à la dernière version sans perte', () async {
     createV1Database();
 
     final database = AppDatabase(NativeDatabase(file));
@@ -62,8 +83,63 @@ void main() {
     await database.close();
 
     final raw = sqlite3.open(file.path);
-    expect(raw.select('PRAGMA user_version').first.values.first, 2);
+    expect(
+      raw.select('PRAGMA user_version').first.values.first,
+      database.schemaVersion,
+    );
     raw.close();
+  });
+
+  void createV2Database() {
+    final database = sqlite3.open(file.path);
+    _schemaV2.forEach(database.execute);
+    database
+      ..execute("INSERT INTO app_meta VALUES ('appearance.theme', 'light')")
+      ..execute(
+        "INSERT INTO notes (title, body, created_at, updated_at) "
+        "VALUES ('Ma note', 'Corps', 1, 1)",
+      )
+      ..execute("INSERT INTO lesson_progress VALUES ('leçon', 'kotlin', 1)")
+      ..execute(
+        "INSERT INTO quiz_attempts (quiz_id, score, max_score, passed, "
+        "attempted_at) VALUES ('quiz', 1, 1, 1, 1)",
+      )
+      ..execute(
+        "INSERT INTO xp_events (source, amount, earned_at) "
+        "VALUES ('quiz:quiz', 10, 1)",
+      )
+      ..execute('PRAGMA user_version = 2');
+    database.close();
+  }
+
+  test('la version 2 passe en version 3 sans perte', () async {
+    createV2Database();
+
+    final database = AppDatabase(NativeDatabase(file));
+    expect(await database.readMeta('appearance.theme'), 'light');
+    final progress = await ProgressRepository(
+      database,
+      DateTime.now,
+    ).watch().first;
+    expect(progress.xp, 10);
+    expect(progress.lessonsCompleted, 1);
+    final notes = await NotesRepository(database, DateTime.now).watch().first;
+    expect(notes.single.title, 'Ma note');
+    await database.close();
+  });
+
+  test('une base v2 migrée a le même schéma qu\'une base neuve', () async {
+    createV2Database();
+    final migrated = AppDatabase(NativeDatabase(file));
+    await migrated.readMeta('x');
+    await migrated.close();
+
+    final freshFile = File(p.join(directory.path, 'neuve.sqlite'));
+    final fresh = AppDatabase(NativeDatabase(freshFile));
+    await fresh.readMeta('x');
+    await fresh.close();
+
+    expect(schemaOf(file.path), schemaOf(freshFile.path));
   });
 
   test('une base migrée a le même schéma qu\'une base neuve', () async {

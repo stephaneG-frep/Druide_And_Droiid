@@ -1,6 +1,7 @@
 import 'package:druide_and_droiid/app/router.dart';
 import 'package:druide_and_droiid/app/sections.dart';
 import 'package:druide_and_droiid/features/academie/domain/module_catalog.dart';
+import 'package:druide_and_droiid/features/academie/presentation/paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,6 +20,9 @@ final _routes = [
   for (final section in AppSection.values) section.path,
   plusPath,
   '${AppSection.academie.path}/${academyModules.last.id}',
+  '${AppSection.academie.path}/${academyModules.first.id}',
+  lessonPath(academyModules.first.id, 'fondations-03-architecture'),
+  evaluationPath(academyModules.first.id),
 ];
 
 void main() {

@@ -34,7 +34,19 @@ class GrimoirePage extends StatelessWidget {
           child: Text(
             'Dans l\'onglet Académie, touchez un module pour lire son '
             'programme. L\'étoile en haut de l\'écran l\'ajoute à vos favoris. '
-            'Les leçons ne sont pas encore disponibles.',
+            'Certains modules n\'ont encore que leur programme.',
+            style: body,
+          ),
+        ),
+        GrimoirePanel(
+          title: 'Suivre une leçon',
+          icon: Icons.menu_book_outlined,
+          child: Text(
+            'Ouvrez un module, puis une leçon. Lisez-la, répondez au quiz, '
+            'faites les exercices, puis touchez Terminer la leçon. Vos '
+            'réponses sont enregistrées : vous pouvez reprendre plus tard. '
+            'Une fois toutes les leçons terminées, l\'évaluation du module '
+            's\'ouvre. L\'accueil vous propose toujours la leçon suivante.',
             style: body,
           ),
         ),
@@ -53,9 +65,10 @@ class GrimoirePage extends StatelessWidget {
           title: 'Gagner de l\'expérience',
           icon: Icons.bolt,
           child: Text(
-            'Chaque jour, une bonne réponse du premier coup à la question '
-            'flash de l\'accueil rapporte de l\'expérience. Votre progression '
-            'est conservée sur cet appareil.',
+            'Terminer une leçon, réussir un quiz ou une évaluation et valider '
+            'un exercice rapportent de l\'expérience, une seule fois chacun. '
+            'La question flash de l\'accueil en rapporte aussi chaque jour. '
+            'Votre progression est conservée sur cet appareil.',
             style: body,
           ),
         ),

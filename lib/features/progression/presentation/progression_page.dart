@@ -43,9 +43,8 @@ class ProgressionPage extends ConsumerWidget {
         ),
         const PhaseNotice(
           message:
-              'Pour l\'instant, seule la question flash de l\'accueil '
-              'rapporte de l\'expérience. Les défis et badges ne sont pas '
-              'encore actifs, et les seuils des grades sont provisoires.',
+              'Les défis et badges ne sont pas encore actifs, et les seuils '
+              'des grades sont provisoires.',
         ),
         const SectionTitle('Les huit grades'),
         AdaptiveGrid(

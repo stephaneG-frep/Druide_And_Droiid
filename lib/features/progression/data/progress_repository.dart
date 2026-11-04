@@ -44,6 +44,31 @@ class ProgressRepository {
     return query.watch().map((rows) => rows.isNotEmpty);
   }
 
+  Stream<Set<String>> watchCompletedLessons() {
+    return _database
+        .select(_database.lessonProgress)
+        .watch()
+        .map((rows) => {for (final row in rows) row.lessonId});
+  }
+
+  /// Meilleure tentative de chaque quiz.
+  Stream<Map<String, QuizBest>> watchBestAttempts() {
+    return _database.select(_database.quizAttempts).watch().map((rows) {
+      final best = <String, QuizBest>{};
+      for (final row in rows) {
+        final current = best[row.quizId];
+        if (current == null || row.score > current.score) {
+          best[row.quizId] = QuizBest(
+            score: row.score,
+            maxScore: row.maxScore,
+            passed: row.passed,
+          );
+        }
+      }
+      return best;
+    });
+  }
+
   /// Marque une leçon terminée. Refaire une leçon ne rapporte rien de plus.
   /// Renvoie l'expérience réellement gagnée.
   Future<int> completeLesson({
@@ -63,7 +88,7 @@ class ProgressRepository {
             ),
             mode: InsertMode.insertOrIgnore,
           );
-      return _award('lesson:$lessonId', xp, now);
+      return award('lesson:$lessonId', xp, now);
     });
   }
 
@@ -95,7 +120,7 @@ class ProgressRepository {
             ),
           );
 
-      final earned = passed ? await _award('quiz:$quizId', xp, now) : 0;
+      final earned = passed ? await award('quiz:$quizId', xp, now) : 0;
       return QuizOutcome(recorded: true, xpEarned: earned);
     });
   }
@@ -108,7 +133,7 @@ class ProgressRepository {
   }
 
   /// Crédite [amount] une seule fois pour [source]. À appeler en transaction.
-  Future<int> _award(String source, int amount, DateTime at) async {
+  Future<int> award(String source, int amount, DateTime at) async {
     final existing = _database.select(_database.xpEvents)
       ..where((row) => row.source.equals(source));
     if (await existing.getSingleOrNull() != null) return 0;
@@ -135,6 +160,14 @@ final progressRepositoryProvider = Provider<ProgressRepository>(
 
 final progressProvider = StreamProvider<ProgressSnapshot>(
   (ref) => ref.watch(progressRepositoryProvider).watch(),
+);
+
+final completedLessonsProvider = StreamProvider<Set<String>>(
+  (ref) => ref.watch(progressRepositoryProvider).watchCompletedLessons(),
+);
+
+final bestAttemptsProvider = StreamProvider<Map<String, QuizBest>>(
+  (ref) => ref.watch(progressRepositoryProvider).watchBestAttempts(),
 );
 
 final quizAttemptedProvider = StreamProvider.family<bool, String>(

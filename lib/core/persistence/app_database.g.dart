@@ -1845,6 +1845,372 @@ class FavoritesCompanion extends UpdateCompanion<Favorite> {
   }
 }
 
+class $ExerciseAnswersTable extends ExerciseAnswers
+    with TableInfo<$ExerciseAnswersTable, ExerciseAnswer> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExerciseAnswersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _moduleIdMeta = const VerificationMeta(
+    'moduleId',
+  );
+  @override
+  late final GeneratedColumn<String> moduleId = GeneratedColumn<String>(
+    'module_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _answerMeta = const VerificationMeta('answer');
+  @override
+  late final GeneratedColumn<String> answer = GeneratedColumn<String>(
+    'answer',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    exerciseId,
+    moduleId,
+    answer,
+    status,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exercise_answers';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExerciseAnswer> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('module_id')) {
+      context.handle(
+        _moduleIdMeta,
+        moduleId.isAcceptableOrUnknown(data['module_id']!, _moduleIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_moduleIdMeta);
+    }
+    if (data.containsKey('answer')) {
+      context.handle(
+        _answerMeta,
+        answer.isAcceptableOrUnknown(data['answer']!, _answerMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_answerMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {exerciseId};
+  @override
+  ExerciseAnswer map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExerciseAnswer(
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      moduleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}module_id'],
+      )!,
+      answer: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}answer'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ExerciseAnswersTable createAlias(String alias) {
+    return $ExerciseAnswersTable(attachedDatabase, alias);
+  }
+}
+
+class ExerciseAnswer extends DataClass implements Insertable<ExerciseAnswer> {
+  final String exerciseId;
+  final String moduleId;
+  final String answer;
+  final String status;
+  final DateTime updatedAt;
+  const ExerciseAnswer({
+    required this.exerciseId,
+    required this.moduleId,
+    required this.answer,
+    required this.status,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['module_id'] = Variable<String>(moduleId);
+    map['answer'] = Variable<String>(answer);
+    map['status'] = Variable<String>(status);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ExerciseAnswersCompanion toCompanion(bool nullToAbsent) {
+    return ExerciseAnswersCompanion(
+      exerciseId: Value(exerciseId),
+      moduleId: Value(moduleId),
+      answer: Value(answer),
+      status: Value(status),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ExerciseAnswer.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExerciseAnswer(
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      moduleId: serializer.fromJson<String>(json['moduleId']),
+      answer: serializer.fromJson<String>(json['answer']),
+      status: serializer.fromJson<String>(json['status']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'moduleId': serializer.toJson<String>(moduleId),
+      'answer': serializer.toJson<String>(answer),
+      'status': serializer.toJson<String>(status),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ExerciseAnswer copyWith({
+    String? exerciseId,
+    String? moduleId,
+    String? answer,
+    String? status,
+    DateTime? updatedAt,
+  }) => ExerciseAnswer(
+    exerciseId: exerciseId ?? this.exerciseId,
+    moduleId: moduleId ?? this.moduleId,
+    answer: answer ?? this.answer,
+    status: status ?? this.status,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ExerciseAnswer copyWithCompanion(ExerciseAnswersCompanion data) {
+    return ExerciseAnswer(
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      moduleId: data.moduleId.present ? data.moduleId.value : this.moduleId,
+      answer: data.answer.present ? data.answer.value : this.answer,
+      status: data.status.present ? data.status.value : this.status,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseAnswer(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('moduleId: $moduleId, ')
+          ..write('answer: $answer, ')
+          ..write('status: $status, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(exerciseId, moduleId, answer, status, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExerciseAnswer &&
+          other.exerciseId == this.exerciseId &&
+          other.moduleId == this.moduleId &&
+          other.answer == this.answer &&
+          other.status == this.status &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ExerciseAnswersCompanion extends UpdateCompanion<ExerciseAnswer> {
+  final Value<String> exerciseId;
+  final Value<String> moduleId;
+  final Value<String> answer;
+  final Value<String> status;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ExerciseAnswersCompanion({
+    this.exerciseId = const Value.absent(),
+    this.moduleId = const Value.absent(),
+    this.answer = const Value.absent(),
+    this.status = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExerciseAnswersCompanion.insert({
+    required String exerciseId,
+    required String moduleId,
+    required String answer,
+    required String status,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : exerciseId = Value(exerciseId),
+       moduleId = Value(moduleId),
+       answer = Value(answer),
+       status = Value(status),
+       updatedAt = Value(updatedAt);
+  static Insertable<ExerciseAnswer> custom({
+    Expression<String>? exerciseId,
+    Expression<String>? moduleId,
+    Expression<String>? answer,
+    Expression<String>? status,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (moduleId != null) 'module_id': moduleId,
+      if (answer != null) 'answer': answer,
+      if (status != null) 'status': status,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExerciseAnswersCompanion copyWith({
+    Value<String>? exerciseId,
+    Value<String>? moduleId,
+    Value<String>? answer,
+    Value<String>? status,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ExerciseAnswersCompanion(
+      exerciseId: exerciseId ?? this.exerciseId,
+      moduleId: moduleId ?? this.moduleId,
+      answer: answer ?? this.answer,
+      status: status ?? this.status,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (moduleId.present) {
+      map['module_id'] = Variable<String>(moduleId.value);
+    }
+    if (answer.present) {
+      map['answer'] = Variable<String>(answer.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseAnswersCompanion(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('moduleId: $moduleId, ')
+          ..write('answer: $answer, ')
+          ..write('status: $status, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1854,6 +2220,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $XpEventsTable xpEvents = $XpEventsTable(this);
   late final $NotesTable notes = $NotesTable(this);
   late final $FavoritesTable favorites = $FavoritesTable(this);
+  late final $ExerciseAnswersTable exerciseAnswers = $ExerciseAnswersTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1865,6 +2234,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     xpEvents,
     notes,
     favorites,
+    exerciseAnswers,
   ];
 }
 
@@ -2960,6 +3330,223 @@ typedef $$FavoritesTableProcessedTableManager =
       Favorite,
       PrefetchHooks Function()
     >;
+typedef $$ExerciseAnswersTableCreateCompanionBuilder =
+    ExerciseAnswersCompanion Function({
+      required String exerciseId,
+      required String moduleId,
+      required String answer,
+      required String status,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ExerciseAnswersTableUpdateCompanionBuilder =
+    ExerciseAnswersCompanion Function({
+      Value<String> exerciseId,
+      Value<String> moduleId,
+      Value<String> answer,
+      Value<String> status,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ExerciseAnswersTableFilterComposer
+    extends Composer<_$AppDatabase, $ExerciseAnswersTable> {
+  $$ExerciseAnswersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get moduleId => $composableBuilder(
+    column: $table.moduleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get answer => $composableBuilder(
+    column: $table.answer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ExerciseAnswersTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExerciseAnswersTable> {
+  $$ExerciseAnswersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get moduleId => $composableBuilder(
+    column: $table.moduleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get answer => $composableBuilder(
+    column: $table.answer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ExerciseAnswersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExerciseAnswersTable> {
+  $$ExerciseAnswersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get moduleId =>
+      $composableBuilder(column: $table.moduleId, builder: (column) => column);
+
+  GeneratedColumn<String> get answer =>
+      $composableBuilder(column: $table.answer, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ExerciseAnswersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ExerciseAnswersTable,
+          ExerciseAnswer,
+          $$ExerciseAnswersTableFilterComposer,
+          $$ExerciseAnswersTableOrderingComposer,
+          $$ExerciseAnswersTableAnnotationComposer,
+          $$ExerciseAnswersTableCreateCompanionBuilder,
+          $$ExerciseAnswersTableUpdateCompanionBuilder,
+          (
+            ExerciseAnswer,
+            BaseReferences<
+              _$AppDatabase,
+              $ExerciseAnswersTable,
+              ExerciseAnswer
+            >,
+          ),
+          ExerciseAnswer,
+          PrefetchHooks Function()
+        > {
+  $$ExerciseAnswersTableTableManager(
+    _$AppDatabase db,
+    $ExerciseAnswersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExerciseAnswersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExerciseAnswersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExerciseAnswersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> exerciseId = const Value.absent(),
+                Value<String> moduleId = const Value.absent(),
+                Value<String> answer = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseAnswersCompanion(
+                exerciseId: exerciseId,
+                moduleId: moduleId,
+                answer: answer,
+                status: status,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String exerciseId,
+                required String moduleId,
+                required String answer,
+                required String status,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseAnswersCompanion.insert(
+                exerciseId: exerciseId,
+                moduleId: moduleId,
+                answer: answer,
+                status: status,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ExerciseAnswersTable, ExerciseAnswer>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ExerciseAnswersTable,
+                    ExerciseAnswer
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ExerciseAnswersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ExerciseAnswersTable,
+      ExerciseAnswer,
+      $$ExerciseAnswersTableFilterComposer,
+      $$ExerciseAnswersTableOrderingComposer,
+      $$ExerciseAnswersTableAnnotationComposer,
+      $$ExerciseAnswersTableCreateCompanionBuilder,
+      $$ExerciseAnswersTableUpdateCompanionBuilder,
+      (
+        ExerciseAnswer,
+        BaseReferences<_$AppDatabase, $ExerciseAnswersTable, ExerciseAnswer>,
+      ),
+      ExerciseAnswer,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2976,4 +3563,6 @@ class $AppDatabaseManager {
       $$NotesTableTableManager(_db, _db.notes);
   $$FavoritesTableTableManager get favorites =>
       $$FavoritesTableTableManager(_db, _db.favorites);
+  $$ExerciseAnswersTableTableManager get exerciseAnswers =>
+      $$ExerciseAnswersTableTableManager(_db, _db.exerciseAnswers);
 }

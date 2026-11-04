@@ -13,6 +13,8 @@ import '../../../design_system/stat_tile.dart';
 import '../../../design_system/techno_card.dart';
 import '../../../design_system/xp_bar.dart';
 import '../../academie/domain/module_catalog.dart';
+import '../../academie/presentation/next_lesson.dart';
+import '../../academie/presentation/paths.dart';
 import '../../../design_system/druide_toast.dart';
 import '../../progression/data/progress_repository.dart';
 import '../../progression/domain/progression.dart';
@@ -30,7 +32,7 @@ class AccueilPage extends ConsumerWidget {
     return PageFrame(
       title: AppSection.accueil.label,
       children: [
-        _Hero(progress: progress),
+        _Hero(progress: progress, next: ref.watch(nextLessonProvider).value),
         if (snapshot.hasError)
           const ErrorNotice(
             message:
@@ -136,9 +138,10 @@ class _FlashQuiz extends ConsumerWidget {
 }
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.progress});
+  const _Hero({required this.progress, required this.next});
 
   final ProgressSnapshot progress;
+  final NextLesson? next;
 
   @override
   Widget build(BuildContext context) {
@@ -186,9 +189,15 @@ class _Hero extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   ArcaneButton(
-                    label: 'Découvrir l\'Académie',
+                    label: next == null
+                        ? 'Découvrir l\'Académie'
+                        : 'Continuer : ${next!.lesson.title}',
                     icon: Icons.school_outlined,
-                    onPressed: () => context.go(AppSection.academie.path),
+                    onPressed: () => context.go(
+                      next == null
+                          ? AppSection.academie.path
+                          : lessonPath(next!.moduleId, next!.lesson.id),
+                    ),
                   ),
                 ],
               ),

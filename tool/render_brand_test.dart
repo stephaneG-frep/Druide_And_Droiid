@@ -11,6 +11,7 @@ import 'package:druide_and_droiid/app/sections.dart';
 import 'package:druide_and_droiid/app/theme/palette.dart';
 import 'package:druide_and_droiid/design_system/mascot/mascot_painter.dart';
 import 'package:druide_and_droiid/features/academie/domain/module_catalog.dart';
+import 'package:druide_and_droiid/features/academie/presentation/paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -96,7 +97,10 @@ void main() {
   final previews = <String, String>{
     'accueil': AppSection.accueil.path,
     'academie': AppSection.academie.path,
-    'module': '${AppSection.academie.path}/${academyModules[1].id}',
+    'module': '${AppSection.academie.path}/${academyModules.first.id}',
+    'lecon_a': lessonPath('fondations', 'fondations-02-versions'),
+    'lecon_b': lessonPath('fondations', 'fondations-03-architecture'),
+    'evaluation': evaluationPath('fondations'),
     'maitre': AppSection.maitre.path,
     'lab': AppSection.lab.path,
     'chaudron': AppSection.chaudron.path,

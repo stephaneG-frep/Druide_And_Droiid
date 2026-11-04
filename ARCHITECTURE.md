@@ -34,7 +34,7 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | Présentation | `features/*/presentation`, `app/shell` |
 | Logique métier | `features/*/domain` |
 | Persistance | `core/persistence`, `features/*/data` |
-| Contenu pédagogique | `features/*/domain` pour les catalogues ; leçons prévues en phases 4 et 5 |
+| Contenu pédagogique | `assets/courses/` pour les cours, `features/*/domain` pour les catalogues |
 | Fournisseurs IA | Prévu : phase 6 |
 | Services de plateforme | Prévu : `core/platform`, phase 7 |
 
@@ -54,9 +54,48 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | Apparence | Chargée avant le premier rendu | Évite un flash du mauvais thème. Un échec de lecture n'empêche pas le démarrage. |
 | Éditeur de note | Route hors de la coque de navigation | Laisse la place au clavier, et le retour revient à l'écran d'origine, module ou liste. |
 
+## Contenu pédagogique
+
+Chaque module rédigé est un fichier `assets/courses/<module>.json`, déclaré dans `assets/courses/index.json`. Les cours sont embarqués : ils fonctionnent hors ligne.
+
+```json
+{
+  "moduleId": "fondations",
+  "lessons": [{
+    "id": "fondations-01-histoire",
+    "title": "…",
+    "minutes": 8,
+    "blocks": [{ "type": "paragraph", "text": "**gras** et `code`" }],
+    "quiz": [{ "prompt": "…", "options": ["…"], "answers": [1], "explanation": "…" }],
+    "exercises": [{ "id": "…", "kind": "fill", "prompt": "…", "accepted": ["…"], "solution": "…" }]
+  }],
+  "evaluation": { "passPercent": 80, "questions": [] },
+  "resources": [{ "title": "…", "url": "…" }]
+}
+```
+
+| Élément | Valeurs |
+| --- | --- |
+| Blocs | `heading`, `paragraph`, `list`, `code`, `info`, `warning`, `tip`, `layers` |
+| Questions | Une ou plusieurs bonnes réponses ; une question multiple n'est juste que si elle est entièrement juste |
+| Exercices | `fill` : réponse courte corrigée automatiquement ; `self` : réponse libre, comparée au corrigé par l'apprenant |
+
+Aucun exercice n'exécute de code : la correction ne prétend jamais avoir compilé quoi que ce soit.
+
+`Course.fromJson` valide tout et indique l'emplacement de l'erreur. Un cours illisible devient l'état `CourseUnreadable`, affiché par l'écran concerné. `test/content/courses_test.dart` contrôle les vrais fichiers : à lancer après toute modification de contenu.
+
+Règles de progression, dans `rewards.dart` :
+
+| Action | Condition | XP |
+| --- | --- | --- |
+| Terminer une leçon | Une fois | 20 |
+| Quiz de leçon | 70 %, première réussite | 15 |
+| Exercice | Première réussite | 10 |
+| Évaluation de module | Leçons terminées, seuil du cours, première réussite | 50 |
+
 ## Données
 
-Base SQLite locale gérée par Drift, schéma en version 2 (`lib/core/persistence/`).
+Base SQLite locale gérée par Drift, schéma en version 3 (`lib/core/persistence/`).
 
 | Table | Contenu |
 | --- | --- |
@@ -66,6 +105,7 @@ Base SQLite locale gérée par Drift, schéma en version 2 (`lib/core/persistenc
 | `xp_events` | Registre de l'expérience ; `source` unique, donc une action ne rapporte qu'une fois |
 | `notes` | Notes, liées ou non à un module |
 | `favorites` | Favoris, par type et identifiant |
+| `exercise_answers` | Dernière réponse et résultat de chaque exercice |
 
 L'expérience totale est la somme du registre : elle n'est jamais stockée à part, et ne peut donc pas diverger.
 
@@ -78,7 +118,7 @@ Chaque hausse de `schemaVersion` exige une étape de migration et un test partan
 
 Les repositories sont dans `features/*/data`. Les lectures sont des flux : les écrans se mettent à jour d'eux-mêmes après une écriture.
 
-**Sauvegarde automatique des notes** (`NoteDraft`) : écriture 300 ms après la dernière frappe, et immédiatement en quittant l'écran ou en passant en arrière-plan. Les écritures sont sérialisées pour ne jamais créer de doublon. Limite connue : si le processus est tué brutalement moins de 300 ms après une frappe, cette frappe peut être perdue.
+**Sauvegarde automatique** (`Autosaver`, utilisé par les notes et les exercices) : écriture 300 ms après la dernière frappe, et immédiatement en quittant l'écran ou en passant en arrière-plan. Les écritures sont sérialisées pour ne jamais créer de doublon. Limite connue : si le processus est tué brutalement moins de 300 ms après une frappe, cette frappe peut être perdue.
 
 ## Dépendances système
 

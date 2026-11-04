@@ -67,14 +67,14 @@ class _QuizCardState extends State<QuizCard> {
           for (final (index, option) in question.options.indexed)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: _QuizOption(
+              child: QuizOption(
                 label: option,
                 duration: duration,
                 state: switch (index) {
-                  _ when !answered => _OptionState.idle,
-                  _ when index == question.answerIndex => _OptionState.correct,
-                  _ when index == selected => _OptionState.wrong,
-                  _ => _OptionState.dimmed,
+                  _ when !answered => OptionState.idle,
+                  _ when index == question.answerIndex => OptionState.correct,
+                  _ when index == selected => OptionState.wrong,
+                  _ => OptionState.dimmed,
                 },
                 onTap: answered
                     ? null
@@ -125,10 +125,12 @@ class _QuizCardState extends State<QuizCard> {
   }
 }
 
-enum _OptionState { idle, correct, wrong, dimmed }
+enum OptionState { idle, selected, correct, wrong, dimmed }
 
-class _QuizOption extends StatelessWidget {
-  const _QuizOption({
+/// Choix de réponse, utilisé par les quiz et les évaluations.
+class QuizOption extends StatelessWidget {
+  const QuizOption({
+    super.key,
     required this.label,
     required this.state,
     required this.duration,
@@ -136,7 +138,7 @@ class _QuizOption extends StatelessWidget {
   });
 
   final String label;
-  final _OptionState state;
+  final OptionState state;
   final Duration duration;
   final VoidCallback? onTap;
 
@@ -144,18 +146,23 @@ class _QuizOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final techno = context.techno;
     final (color, icon, suffix) = switch (state) {
-      _OptionState.idle => (techno.border, null, ''),
-      _OptionState.correct => (
+      OptionState.idle => (techno.border, null, ''),
+      OptionState.selected => (
+        techno.violet,
+        Icons.radio_button_checked,
+        ', sélectionnée',
+      ),
+      OptionState.correct => (
         techno.emeraude,
         Icons.check_circle_outline,
         ', bonne réponse',
       ),
-      _OptionState.wrong => (
+      OptionState.wrong => (
         techno.danger,
         Icons.cancel_outlined,
         ', votre réponse, incorrecte',
       ),
-      _OptionState.dimmed => (techno.border, null, ''),
+      OptionState.dimmed => (techno.border, null, ''),
     };
     final shape = BeveledRectangleBorder(
       borderRadius: bevel,
@@ -171,7 +178,7 @@ class _QuizOption extends StatelessWidget {
           duration: duration,
           decoration: ShapeDecoration(
             shape: shape,
-            color: state == _OptionState.idle || state == _OptionState.dimmed
+            color: state == OptionState.idle || state == OptionState.dimmed
                 ? Colors.transparent
                 : color.withValues(alpha: 0.14),
           ),

@@ -7,9 +7,25 @@ import '../../../app/theme/app_theme.dart';
 import '../../../design_system/adaptive_grid.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
+import '../../../design_system/xp_bar.dart';
+import '../../progression/data/progress_repository.dart';
+import '../data/course_repository.dart';
 import '../data/favorites_repository.dart';
 import '../domain/module_catalog.dart';
+import '../domain/rewards.dart';
 import 'level_color.dart';
+import 'paths.dart';
+
+String _pendingMessage(List<String> available) {
+  final numbers = [
+    for (final module in academyModules)
+      if (available.contains(module.id)) module.number,
+  ];
+  return numbers.isEmpty
+      ? 'Les leçons sont en cours de rédaction.'
+      : 'Des leçons sont disponibles dans le module ${numbers.join(', ')}. '
+            'Pour les autres, seul le programme est consultable.';
+}
 
 class AcademiePage extends ConsumerWidget {
   const AcademiePage({super.key});
@@ -17,6 +33,7 @@ class AcademiePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favorites = ref.watch(favoriteModulesProvider).value ?? const {};
+    final available = ref.watch(availableModulesProvider).value;
 
     return PageFrame(
       title: AppSection.academie.label,
@@ -26,11 +43,8 @@ class AcademiePage extends ConsumerWidget {
           'de chacun.',
           style: context.text.bodyLarge,
         ),
-        const PhaseNotice(
-          message:
-              'Les leçons, quiz et exercices sont en cours de rédaction : '
-              'seuls les programmes sont disponibles pour l\'instant.',
-        ),
+        if (available != null && available.length < academyModules.length)
+          PhaseNotice(message: _pendingMessage(available)),
         if (favorites.isNotEmpty) ...[
           const SectionTitle('Vos favoris'),
           AdaptiveGrid(
@@ -54,18 +68,22 @@ class AcademiePage extends ConsumerWidget {
 }
 
 /// Carte de cours d'un module.
-class CourseCard extends StatelessWidget {
+class CourseCard extends ConsumerWidget {
   const CourseCard({required this.module, super.key});
 
   final AcademyModule module;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final techno = context.techno;
     final color = levelColor(context, module.level);
+    final course = ref.watch(courseProvider(module.id)).value?.course;
+    final completed = ref.watch(completedLessonsProvider).value ?? const {};
+    final best = ref.watch(bestAttemptsProvider).value ?? const {};
+    final validated = best[evaluationQuizId(module.id)]?.passed ?? false;
 
     return TechnoCard(
-      onTap: () => context.go('${AppSection.academie.path}/${module.id}'),
+      onTap: () => context.go(modulePath(module.id)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -97,8 +115,20 @@ class CourseCard extends StatelessWidget {
                       label: '${module.topics.length} notions',
                       color: techno.muted,
                     ),
+                    if (validated)
+                      TechnoTag(label: 'Validé', color: techno.emeraude),
                   ],
                 ),
+                if (course != null) ...[
+                  const SizedBox(height: 8),
+                  StepProgress(
+                    done: course.lessons
+                        .where((lesson) => completed.contains(lesson.id))
+                        .length,
+                    total: course.lessons.length,
+                    unit: 'leçons',
+                  ),
+                ],
               ],
             ),
           ),
