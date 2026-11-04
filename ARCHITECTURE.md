@@ -45,7 +45,7 @@ Séparation demandée par la spec, et emplacement de chaque couche :
 | SQLite | Drift | Requêtes typées et migrations versionnées. La bibliothèque SQLite est embarquée sur les deux plateformes. |
 | Secrets | `flutter_secure_storage` derrière `SecretStore` | Keystore sur Android, libsecret sur Linux. |
 | Sauvegarde Android | `allowBackup="false"` | Évite que la sauvegarde cloud du système embarque des données du coffre. Les sauvegardes passent par l'export de l'application (phase 11). |
-| Identifiant | `com.druideanddroiid.druide_and_droiid` | À confirmer avant toute publication : il ne peut plus changer ensuite. |
+| Identifiant | `com.druideanddroiid.druide_and_droiid` | Confirmé. Il ne peut plus changer après une publication. |
 | Langue | Locale `fr` fixe | La spec demande une interface entièrement française. |
 
 ## Dépendances système

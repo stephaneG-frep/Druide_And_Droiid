@@ -18,7 +18,6 @@
 
 ## Points ouverts
 
-- Android n'a pas encore été testé à l'exécution : aucun appareil ni émulateur disponible. Installer une image système et créer un AVD avant la phase 13, idéalement dès la phase 3.
-- Dépôt Git non initialisé : les commits de fin de phase ne sont pas effectués.
+- Publication GitHub en attente : remote `origin` à ajouter.
 - Rendu Linux à vérifier à l'œil (voir [TEST_REPORT.md](TEST_REPORT.md)).
 - Signature release Android : encore la clé de debug, à remplacer en phase 13.
