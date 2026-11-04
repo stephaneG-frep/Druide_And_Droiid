@@ -2,7 +2,8 @@ enum CodeLanguage {
   kotlin('Kotlin'),
   java('Java'),
   dart('Dart'),
-  xml('XML');
+  xml('XML'),
+  shell('Shell');
 
   const CodeLanguage(this.label);
 
@@ -122,6 +123,13 @@ final _codePattern = RegExp(
   r'|(?<word>\b[A-Za-z_]\w*\b)',
 );
 
+final _shellPattern = RegExp(
+  r'(?<comment>(?:^|(?<=\s))#[^\n]*)'
+  r'|(?<string>"[^"\n]*"|'
+  r"'[^'\n]*')",
+  multiLine: true,
+);
+
 final _xmlPattern = RegExp(
   r'(?<comment><!--[\s\S]*?-->)'
   r'|(?<string>"[^"]*")'
@@ -132,11 +140,16 @@ final _xmlPattern = RegExp(
 /// Découpe [source] en jetons colorables ; leur concaténation redonne [source].
 List<CodeToken> highlightCode(String source, CodeLanguage language) {
   final isXml = language == CodeLanguage.xml;
+  final pattern = switch (language) {
+    CodeLanguage.xml => _xmlPattern,
+    CodeLanguage.shell => _shellPattern,
+    _ => _codePattern,
+  };
   final keywords = _keywords[language] ?? const <String>{};
   final tokens = <CodeToken>[];
   var cursor = 0;
 
-  for (final match in (isXml ? _xmlPattern : _codePattern).allMatches(source)) {
+  for (final match in pattern.allMatches(source)) {
     if (match.start > cursor) {
       tokens.add(
         CodeToken(CodeTokenKind.plain, source.substring(cursor, match.start)),
@@ -149,6 +162,7 @@ List<CodeToken> highlightCode(String source, CodeLanguage language) {
       _ when match.namedGroup('string') != null => CodeTokenKind.string,
       _ when isXml && match.namedGroup('tag') != null => CodeTokenKind.tag,
       _ when isXml => CodeTokenKind.annotation,
+      _ when language == CodeLanguage.shell => CodeTokenKind.plain,
       _ when match.namedGroup('annotation') != null => CodeTokenKind.annotation,
       _ when match.namedGroup('number') != null => CodeTokenKind.number,
       _ when keywords.contains(text) => CodeTokenKind.keyword,

@@ -13,6 +13,7 @@ void main() {
       CodeLanguage.java: '@Override public void f() { /* note */ int a = 1; }',
       CodeLanguage.dart: "final a = 'x'; // note",
       CodeLanguage.xml: '<!-- note --><a b="c">texte</a>',
+      CodeLanguage.shell: '# note\nadb install -r "app.apk" # fin',
     };
 
     for (final MapEntry(key: language, value: code) in samples.entries) {
@@ -38,6 +39,16 @@ void main() {
     final tokens = highlightCode('fun', CodeLanguage.java);
 
     expect(textsOf(tokens, CodeTokenKind.keyword), isEmpty);
+  });
+
+  test('reconnaît commentaires et chaînes du shell', () {
+    final tokens = highlightCode(
+      '# Installer\nadb shell "ls"\necho a#b',
+      CodeLanguage.shell,
+    );
+
+    expect(textsOf(tokens, CodeTokenKind.comment), ['# Installer']);
+    expect(textsOf(tokens, CodeTokenKind.string), ['"ls"']);
   });
 
   test('reconnaît les balises et attributs XML', () {

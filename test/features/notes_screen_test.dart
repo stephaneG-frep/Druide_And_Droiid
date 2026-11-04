@@ -183,7 +183,7 @@ void main() {
     testWidgets('une note créée est rattachée au module et y revient', (
       tester,
     ) async {
-      final container = await pumpApp(tester, size: const Size(390, 2400));
+      final container = await pumpApp(tester, size: const Size(390, 5000));
       await goTo(tester, container, modulePath);
 
       await tester.tap(find.text('Ajouter une note'));

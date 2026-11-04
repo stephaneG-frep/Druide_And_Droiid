@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Phase 5, en cours — 2026-11-04
+
+- Module 1 terminé : huit leçons, évaluation de onze questions.
+- Module 2 Kotlin rédigé : neuf leçons et évaluation.
+- Sortie des programmes affichée sous les exemples de code.
+- Coloration du Shell.
+- Outil `tool/check_course_code.py`, qui compile et exécute les exemples Kotlin.
+
 ## Phase 4 — 2026-11-04
 
 - Cours au format JSON embarqué, avec validation stricte du contenu.

@@ -88,6 +88,7 @@ sealed class LessonBlock {
       'code' => CodeBlock(
         language: path.language(json),
         code: path.string(json, 'code'),
+        output: json.containsKey('output') ? path.string(json, 'output') : null,
       ),
       'info' => CalloutBlock(CalloutKind.info, path.string(json, 'text')),
       'warning' => CalloutBlock(CalloutKind.warning, path.string(json, 'text')),
@@ -120,10 +121,17 @@ class ListBlock extends LessonBlock {
 }
 
 class CodeBlock extends LessonBlock {
-  const CodeBlock({required this.language, required this.code});
+  const CodeBlock({
+    required this.language,
+    required this.code,
+    required this.output,
+  });
 
   final CodeLanguage language;
   final String code;
+
+  /// Sortie réelle du programme, contrôlée par `tool/check_course_code.py`.
+  final String? output;
 }
 
 class CalloutBlock extends LessonBlock {

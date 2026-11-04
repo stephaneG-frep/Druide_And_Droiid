@@ -76,13 +76,15 @@ Chaque module rédigé est un fichier `assets/courses/<module>.json`, déclaré 
 
 | Élément | Valeurs |
 | --- | --- |
-| Blocs | `heading`, `paragraph`, `list`, `code`, `info`, `warning`, `tip`, `layers` |
+| Blocs | `heading`, `paragraph`, `list`, `code` (avec `output` facultatif), `info`, `warning`, `tip`, `layers` |
 | Questions | Une ou plusieurs bonnes réponses ; une question multiple n'est juste que si elle est entièrement juste |
 | Exercices | `fill` : réponse courte corrigée automatiquement ; `self` : réponse libre, comparée au corrigé par l'apprenant |
 
 Aucun exercice n'exécute de code : la correction ne prétend jamais avoir compilé quoi que ce soit.
 
 `Course.fromJson` valide tout et indique l'emplacement de l'erreur. Un cours illisible devient l'état `CourseUnreadable`, affiché par l'écran concerné. `test/content/courses_test.dart` contrôle les vrais fichiers : à lancer après toute modification de contenu.
+
+`tool/check_course_code.py` compile et exécute avec `kotlinc` chaque exemple Kotlin contenant `fun main`, y compris les corrigés, et compare la sortie au champ `output`. Les extraits utilisant des API Android ne s'exécutent pas sur un ordinateur : l'outil les liste comme non vérifiés. À lancer après toute modification d'un cours.
 
 Règles de progression, dans `rewards.dart` :
 

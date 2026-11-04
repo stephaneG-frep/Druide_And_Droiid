@@ -13,7 +13,7 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 ## Ce qui est disponible
 
 - **Accueil** : votre grade, vos statistiques et une question flash chaque jour.
-- **Académie** : le programme des douze modules et vos favoris. Pour l'instant, seules les trois premières leçons du module 1 sont rédigées.
+- **Académie** : le programme des douze modules et vos favoris. Pour l'instant, les modules 1 (Fondations) et 2 (Kotlin) sont rédigés.
 - **Mes notes** : vos notes personnelles.
 - **Lab** : un exemple de code Kotlin à lire et à copier. Il ne peut pas être exécuté dans l'application.
 - **Projets** : la liste des vingt projets prévus.

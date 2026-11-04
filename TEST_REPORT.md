@@ -1,5 +1,33 @@
 # Rapport de tests
 
+## Phase 5, tour 1 — 2026-11-04
+
+La phase n'est pas terminée : modules 1 et 2 sur douze.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux et sur Honor | 5 tests sur 5 réussis sur chacun |
+| Exemples Kotlin compilés, exécutés et comparés | 41 sur 41 |
+| Cohérence des cours | Identifiants, réponses et index validés par les tests |
+
+L'outil de contrôle a été éprouvé : une sortie faussée et un code qui ne compile pas ont bien été signalés.
+
+Sources contrôlées sur developer.android.com : niveaux d'API, AAB, notifications et canaux, stockage, services et types de premier plan, processus, permissions, mémoire. Aucune correction n'a été nécessaire sur les trois leçons existantes.
+
+Vérifié à la main sur le Honor : liste des modules, module Kotlin, lecture d'une leçon avec sa console de résultat. Aucun crash ni erreur Flutter dans logcat.
+
+### Non vérifié
+
+- **Neuf extraits non exécutés** : ils utilisent des API Android, ou sont des fragments, et n'ont été ni compilés ni exécutés.
+  - Module 1 : niveaux d'API (2), corrigé `defaultConfig`, permissions, mémoire (2), notifications (2).
+  - Module 2 : `viewModelScope`.
+- **Trois affirmations du module 1** n'ont pas été recoupées sur une page lue : permissions accordées une seule fois et retrait automatique, depuis Android 11 ; permissions d'exécution depuis Android 6.0 ; message `INSTALL_FAILED_UPDATE_INCOMPATIBLE`.
+- **Android 37** : le SDK de cette machine contient la plateforme 37, absente de la page officielle consultée. La liste des versions est présentée comme des repères.
+- **Le contenu n'a pas été relu par un tiers**, et les leçons n'ont pas toutes été parcourues sur le téléphone.
+- **Les liens des ressources** ne s'ouvrent pas, et les cinq liens du module Kotlin n'ont pas été testés.
+
 ## Phase 4 — 2026-11-04
 
 | Vérification | Résultat |

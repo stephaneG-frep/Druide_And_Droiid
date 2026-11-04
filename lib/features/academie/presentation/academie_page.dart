@@ -16,15 +16,16 @@ import '../domain/rewards.dart';
 import 'level_color.dart';
 import 'paths.dart';
 
-String _pendingMessage(List<String> available) {
-  final numbers = [
-    for (final module in academyModules)
-      if (available.contains(module.id)) module.number,
-  ];
-  return numbers.isEmpty
-      ? 'Les leçons sont en cours de rédaction.'
-      : 'Des leçons sont disponibles dans le module ${numbers.join(', ')}. '
-            'Pour les autres, seul le programme est consultable.';
+/// Texte annonçant les modules déjà rédigés.
+String pendingMessage(List<int> numbers) {
+  if (numbers.isEmpty) return 'Les leçons sont en cours de rédaction.';
+  final last = numbers.last;
+  final where = numbers.length == 1
+      ? 'le module $last'
+      : 'les modules ${numbers.sublist(0, numbers.length - 1).join(', ')} '
+            'et $last';
+  return 'Des leçons sont disponibles dans $where. Pour les autres, seul le '
+      'programme est consultable.';
 }
 
 class AcademiePage extends ConsumerWidget {
@@ -44,7 +45,12 @@ class AcademiePage extends ConsumerWidget {
           style: context.text.bodyLarge,
         ),
         if (available != null && available.length < academyModules.length)
-          PhaseNotice(message: _pendingMessage(available)),
+          PhaseNotice(
+            message: pendingMessage([
+              for (final module in academyModules)
+                if (available.contains(module.id)) module.number,
+            ]),
+          ),
         if (favorites.isNotEmpty) ...[
           const SectionTitle('Vos favoris'),
           AdaptiveGrid(

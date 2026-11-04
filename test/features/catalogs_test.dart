@@ -1,4 +1,5 @@
 import 'package:druide_and_droiid/features/academie/domain/module_catalog.dart';
+import 'package:druide_and_droiid/features/academie/presentation/academie_page.dart';
 import 'package:druide_and_droiid/features/accueil/domain/flash_questions.dart';
 import 'package:druide_and_droiid/features/progression/domain/progression.dart';
 import 'package:druide_and_droiid/features/projets/domain/project_catalog.dart';
@@ -27,6 +28,13 @@ void main() {
     test('aucun module n\'a un programme vide', () {
       expect(academyModules.every((m) => m.topics.isNotEmpty), isTrue);
     });
+  });
+
+  test('l\'annonce des modules rédigés s\'accorde en nombre', () {
+    expect(pendingMessage([]), contains('en cours de rédaction'));
+    expect(pendingMessage([1]), contains('dans le module 1.'));
+    expect(pendingMessage([1, 2]), contains('dans les modules 1 et 2.'));
+    expect(pendingMessage([1, 2, 3]), contains('dans les modules 1, 2 et 3.'));
   });
 
   test('vingt projets répartis sur quatre niveaux', () {

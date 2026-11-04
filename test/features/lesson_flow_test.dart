@@ -81,6 +81,16 @@ Future<void> completeAllLessons(
   }
 }
 
+class _SingleModuleBundle extends DiskAssetBundle {
+  @override
+  Future<String> loadString(String key, {bool cache = true}) {
+    if (key.endsWith('index.json')) {
+      return Future.value('{"modules": ["$moduleId"]}');
+    }
+    return super.loadString(key, cache: cache);
+  }
+}
+
 class _BrokenBundle extends DiskAssetBundle {
   @override
   Future<String> loadString(String key, {bool cache = true}) {
@@ -375,7 +385,7 @@ void main() {
     testWidgets('un module sans contenu l\'indique', (tester) async {
       final container = await pumpApp(tester, size: tall);
 
-      await goTo(tester, container, modulePath('kotlin'));
+      await goTo(tester, container, modulePath('java'));
 
       expect(find.textContaining('pas encore rédigées'), findsOneWidget);
     });
@@ -387,7 +397,10 @@ void main() {
 
       await goTo(tester, container, evaluationPath(moduleId));
 
-      expect(find.textContaining('il en reste 3'), findsOneWidget);
+      expect(
+        find.textContaining('il en reste ${course.lessons.length}'),
+        findsOneWidget,
+      );
       expect(find.text(course.evaluation.questions.first.prompt), findsNothing);
     });
 
@@ -452,8 +465,10 @@ void main() {
       );
     });
 
-    testWidgets('renvoie à l\'Académie quand tout est terminé', (tester) async {
-      final container = await pumpApp(tester);
+    testWidgets('passe au module suivant, puis à l\'Académie à la fin', (
+      tester,
+    ) async {
+      final container = await pumpApp(tester, bundle: _SingleModuleBundle());
 
       await completeAllLessons(tester, container);
       await tester.pump();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../app/theme/palette.dart';
 import '../../../design_system/code_panel.dart';
+import '../../../design_system/console_panel.dart';
 import '../../../design_system/dialogue_bubble.dart';
 import '../../../design_system/mascot/maitre_and_droiid.dart';
 import '../../../design_system/techno_card.dart';
@@ -80,9 +81,20 @@ class LessonBlockView extends StatelessWidget {
             ),
         ],
       ),
-      CodeBlock(:final language, :final code) => CodePanel(
-        code: code,
-        language: language,
+      CodeBlock(:final language, :final code, :final output) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 8,
+        children: [
+          CodePanel(code: code, language: language),
+          if (output != null)
+            ConsolePanel(
+              title: 'Résultat de ce programme, relevé à la rédaction',
+              lines: [
+                for (final line in output.split('\n'))
+                  ConsoleLine(ConsoleLineKind.output, line),
+              ],
+            ),
+        ],
       ),
       CalloutBlock(:final kind, :final text) => _Callout(kind, text),
       TipBlock(:final text) => DialogueBubble(
