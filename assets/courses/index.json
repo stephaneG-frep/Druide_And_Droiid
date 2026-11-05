@@ -3,6 +3,8 @@
     "fondations",
     "kotlin",
     "java",
-    "android-studio"
+    "android-studio",
+    "interfaces",
+    "donnees-reseaux"
   ]
 }

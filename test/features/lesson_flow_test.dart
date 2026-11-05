@@ -385,7 +385,7 @@ void main() {
     testWidgets('un module sans contenu l\'indique', (tester) async {
       final container = await pumpApp(tester, size: tall);
 
-      await goTo(tester, container, modulePath('donnees-reseaux'));
+      await goTo(tester, container, modulePath('publication'));
 
       expect(find.textContaining('pas encore rédigées'), findsOneWidget);
     });

@@ -1,0 +1,1755 @@
+{
+ "moduleId": "donnees-reseaux",
+ "lessons": [
+  {
+   "id": "data-01-sqlite",
+   "title": "SQLite et le langage SQL",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**SQLite** est une base de données complète, stockée dans un simple fichier et intégrée à Android. Elle est parfaite pour des données structurées qui doivent rester sur l'appareil."
+    },
+    {
+     "type": "heading",
+     "text": "Tables et lignes"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **table** ressemble à un tableau : chaque colonne a un type, chaque ligne est un enregistrement, et une **clé primaire** identifie chaque ligne."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "CREATE TABLE sorts (\n    id INTEGER PRIMARY KEY,\n    nom TEXT NOT NULL,\n    niveau INTEGER NOT NULL\n);\n\nINSERT INTO sorts (nom, niveau) VALUES ('Feu', 3);\nINSERT INTO sorts (nom, niveau) VALUES ('Eau', 1);\nINSERT INTO sorts (nom, niveau) VALUES ('Foudre', 5);"
+    },
+    {
+     "type": "heading",
+     "text": "Lire des données"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "-- Les sorts de niveau 2 ou plus, du plus fort au plus faible\nSELECT nom, niveau\nFROM sorts\nWHERE niveau >= 2\nORDER BY niveau DESC;"
+    },
+    {
+     "type": "heading",
+     "text": "Modifier et supprimer"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "UPDATE sorts SET niveau = 4 WHERE nom = 'Feu';\nDELETE FROM sorts WHERE nom = 'Eau';"
+    },
+    {
+     "type": "warning",
+     "text": "Un `UPDATE` ou un `DELETE` sans `WHERE` touche **toutes** les lignes. Relisez toujours votre condition avant d'exécuter."
+    },
+    {
+     "type": "heading",
+     "text": "Relier des tables"
+    },
+    {
+     "type": "paragraph",
+     "text": "Plutôt que de répéter des informations, on les répartit dans plusieurs tables, reliées par une **clé étrangère**. Une **jointure** les réunit à la lecture."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "CREATE TABLE ecoles (\n    id INTEGER PRIMARY KEY,\n    nom TEXT NOT NULL\n);\n\nCREATE TABLE apprentis (\n    id INTEGER PRIMARY KEY,\n    nom TEXT NOT NULL,\n    ecole_id INTEGER NOT NULL REFERENCES ecoles(id)\n);\n\nSELECT apprentis.nom, ecoles.nom\nFROM apprentis\nJOIN ecoles ON apprentis.ecole_id = ecoles.id;"
+    },
+    {
+     "type": "heading",
+     "text": "Compter et regrouper"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "SELECT ecole_id, COUNT(*) AS effectif\nFROM apprentis\nGROUP BY ecole_id;"
+    },
+    {
+     "type": "heading",
+     "text": "Les transactions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **transaction** regroupe plusieurs opérations : toutes réussissent, ou aucune n'est appliquée. C'est indispensable pour un virement de points d'un joueur à un autre."
+    },
+    {
+     "type": "heading",
+     "text": "Les injections SQL"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ne construisez jamais une requête en collant un texte saisi par l'utilisateur. Une valeur malveillante pourrait modifier la requête elle-même. Passez toujours par des **paramètres** : c'est ce que fait Room avec `:nom`."
+    },
+    {
+     "type": "tip",
+     "text": "Sur Android, vous utiliserez rarement SQLite directement : Room s'en charge. Mais comprendre le SQL reste indispensable pour écrire de bonnes requêtes !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait une clé primaire ?",
+     "options": [
+      "Elle identifie chaque ligne",
+      "Elle chiffre la table",
+      "Elle trie les lignes"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque valeur est unique."
+    },
+    {
+     "prompt": "Quelle commande lit des données ?",
+     "options": [
+      "SELECT",
+      "INSERT",
+      "DROP"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "INSERT ajoute des lignes."
+    },
+    {
+     "prompt": "Que fait `DELETE FROM sorts` sans WHERE ?",
+     "options": [
+      "Il supprime toutes les lignes",
+      "Rien",
+      "Il supprime la première ligne"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Relisez toujours votre condition."
+    },
+    {
+     "prompt": "Que garantit une transaction ?",
+     "options": [
+      "Toutes les opérations réussissent, ou aucune",
+      "Une exécution plus rapide",
+      "Un chiffrement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La base reste cohérente."
+    },
+    {
+     "prompt": "Comment éviter une injection SQL ?",
+     "options": [
+      "Avec des requêtes paramétrées",
+      "En concaténant du texte",
+      "En masquant le clavier"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La valeur n'est alors jamais interprétée comme du SQL."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé SQL trie les résultats ?",
+     "accepted": [
+      "ORDER BY"
+     ],
+     "solution": "ORDER BY."
+    },
+    {
+     "id": "data-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la requête qui affiche les noms des sorts de niveau 3 ou plus, par ordre alphabétique.",
+     "solution": "SELECT nom FROM sorts\nWHERE niveau >= 3\nORDER BY nom;"
+    }
+   ]
+  },
+  {
+   "id": "data-02-room",
+   "title": "Room",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Room** ajoute une couche au-dessus de SQLite : vos requêtes sont vérifiées à la compilation, et vous manipulez des objets Kotlin. C'est la solution recommandée sur Android."
+    },
+    {
+     "type": "info",
+     "text": "Room 3.0 change de nom de paquet : `androidx.room3`, avec KSP obligatoire. Dans les projets existants, vous verrez encore très souvent `androidx.room`. Les concepts sont les mêmes."
+    },
+    {
+     "type": "heading",
+     "text": "Les trois composants"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Entity** : une classe qui représente une table.",
+      "**DAO** : les fonctions d'accès aux données.",
+      "**Database** : le point d'entrée de la base."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Entity(tableName = \"notes\")\ndata class NoteEntity(\n    @PrimaryKey(autoGenerate = true) val id: Long = 0,\n    val titre: String,\n    @ColumnInfo(name = \"module_id\") val moduleId: String?,\n)\n\n@Dao\ninterface NoteDao {\n    @Query(\"SELECT * FROM notes ORDER BY id DESC\")\n    fun observerTout(): Flow<List<NoteEntity>>\n\n    @Query(\"SELECT * FROM notes WHERE module_id = :moduleId\")\n    suspend fun parModule(moduleId: String): List<NoteEntity>\n\n    @Insert\n    suspend fun ajouter(note: NoteEntity): Long\n\n    @Update\n    suspend fun modifier(note: NoteEntity)\n\n    @Delete\n    suspend fun supprimer(note: NoteEntity)\n}\n\n@Database(entities = [NoteEntity::class], version = 1)\nabstract class BaseDeDonnees : RoomDatabase() {\n    abstract fun notes(): NoteDao\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une requête qui renvoie un `Flow` réémet automatiquement ses résultats à chaque changement de la table. L'écran se met donc à jour tout seul : c'est le cœur d'une application réactive."
+    },
+    {
+     "type": "heading",
+     "text": "Créer la base"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une instance de base coûte cher : gardez-en une seule pour toute l'application."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun creerBase(context: Context): BaseDeDonnees {\n    return Room.databaseBuilder<BaseDeDonnees>(context, \"academie.db\")\n        .setDriver(AndroidSQLiteDriver())\n        .build()\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Le dépôt"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un dépôt cache Room au reste de l'application, et convertit les entités en modèles métier."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Note(val id: Long, val titre: String)\n\nclass NotesDepot(private val dao: NoteDao) {\n    val notes: Flow<List<Note>> = dao.observerTout().map { lignes ->\n        lignes.map { Note(it.id, it.titre) }\n    }\n\n    suspend fun ajouter(titre: String) {\n        dao.ajouter(NoteEntity(titre = titre, moduleId = null))\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les migrations"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand le schéma change, augmentez `version`, et fournissez une **migration** : elle transforme la base existante des utilisateurs."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "val MIGRATION_1_2 = object : Migration(1, 2) {\n    override suspend fun migrate(connection: SQLiteConnection) {\n        connection.execSQL(\"ALTER TABLE notes ADD COLUMN favori INTEGER NOT NULL DEFAULT 0\")\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "`fallbackToDestructiveMigration` efface la base si une migration manque. C'est tolérable pendant le développement, mais en production vos utilisateurs perdraient toutes leurs données."
+    },
+    {
+     "type": "tip",
+     "text": "Testez vos migrations avec un vrai fichier de l'ancienne version. Une migration ratée ne se voit que chez vos utilisateurs !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel composant représente une table ?",
+     "options": [
+      "Entity",
+      "Dao",
+      "Database"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le DAO contient les requêtes."
+    },
+    {
+     "prompt": "Quel est l'atout majeur de Room face au SQL brut ?",
+     "options": [
+      "La vérification des requêtes à la compilation",
+      "Une base en ligne",
+      "L'absence de tables"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une erreur de requête casse la compilation."
+    },
+    {
+     "prompt": "Que fait une requête renvoyant un Flow ?",
+     "options": [
+      "Elle réémet à chaque changement de la table",
+      "Elle ne s'exécute qu'une fois",
+      "Elle bloque le fil principal"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'écran se met à jour tout seul."
+    },
+    {
+     "prompt": "Que faire quand le schéma change ?",
+     "options": [
+      "Augmenter la version et fournir une migration",
+      "Rien",
+      "Supprimer l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La base des utilisateurs doit être transformée."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation marque l'interface qui contient les requêtes ?",
+     "accepted": [
+      "@Dao",
+      "Dao"
+     ],
+     "solution": "@Dao."
+    },
+    {
+     "id": "data-02-ex2",
+     "kind": "self",
+     "prompt": "Ajoutez à `NoteDao` une fonction qui compte les notes.",
+     "solution": "@Dao\ninterface CompteurDao {\n    @Query(\"SELECT COUNT(*) FROM notes\")\n    suspend fun compter(): Int\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "data-03-datastore",
+   "title": "DataStore",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Pour de petits réglages, comme un thème ou la dernière rubrique ouverte, une base de données serait excessive. **DataStore** stocke des paires clé/valeur ou des objets typés, de façon asynchrone et transactionnelle."
+    },
+    {
+     "type": "info",
+     "text": "DataStore remplace `SharedPreferences`, que vous verrez dans les anciens projets. Pour de grands volumes ou des données reliées, préférez Room."
+    },
+    {
+     "type": "heading",
+     "text": "Déclarer et lire"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "val Context.reglages: DataStore<Preferences> by preferencesDataStore(name = \"reglages\")\n\nval THEME_SOMBRE = booleanPreferencesKey(\"theme_sombre\")\n\nclass ReglagesDepot(private val context: Context) {\n    val themeSombre: Flow<Boolean> = context.reglages.data.map { preferences ->\n        preferences[THEME_SOMBRE] ?: false\n    }\n\n    suspend fun changerTheme(sombre: Boolean) {\n        context.reglages.edit { preferences ->\n            preferences[THEME_SOMBRE] = sombre\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "La lecture passe par un `Flow`, et l'écriture par une fonction `suspend` : rien ne bloque le fil principal, contrairement au `commit()` de `SharedPreferences`."
+    },
+    {
+     "type": "heading",
+     "text": "L'exposer à l'écran"
+    },
+    {
+     "type": "paragraph",
+     "text": "Suivez l'architecture habituelle : le dépôt enveloppe DataStore, et le ViewModel transforme le `Flow` en `StateFlow`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ReglagesViewModel(private val depot: ReglagesDepot) : ViewModel() {\n    val themeSombre: StateFlow<Boolean> = depot.themeSombre.stateIn(\n        scope = viewModelScope,\n        started = SharingStarted.WhileSubscribed(5000),\n        initialValue = false,\n    )\n\n    fun changerTheme(sombre: Boolean) {\n        viewModelScope.launch { depot.changerTheme(sombre) }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les règles à respecter"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une seule instance de DataStore par fichier dans un processus. Sinon, lectures et écritures lèvent une `IllegalStateException`. Le délégué déclaré au niveau du fichier y veille.",
+      "Le type stocké doit être immuable.",
+      "Ne lisez pas DataStore directement dans un composable : passez par le ViewModel."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Les fichiers de DataStore sont inclus par défaut dans la sauvegarde automatique d'Android. N'y mettez pas de données sensibles sans configurer des règles d'exclusion."
+    },
+    {
+     "type": "tip",
+     "text": "Un réglage ? DataStore. Une liste qui grandit ? Room. Un fichier binaire ? Le stockage de fichiers. Chaque donnée a sa maison !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Pour quoi DataStore est-il adapté ?",
+     "options": [
+      "De petits réglages",
+      "Des milliers de lignes reliées",
+      "Des vidéos"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pour de grands volumes, préférez Room."
+    },
+    {
+     "prompt": "Comment lit-on dans DataStore ?",
+     "options": [
+      "Avec un Flow",
+      "Avec findViewById",
+      "Avec une requête SQL"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La lecture est asynchrone."
+    },
+    {
+     "prompt": "Combien d'instances pour un même fichier dans un processus ?",
+     "options": [
+      "Une seule",
+      "Autant que d'écrans"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon, une IllegalStateException est levée."
+    },
+    {
+     "prompt": "Que remplace DataStore ?",
+     "options": [
+      "SharedPreferences",
+      "Room",
+      "Gradle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il corrige ses défauts."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction de DataStore modifie les préférences ?",
+     "accepted": [
+      "edit",
+      "edit()",
+      ".edit"
+     ],
+     "solution": "edit."
+    },
+    {
+     "id": "data-03-ex2",
+     "kind": "self",
+     "prompt": "Déclarez une clé de préférence entière `TAILLE_TEXTE`, nommée `taille_texte`.",
+     "solution": "val TAILLE_TEXTE = intPreferencesKey(\"taille_texte\")",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "data-04-http",
+   "title": "HTTP et REST",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La plupart des applications dialoguent avec un serveur. **HTTP** est le protocole de ce dialogue, et **REST** une façon d'organiser une API."
+    },
+    {
+     "type": "heading",
+     "text": "Une requête et sa réponse"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "GET /sorts/7 HTTP/1.1\nHost: api.exemple.fr\nAccept: application/json\nAuthorization: Bearer abc123\n\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"id\": 7, \"nom\": \"Feu\", \"niveau\": 3}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une requête comporte une **méthode**, un chemin, des **en-têtes** et parfois un **corps**. La réponse renvoie un **code de statut**, des en-têtes et un corps."
+    },
+    {
+     "type": "heading",
+     "text": "Les méthodes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`GET` : lire une ressource, sans la modifier.",
+      "`POST` : créer une ressource.",
+      "`PUT` : remplacer une ressource.",
+      "`PATCH` : modifier une partie d'une ressource.",
+      "`DELETE` : supprimer une ressource."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "`GET`, `PUT` et `DELETE` sont **idempotents** : les répéter produit le même résultat. Retenter un `POST` peut en revanche créer un doublon, ce qui compte pour les nouvelles tentatives."
+    },
+    {
+     "type": "heading",
+     "text": "Les codes de statut"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun categorie(code: Int) = when (code) {\n    in 200..299 -> \"Succès\"\n    in 300..399 -> \"Redirection\"\n    401 -> \"Non authentifié\"\n    403 -> \"Interdit\"\n    404 -> \"Introuvable\"\n    429 -> \"Trop de requêtes\"\n    in 400..499 -> \"Erreur du client\"\n    in 500..599 -> \"Erreur du serveur\"\n    else -> \"Inconnu\"\n}\n\nfun main() {\n    listOf(200, 201, 304, 401, 404, 429, 503).forEach { code ->\n        println(\"$code : ${categorie(code)}\")\n    }\n}",
+     "output": "200 : Succès\n201 : Succès\n304 : Redirection\n401 : Non authentifié\n404 : Introuvable\n429 : Trop de requêtes\n503 : Erreur du serveur"
+    },
+    {
+     "type": "info",
+     "text": "La différence entre 401 et 403 est utile : 401 signifie que le serveur ne sait pas qui vous êtes, 403 qu'il le sait mais refuse."
+    },
+    {
+     "type": "heading",
+     "text": "Une API REST"
+    },
+    {
+     "type": "paragraph",
+     "text": "REST organise une API autour de ressources, désignées par des URL, sur lesquelles on applique les méthodes HTTP."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "GET    /sorts          Lire la liste\nGET    /sorts/7        Lire un sort\nPOST   /sorts          Créer un sort\nPUT    /sorts/7        Remplacer un sort\nDELETE /sorts/7        Supprimer un sort"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les paramètres de filtre et de pagination passent en général dans l'URL : `GET /sorts?niveau=3&page=2`."
+    },
+    {
+     "type": "heading",
+     "text": "Sur Android"
+    },
+    {
+     "type": "paragraph",
+     "text": "La permission `INTERNET` est nécessaire, et les accès réseau sont interdits sur le fil principal : Android lève une `NetworkOnMainThreadException`."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<uses-permission android:name=\"android.permission.INTERNET\" />"
+    },
+    {
+     "type": "tip",
+     "text": "Essayez votre API avec `curl` avant d'écrire du Kotlin. Vous saurez tout de suite si le problème vient du serveur ou de votre code !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle méthode lit une ressource sans la modifier ?",
+     "options": [
+      "GET",
+      "POST",
+      "DELETE"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "POST crée une ressource."
+    },
+    {
+     "prompt": "Que signifie un code 404 ?",
+     "options": [
+      "La ressource est introuvable",
+      "Tout va bien",
+      "Le serveur est en panne"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une erreur côté client."
+    },
+    {
+     "prompt": "Quelle famille indique une erreur du serveur ?",
+     "options": [
+      "5xx",
+      "2xx",
+      "3xx"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "503 en est un exemple."
+    },
+    {
+     "prompt": "Quelle méthode faut-il éviter de retenter aveuglément ?",
+     "options": [
+      "POST",
+      "GET"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle pourrait créer un doublon."
+    },
+    {
+     "prompt": "Que se passe-t-il pour un accès réseau sur le fil principal ?",
+     "options": [
+      "Android lève une exception",
+      "Il est accéléré",
+      "Il est ignoré"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une NetworkOnMainThreadException."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-04-ex1",
+     "kind": "fill",
+     "prompt": "Quel code de statut signifie que le client n'est pas authentifié ?",
+     "accepted": [
+      "401"
+     ],
+     "solution": "401."
+    },
+    {
+     "id": "data-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les requêtes REST pour lire les apprentis, créer un apprenti, et supprimer l'apprenti numéro 12.",
+     "solution": "GET /apprentis\nPOST /apprentis\nDELETE /apprentis/12"
+    }
+   ]
+  },
+  {
+   "id": "data-05-json",
+   "title": "JSON",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**JSON** est le format d'échange le plus répandu entre une application et son serveur. Il est lisible, et se compose d'objets, de listes, de textes, de nombres et de booléens."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "{\n  \"id\": 7,\n  \"nom\": \"Feu\",\n  \"niveau\": 3,\n  \"actif\": true,\n  \"tags\": [\"attaque\", \"élément\"],\n  \"auteur\": { \"nom\": \"Merlin\" },\n  \"note\": null\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Décoder avec kotlinx.serialization"
+    },
+    {
+     "type": "paragraph",
+     "text": "La bibliothèque **kotlinx.serialization** convertit le JSON en classes Kotlin. L'annotation `@Serializable` génère le code de conversion à la compilation."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.serialization.Serializable\nimport kotlinx.serialization.encodeToString\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Sort(val id: Int, val nom: String, val niveau: Int = 1)\n\nfun main() {\n    val texte = \"\"\"{\"id\": 7, \"nom\": \"Feu\"}\"\"\"\n    val sort = Json.decodeFromString<Sort>(texte)\n    println(sort)\n\n    println(Json.encodeToString(sort.copy(niveau = 3)))\n}",
+     "output": "Sort(id=7, nom=Feu, niveau=1)\n{\"id\":7,\"nom\":\"Feu\",\"niveau\":3}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une propriété avec une valeur par défaut peut manquer dans le JSON."
+    },
+    {
+     "type": "heading",
+     "text": "Résister aux changements du serveur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Par défaut, une clé inconnue provoque une erreur. Or un serveur peut ajouter un champ à tout moment. `ignoreUnknownKeys` rend l'application plus robuste, et `@SerialName` accepte un nom différent."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.serialization.SerialName\nimport kotlinx.serialization.Serializable\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Apprenti(\n    val nom: String,\n    @SerialName(\"xp_total\") val xp: Int,\n    val surnom: String? = null,\n)\n\nprivate val lecteur = Json { ignoreUnknownKeys = true }\n\nfun main() {\n    val texte = \"\"\"{\"nom\": \"Viviane\", \"xp_total\": 120, \"nouveau_champ\": true}\"\"\"\n    println(lecteur.decodeFromString<Apprenti>(texte))\n}",
+     "output": "Apprenti(nom=Viviane, xp=120, surnom=null)"
+    },
+    {
+     "type": "heading",
+     "text": "Gérer un JSON invalide"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une réponse peut être tronquée ou inattendue. Le décodage lève alors une `SerializationException` : attrapez-la, plutôt que de laisser l'application planter."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.serialization.Serializable\nimport kotlinx.serialization.SerializationException\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Point(val x: Int)\n\nfun lire(texte: String): Point? = try {\n    Json.decodeFromString<Point>(texte)\n} catch (e: SerializationException) {\n    null\n}\n\nfun main() {\n    println(lire(\"\"\"{\"x\": 1}\"\"\"))\n    println(lire(\"\"\"{\"x\": \"pas un nombre\"}\"\"\"))\n    println(lire(\"\"\"{tronqué\"\"\"))\n}",
+     "output": "Point(x=1)\nnull\nnull"
+    },
+    {
+     "type": "warning",
+     "text": "Avec R8, le code de réduction peut retirer des classes utilisées uniquement par réflexion. kotlinx.serialization génère son code à la compilation et limite ce risque, mais testez toujours votre version de release."
+    },
+    {
+     "type": "tip",
+     "text": "Une classe pour le réseau, une pour la base, une pour l'écran. Trois classes semblables, mais le jour où le serveur change, un seul fichier bouge !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle annotation rend une classe convertible en JSON ?",
+     "options": [
+      "@Serializable",
+      "@Entity",
+      "@Composable"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code est généré à la compilation."
+    },
+    {
+     "prompt": "Que fait ignoreUnknownKeys ?",
+     "options": [
+      "Il ignore les champs inconnus du JSON",
+      "Il supprime toutes les clés",
+      "Il chiffre le JSON"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le serveur peut alors ajouter des champs."
+    },
+    {
+     "prompt": "Que permet @SerialName ?",
+     "options": [
+      "D'utiliser un nom JSON différent du nom Kotlin",
+      "De chiffrer un champ",
+      "De rendre un champ facultatif"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple xp_total pour xp."
+    },
+    {
+     "prompt": "Quelle exception lève un JSON invalide ?",
+     "options": [
+      "SerializationException",
+      "NetworkOnMainThreadException"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut l'attraper."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction de `Json` transforme un texte en objet ?",
+     "accepted": [
+      "decodeFromString",
+      "decodeFromString()",
+      "Json.decodeFromString"
+     ],
+     "solution": "decodeFromString."
+    },
+    {
+     "id": "data-05-ex2",
+     "kind": "self",
+     "prompt": "Décodez la liste `[{\"nom\":\"Feu\"},{\"nom\":\"Eau\"}]`, puis affichez le nombre d'éléments.",
+     "solution": "import kotlinx.serialization.Serializable\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Sort(val nom: String)\n\nfun main() {\n    val texte = \"\"\"[{\"nom\":\"Feu\"},{\"nom\":\"Eau\"}]\"\"\"\n    println(Json.decodeFromString<List<Sort>>(texte).size)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "data-06-retrofit",
+   "title": "Retrofit",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Retrofit** transforme une API HTTP en une interface Kotlin. Il s'appuie sur **OkHttp**, qui effectue réellement les requêtes."
+    },
+    {
+     "type": "heading",
+     "text": "Décrire l'API"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Serializable\ndata class SortReseau(val id: Int, val nom: String)\n\ninterface ApiSorts {\n    @GET(\"sorts\")\n    suspend fun lister(\n        @Query(\"niveau\") niveau: Int? = null,\n    ): List<SortReseau>\n\n    @GET(\"sorts/{id}\")\n    suspend fun lire(@Path(\"id\") id: Int): SortReseau\n\n    @POST(\"sorts\")\n    suspend fun creer(@Body sort: SortReseau): SortReseau\n\n    @DELETE(\"sorts/{id}\")\n    suspend fun supprimer(@Path(\"id\") id: Int): Response<Unit>\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`@Query` ajoute un paramètre d'URL. Avec `null`, il est omis.",
+      "`@Path` remplace une portion du chemin.",
+      "`@Body` envoie un objet dans le corps."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Construire le client"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "private val json = Json { ignoreUnknownKeys = true }\n\nfun creerApi(): ApiSorts {\n    val client = OkHttpClient.Builder()\n        .connectTimeout(10, TimeUnit.SECONDS)\n        .readTimeout(20, TimeUnit.SECONDS)\n        .build()\n\n    return Retrofit.Builder()\n        .baseUrl(\"https://api.exemple.fr/\")\n        .client(client)\n        .addConverterFactory(\n            json.asConverterFactory(\"application/json\".toMediaType())\n        )\n        .build()\n        .create(ApiSorts::class.java)\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Réutilisez un seul `OkHttpClient` dans toute l'application : il mutualise ses connexions et ses fils d'exécution. Définissez toujours des délais d'attente."
+    },
+    {
+     "type": "warning",
+     "text": "`baseUrl` doit se terminer par `/`, sinon Retrofit lève une exception. Et un chemin commençant par `/` repart de la racine du domaine, ce qui surprend souvent."
+    },
+    {
+     "type": "heading",
+     "text": "Les réponses"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une fonction `suspend` qui renvoie directement un objet lève une `HttpException` pour tout code hors de la famille 2xx. `Response<T>` donne plutôt accès au code de statut, sans exception."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "suspend fun supprimerSort(api: ApiSorts, id: Int): Boolean {\n    val reponse = api.supprimer(id)\n    return reponse.isSuccessful\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les fonctions `suspend` de Retrofit peuvent être appelées depuis le fil principal : la bibliothèque déplace elle-même le travail réseau."
+    },
+    {
+     "type": "heading",
+     "text": "Tester sans serveur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Faites dépendre vos dépôts de l'interface `ApiSorts`, pas de Retrofit. Une fausse implémentation permet alors de tester sans réseau."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class FausseApi : ApiSorts {\n    override suspend fun lister(niveau: Int?) = listOf(SortReseau(1, \"Feu\"))\n    override suspend fun lire(id: Int) = SortReseau(id, \"Feu\")\n    override suspend fun creer(sort: SortReseau) = sort\n    override suspend fun supprimer(id: Int): Response<Unit> = Response.success(Unit)\n}"
+    },
+    {
+     "type": "tip",
+     "text": "Activez les journaux d'OkHttp en debug seulement. En release, ils exposeraient vos en-têtes et vos jetons !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle annotation insère une valeur dans le chemin ?",
+     "options": [
+      "@Path",
+      "@Query",
+      "@Body"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple sorts/{id}."
+    },
+    {
+     "prompt": "Comment doit se terminer baseUrl ?",
+     "options": [
+      "Par une barre oblique",
+      "Par .json",
+      "Par un point"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon Retrofit lève une exception."
+    },
+    {
+     "prompt": "Que se passe-t-il pour un code 404 avec une fonction renvoyant directement un objet ?",
+     "options": [
+      "Une HttpException est levée",
+      "L'objet est null",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Response<T> évite cette exception."
+    },
+    {
+     "prompt": "Combien d'OkHttpClient créer ?",
+     "options": [
+      "Un seul, partagé",
+      "Un par requête"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il mutualise ses connexions."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation Retrofit envoie un objet dans le corps de la requête ?",
+     "accepted": [
+      "@Body",
+      "Body"
+     ],
+     "solution": "@Body."
+    },
+    {
+     "id": "data-06-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une interface Retrofit avec une fonction qui lit `GET /apprentis/{id}/notes`.",
+     "solution": "@Serializable\ndata class NoteReseau(val titre: String)\n\ninterface ApiApprentis {\n    @GET(\"apprentis/{id}/notes\")\n    suspend fun notes(@Path(\"id\") id: Int): List<NoteReseau>\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "data-07-erreurs",
+   "title": "La gestion des erreurs",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Sur mobile, le réseau **va** échouer : tunnel, ascenseur, serveur saturé. Une application robuste considère l'échec comme un cas normal."
+    },
+    {
+     "type": "heading",
+     "text": "Distinguer les erreurs"
+    },
+    {
+     "type": "paragraph",
+     "text": "Toutes les erreurs n'appellent pas la même réaction. Convertissez les exceptions techniques en un type métier, que l'écran saura présenter."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.IOException\n\nsealed interface Resultat<out T> {\n    data class Succes<T>(val valeur: T) : Resultat<T>\n    data object SansReseau : Resultat<Nothing>\n    data class ErreurServeur(val code: Int) : Resultat<Nothing>\n}\n\nclass HttpErreur(val code: Int) : Exception()\n\nsuspend fun <T> appelSur(appel: suspend () -> T): Resultat<T> =\n    try {\n        Resultat.Succes(appel())\n    } catch (e: IOException) {\n        Resultat.SansReseau\n    } catch (e: HttpErreur) {\n        Resultat.ErreurServeur(e.code)\n    }\n\nfun message(resultat: Resultat<String>) = when (resultat) {\n    is Resultat.Succes -> resultat.valeur\n    Resultat.SansReseau -> \"Vérifiez votre connexion.\"\n    is Resultat.ErreurServeur -> \"Service indisponible (${resultat.code}).\"\n}\n\nsuspend fun main() {\n    println(message(appelSur { \"Bienvenue\" }))\n    println(message(appelSur { throw IOException() }))\n    println(message(appelSur { throw HttpErreur(503) }))\n}",
+     "output": "Bienvenue\nVérifiez votre connexion.\nService indisponible (503)."
+    },
+    {
+     "type": "warning",
+     "text": "N'attrapez pas `Exception` de façon générale dans une coroutine : vous avaleriez la `CancellationException`, et l'annulation ne fonctionnerait plus. Attrapez des types précis, ou relancez-la."
+    },
+    {
+     "type": "heading",
+     "text": "Réessayer intelligemment"
+    },
+    {
+     "type": "paragraph",
+     "text": "Retenter aussitôt surcharge un serveur déjà en difficulté. L'**attente exponentielle** double le délai à chaque essai."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.IOException\nimport kotlinx.coroutines.delay\nimport kotlinx.coroutines.runBlocking\n\nsuspend fun <T> avecTentatives(\n    maximum: Int = 3,\n    delaiInitial: Long = 10,\n    bloc: suspend () -> T,\n): T {\n    var delaiCourant = delaiInitial\n    repeat(maximum - 1) { essai ->\n        try {\n            return bloc()\n        } catch (e: IOException) {\n            println(\"Essai ${essai + 1} échoué, attente de $delaiCourant ms\")\n            delay(delaiCourant)\n            delaiCourant *= 2\n        }\n    }\n    return bloc()\n}\n\nfun main() = runBlocking {\n    var appels = 0\n    val resultat = avecTentatives {\n        appels++\n        if (appels < 3) throw IOException(\"réseau\")\n        \"Réussi au troisième essai\"\n    }\n    println(resultat)\n}",
+     "output": "Essai 1 échoué, attente de 10 ms\nEssai 2 échoué, attente de 20 ms\nRéussi au troisième essai"
+    },
+    {
+     "type": "heading",
+     "text": "Ce qu'il ne faut pas retenter"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une erreur 4xx : la requête est incorrecte, elle échouera encore.",
+      "Une erreur 401 : il faut d'abord se reconnecter.",
+      "Un `POST` non idempotent, sauf si le serveur accepte une clé d'idempotence."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Une erreur 429 ou 503 peut inclure un en-tête `Retry-After`, qui indique combien de temps patienter."
+    },
+    {
+     "type": "heading",
+     "text": "Présenter l'erreur"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Expliquez ce qui s'est passé, en français clair.",
+      "Proposez une action, comme un bouton Réessayer.",
+      "Conservez ce qui était déjà affiché et ce que l'utilisateur a saisi."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "« Une erreur est survenue » n'a jamais aidé personne. Dites ce qui se passe, et ce que l'on peut faire !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi convertir les exceptions en type métier ?",
+     "options": [
+      "Pour que l'écran puisse réagir à chaque cas",
+      "Pour ajouter des couleurs",
+      "Pour éviter les tests"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une interface scellée oblige à tout traiter."
+    },
+    {
+     "prompt": "Quelle exception ne faut-il pas avaler dans une coroutine ?",
+     "options": [
+      "CancellationException",
+      "IOException"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'annulation ne fonctionnerait plus."
+    },
+    {
+     "prompt": "Que fait une attente exponentielle ?",
+     "options": [
+      "Elle double le délai à chaque essai",
+      "Elle réessaie sans pause",
+      "Elle arrête tout"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle évite de surcharger le serveur."
+    },
+    {
+     "prompt": "Faut-il retenter une erreur 400 ?",
+     "options": [
+      "Non, elle échouera encore",
+      "Oui, indéfiniment"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La requête elle-même est incorrecte."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle exception d'E/S signale généralement un problème de réseau ?",
+     "accepted": [
+      "IOException",
+      "java.io.IOException"
+     ],
+     "solution": "IOException."
+    },
+    {
+     "id": "data-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez `delais(essais: Int, initial: Long)`, qui renvoie la liste des délais d'une attente exponentielle, puis affichez le résultat pour 4 essais à partir de 100.",
+     "solution": "fun delais(essais: Int, initial: Long): List<Long> =\n    List(essais) { index -> initial shl index }\n\nfun main() {\n    println(delais(4, 100))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "data-08-authentification",
+   "title": "L'authentification",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'**authentification** prouve qui est l'utilisateur. L'**autorisation** détermine ce qu'il a le droit de faire. Sur mobile, le serveur reste le seul juge : ne faites jamais confiance à l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Le principe du jeton"
+    },
+    {
+     "type": "layers",
+     "title": "Une connexion par jeton",
+     "layers": [
+      {
+       "name": "1. Identification",
+       "detail": "L'application envoie ses identifiants, en HTTPS."
+      },
+      {
+       "name": "2. Jetons",
+       "detail": "Le serveur renvoie un jeton d'accès, et souvent un jeton de rafraîchissement."
+      },
+      {
+       "name": "3. Requêtes",
+       "detail": "Chaque appel contient le jeton d'accès dans l'en-tête Authorization."
+      },
+      {
+       "name": "4. Renouvellement",
+       "detail": "Le jeton d'accès expiré est remplacé grâce au jeton de rafraîchissement."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Ajouter le jeton à chaque requête"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **intercepteur** OkHttp modifie toutes les requêtes au même endroit."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class IntercepteurJeton(private val lireJeton: () -> String?) : Interceptor {\n    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {\n        val requete = chain.request()\n        val jeton = lireJeton() ?: return chain.proceed(requete)\n\n        return chain.proceed(\n            requete.newBuilder()\n                .header(\"Authorization\", \"Bearer $jeton\")\n                .build()\n        )\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Renouveler un jeton expiré"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand le serveur répond 401, un `Authenticator` OkHttp peut obtenir un nouveau jeton, puis rejouer la requête."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Renouveleur(private val renouveler: () -> String?) : Authenticator {\n    override fun authenticate(route: Route?, response: okhttp3.Response): Request? {\n        if (response.request.header(\"X-Rejoue\") != null) return null\n        val jeton = renouveler() ?: return null\n\n        return response.request.newBuilder()\n            .header(\"Authorization\", \"Bearer $jeton\")\n            .header(\"X-Rejoue\", \"1\")\n            .build()\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Renvoyer `null` abandonne. Le test sur `X-Rejoue` évite une boucle sans fin si le nouveau jeton est aussi refusé. Si le rafraîchissement échoue, déconnectez l'utilisateur."
+    },
+    {
+     "type": "heading",
+     "text": "Stocker les secrets"
+    },
+    {
+     "type": "warning",
+     "text": "Ne stockez jamais un mot de passe sur l'appareil, et ne placez pas un jeton en clair dans DataStore ou `SharedPreferences`. Protégez les jetons avec le **Keystore** d'Android, détaillé dans le module 9."
+    },
+    {
+     "type": "warning",
+     "text": "Une clé d'API intégrée à une application n'est pas secrète : elle peut être extraite de l'APK. Les secrets restent sur votre serveur."
+    },
+    {
+     "type": "heading",
+     "text": "Mieux que les mots de passe"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Credential Manager** est l'API Jetpack recommandée pour la connexion. Elle réunit dans une seule interface les **clés d'accès** (passkeys), la connexion fédérée comme Google, et les mots de passe enregistrés."
+    },
+    {
+     "type": "paragraph",
+     "text": "Les clés d'accès résistent à l'hameçonnage : aucun secret réutilisable n'est tapé par l'utilisateur. Credential Manager remplace notamment les anciennes API Google Sign-In, One Tap et Smart Lock."
+    },
+    {
+     "type": "tip",
+     "text": "Se connecter est facile. Bien gérer l'expiration et la déconnexion, c'est là que l'on reconnaît le travail soigné !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où passe habituellement le jeton d'accès ?",
+     "options": [
+      "Dans l'en-tête Authorization",
+      "Dans le nom de l'application",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sous la forme Bearer suivi du jeton."
+    },
+    {
+     "prompt": "Quel outil OkHttp ajoute le jeton à toutes les requêtes ?",
+     "options": [
+      "Un intercepteur",
+      "Un fragment",
+      "Un AVD"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code reste à un seul endroit."
+    },
+    {
+     "prompt": "Une clé d'API dans l'APK est-elle secrète ?",
+     "options": [
+      "Non, elle peut être extraite",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les secrets restent sur le serveur."
+    },
+    {
+     "prompt": "Que propose Credential Manager ?",
+     "options": [
+      "Passkeys, connexion fédérée et mots de passe",
+      "Une base de données",
+      "Un thème"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est l'API recommandée."
+    },
+    {
+     "prompt": "Qui doit vérifier les droits d'un utilisateur ?",
+     "options": [
+      "Le serveur",
+      "L'application uniquement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code d'une application peut être modifié."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel code de statut déclenche généralement un rafraîchissement du jeton ?",
+     "accepted": [
+      "401"
+     ],
+     "solution": "401."
+    },
+    {
+     "id": "data-08-ex2",
+     "kind": "self",
+     "prompt": "Expliquez la différence entre l'authentification et l'autorisation, avec un exemple.",
+     "solution": "L'authentification prouve l'identité : Merlin se connecte avec sa clé d'accès. L'autorisation détermine ses droits : le serveur vérifie ensuite que Merlin a le droit de modifier ce grimoire. Une personne connectée peut donc se voir refuser une action, avec un code 403."
+    }
+   ]
+  },
+  {
+   "id": "data-09-offline",
+   "title": "Cache, hors ligne et synchronisation",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application **hors ligne d'abord** reste utile sans réseau, et affiche aussitôt les données locales au lieu d'attendre le serveur."
+    },
+    {
+     "type": "heading",
+     "text": "Une seule source de vérité"
+    },
+    {
+     "type": "layers",
+     "title": "Le flux de données hors ligne d'abord",
+     "layers": [
+      {
+       "name": "Écran",
+       "detail": "Observe le dépôt, et ne connaît pas le réseau."
+      },
+      {
+       "name": "Dépôt",
+       "detail": "Lit toujours la base locale, et la met à jour depuis le réseau."
+      },
+      {
+       "name": "Base locale",
+       "detail": "La source de vérité de l'application."
+      },
+      {
+       "name": "Réseau",
+       "detail": "Une source qui alimente la base locale."
+      }
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Serializable\ndata class SortDistant(val id: Int, val nom: String)\n\n@Entity(tableName = \"sorts\")\ndata class SortLocal(@PrimaryKey val id: Int, val nom: String)\n\n@Dao\ninterface SortDao {\n    @Query(\"SELECT * FROM sorts ORDER BY nom\")\n    fun observer(): Flow<List<SortLocal>>\n\n    @Upsert\n    suspend fun enregistrer(sorts: List<SortLocal>)\n}\n\ninterface ApiCatalogue {\n    @GET(\"sorts\")\n    suspend fun lister(): List<SortDistant>\n}\n\nclass SortsDepot(\n    private val dao: SortDao,\n    private val api: ApiCatalogue,\n) {\n    val sorts: Flow<List<SortLocal>> = dao.observer()\n\n    suspend fun rafraichir() {\n        val distants = api.lister()\n        dao.enregistrer(distants.map { SortLocal(it.id, it.nom) })\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'écran observe uniquement `sorts`. Quand `rafraichir` écrit en base, l'interface se met à jour toute seule. Hors ligne, seule l'actualisation échoue : l'écran continue d'afficher ses données."
+    },
+    {
+     "type": "heading",
+     "text": "Le cache"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un cache évite de refaire une requête coûteuse. La vraie difficulté est de savoir quand une donnée n'est plus valable : on peut par exemple lui donner une durée de vie."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class CacheTemporaire<T>(\n    private val dureeMs: Long,\n    private val maintenant: () -> Long,\n) {\n    private var valeur: T? = null\n    private var enregistreA = 0L\n\n    fun lire(): T? {\n        val perime = maintenant() - enregistreA > dureeMs\n        return if (perime) null else valeur\n    }\n\n    fun ecrire(nouvelle: T) {\n        valeur = nouvelle\n        enregistreA = maintenant()\n    }\n}\n\nfun main() {\n    var horloge = 0L\n    val cache = CacheTemporaire<String>(dureeMs = 1000) { horloge }\n\n    cache.ecrire(\"Météo : pluie de météores\")\n    horloge = 500\n    println(cache.lire())\n    horloge = 1500\n    println(cache.lire())\n}",
+     "output": "Météo : pluie de météores\nnull"
+    },
+    {
+     "type": "paragraph",
+     "text": "Remarquez l'horloge injectée : le test contrôle le temps, sans attendre réellement. OkHttp propose aussi un cache HTTP, qui respecte les en-têtes envoyés par le serveur."
+    },
+    {
+     "type": "heading",
+     "text": "Écrire hors ligne"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**En ligne uniquement** : pour ce qui exige une confirmation immédiate, comme un paiement.",
+      "**File d'attente** : pour ce qui peut attendre, comme des statistiques.",
+      "**Écriture différée** : on écrit en local, puis on envoie dès que possible. C'est le bon choix pour les données importantes de l'utilisateur."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Synchroniser avec WorkManager"
+    },
+    {
+     "type": "paragraph",
+     "text": "**WorkManager** exécute un travail même si l'application est fermée, dès que ses contraintes sont réunies."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class SyncWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result {\n        return try {\n            synchroniser()\n            Result.success()\n        } catch (e: IOException) {\n            Result.retry()\n        }\n    }\n}\n\nfun planifierSync(context: Context) {\n    val requete = OneTimeWorkRequestBuilder<SyncWorker>()\n        .setConstraints(\n            Constraints.Builder()\n                .setRequiredNetworkType(NetworkType.CONNECTED)\n                .build()\n        )\n        .build()\n\n    WorkManager.getInstance(context).enqueueUniqueWork(\n        \"synchronisation\",\n        ExistingWorkPolicy.KEEP,\n        requete,\n    )\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`Result.retry()` relance le travail plus tard, avec une attente exponentielle. Un travail **unique** évite de lancer plusieurs synchronisations à la fois."
+    },
+    {
+     "type": "heading",
+     "text": "Résoudre les conflits"
+    },
+    {
+     "type": "paragraph",
+     "text": "Si deux appareils modifient la même donnée hors ligne, il faut trancher. La stratégie la plus courante est que **la dernière écriture gagne**, selon un horodatage."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Version(val appareil: String, val texte: String, val modifieA: Long)\n\nfun resoudre(a: Version, b: Version) = maxOf(a, b, compareBy { it.modifieA })\n\nfun main() {\n    val telephone = Version(\"téléphone\", \"Sort de feu\", modifieA = 100)\n    val tablette = Version(\"tablette\", \"Sort de feu amélioré\", modifieA = 250)\n\n    println(resoudre(telephone, tablette).texte)\n}",
+     "output": "Sort de feu amélioré"
+    },
+    {
+     "type": "warning",
+     "text": "Cette stratégie est simple, mais elle écrase silencieusement l'autre modification. Pour des données précieuses, comme un long texte, proposez plutôt à l'utilisateur de choisir, ou fusionnez champ par champ."
+    },
+    {
+     "type": "tip",
+     "text": "Coupez le Wi-Fi et le réseau mobile, puis utilisez votre application. C'est le test le plus simple et le plus révélateur !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle est la source de vérité d'une application hors ligne d'abord ?",
+     "options": [
+      "La base locale",
+      "Le réseau",
+      "L'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les écrans lisent uniquement le local."
+    },
+    {
+     "prompt": "Que devient l'écran quand l'actualisation échoue hors ligne ?",
+     "options": [
+      "Il continue d'afficher ses données locales",
+      "Il se vide",
+      "L'application plante"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Seule l'actualisation a échoué."
+    },
+    {
+     "prompt": "Quelle stratégie choisir pour un paiement ?",
+     "options": [
+      "En ligne uniquement",
+      "Écriture différée",
+      "File d'attente"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il exige une confirmation immédiate."
+    },
+    {
+     "prompt": "Quel outil exécute une synchronisation même application fermée ?",
+     "options": [
+      "WorkManager",
+      "LazyColumn",
+      "Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il attend que les contraintes soient réunies."
+    },
+    {
+     "prompt": "Quel est le risque de « la dernière écriture gagne » ?",
+     "options": [
+      "Écraser silencieusement une modification",
+      "Bloquer le réseau",
+      "Rendre l'APK plus gros"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pour des données précieuses, laissez choisir l'utilisateur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-09-ex1",
+     "kind": "fill",
+     "prompt": "Quel résultat de `doWork` demande à WorkManager de réessayer plus tard ?",
+     "accepted": [
+      "Result.retry()",
+      "Result.retry",
+      "retry"
+     ],
+     "solution": "Result.retry()."
+    },
+    {
+     "id": "data-09-ex2",
+     "kind": "self",
+     "prompt": "Votre application de notes doit fonctionner dans le métro. Décrivez le chemin d'une note créée sans réseau.",
+     "solution": "La note est écrite aussitôt en base locale, et marquée comme non synchronisée. L'écran, qui observe la base, l'affiche immédiatement. Un travail WorkManager unique, contraint au réseau, l'envoie au serveur dès le retour de la connexion, puis retire le marqueur. En cas d'échec, il réessaie plus tard."
+    }
+   ]
+  },
+  {
+   "id": "data-10-securite",
+   "title": "La sécurité des communications",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Sur un Wi-Fi public, tout ce qui circule en clair peut être lu ou modifié. La première règle est simple : **tout passe en HTTPS**."
+    },
+    {
+     "type": "heading",
+     "text": "Ce qu'apporte HTTPS"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Confidentialité** : le contenu est chiffré.",
+      "**Intégrité** : une modification en route est détectée.",
+      "**Authenticité** : le certificat prouve l'identité du serveur."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le trafic en clair est bloqué"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 9, les applications qui le ciblent ne peuvent plus envoyer de HTTP non chiffré par défaut. Si vous obtenez une erreur `CLEARTEXT communication not permitted`, la bonne réponse est de passer le serveur en HTTPS, pas d'autoriser le clair."
+    },
+    {
+     "type": "heading",
+     "text": "La configuration de sécurité réseau"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un fichier `res/xml/network_security_config.xml` règle ces comportements sans toucher au code. Pour un serveur de développement local, `debug-overrides` et des exceptions limitées restent préférables à une autorisation globale."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<network-security-config>\n    <domain-config cleartextTrafficPermitted=\"true\">\n        <domain includeSubdomains=\"false\">10.0.2.2</domain>\n    </domain-config>\n</network-security-config>"
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<application android:networkSecurityConfig=\"@xml/network_security_config\" />"
+    },
+    {
+     "type": "info",
+     "text": "Dans l'émulateur, `10.0.2.2` désigne votre ordinateur. Limitez ce type d'exception à une configuration de debug."
+    },
+    {
+     "type": "warning",
+     "text": "Ne laissez jamais `cleartextTrafficPermitted=\"true\"` dans `base-config` : cela autoriserait le clair vers tous les domaines."
+    },
+    {
+     "type": "heading",
+     "text": "L'épinglage de certificats"
+    },
+    {
+     "type": "paragraph",
+     "text": "Par défaut, l'application fait confiance à toutes les autorités de certification du système. L'**épinglage** restreint cette confiance à certaines clés publiques."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<network-security-config>\n    <domain-config>\n        <domain includeSubdomains=\"true\">api.exemple.fr</domain>\n        <pin-set expiration=\"2028-01-01\">\n            <pin digest=\"SHA-256\">7HIpactkIAq2Y49orFOOQKurWxmmSFZhBCoQYcRhJ3Y=</pin>\n            <!-- Clé de secours -->\n            <pin digest=\"SHA-256\">fwza0LRMXouZHRC8Ei+4PyuldPDcf3UKgO/04cDM1oE=</pin>\n        </pin-set>\n    </domain-config>\n</network-security-config>"
+    },
+    {
+     "type": "warning",
+     "text": "L'épinglage peut couper votre application de son serveur si le certificat change. Prévoyez toujours une clé de secours et une date d'expiration, et réservez-le aux applications sensibles."
+    },
+    {
+     "type": "heading",
+     "text": "Les progrès récents"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Certificate Transparency** vérifie que les certificats figurent dans des journaux publics. Il est activé par défaut à partir d'Android 17 pour les applications qui le ciblent.",
+      "**Encrypted Client Hello** chiffre le nom du domaine visité lors de l'ouverture de la connexion, à partir d'Android 17, si la bibliothèque réseau le prend en charge."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les réflexes à garder"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Pas de donnée sensible dans une URL : elle apparaît dans les journaux.",
+      "Pas de jeton dans Logcat.",
+      "Des journaux réseau limités au debug.",
+      "Une application à jour : les failles viennent souvent des bibliothèques.",
+      "Ne désactivez jamais la vérification des certificats, même pour un test."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Installer un `TrustManager` qui accepte tout pour faire taire une erreur revient à retirer la serrure parce que la clé coince !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Depuis quelle version le trafic en clair est-il bloqué par défaut ?",
+     "options": [
+      "Android 9",
+      "Android 5",
+      "Android 16"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pour les applications qui ciblent Android 9 ou plus."
+    },
+    {
+     "prompt": "Que garantit HTTPS ?",
+     "options": [
+      "Confidentialité, intégrité et authenticité",
+      "Une connexion plus rapide uniquement",
+      "Un APK plus petit"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le certificat prouve l'identité du serveur."
+    },
+    {
+     "prompt": "Que faut-il prévoir avec l'épinglage ?",
+     "options": [
+      "Une clé de secours et une expiration",
+      "Un serveur HTTP",
+      "Rien de particulier"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon, l'application peut perdre l'accès au serveur."
+    },
+    {
+     "prompt": "Que désigne 10.0.2.2 dans l'émulateur ?",
+     "options": [
+      "L'ordinateur hôte",
+      "Le serveur de Google",
+      "Le téléphone"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Utile pour un serveur de développement."
+    },
+    {
+     "prompt": "Où ne jamais placer une donnée sensible ?",
+     "options": [
+      "Dans une URL",
+      "Dans un corps HTTPS"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les URL apparaissent dans les journaux."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "data-10-ex1",
+     "kind": "fill",
+     "prompt": "Quel attribut du manifeste désigne le fichier de configuration de sécurité réseau ?",
+     "accepted": [
+      "android:networkSecurityConfig",
+      "networkSecurityConfig"
+     ],
+     "solution": "android:networkSecurityConfig."
+    },
+    {
+     "id": "data-10-ex2",
+     "kind": "self",
+     "prompt": "Un collègue règle une erreur de certificat en acceptant tous les certificats dans le code. Expliquez le danger, et ce qu'il faut faire à la place.",
+     "solution": "Accepter tous les certificats supprime la vérification de l'identité du serveur : sur un réseau hostile, n'importe qui peut intercepter et modifier le trafic, jetons compris. Il faut corriger le certificat du serveur. Pour un serveur de développement interne, on ajoute son autorité dans la configuration de sécurité réseau, limitée à debug-overrides."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Que fait une clé étrangère ?",
+    "options": [
+     "Elle relie deux tables",
+     "Elle chiffre une colonne"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La jointure s'appuie dessus."
+   },
+   {
+    "prompt": "Comment Room détecte-t-il une requête incorrecte ?",
+    "options": [
+     "À la compilation",
+     "À la publication"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est son grand avantage."
+   },
+   {
+    "prompt": "Où ranger un simple réglage de thème ?",
+    "options": [
+     "DataStore",
+     "Une table de jointure"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Une base serait excessive."
+   },
+   {
+    "prompt": "Quelle méthode HTTP est idempotente ?",
+    "options": [
+     "PUT",
+     "POST"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La répéter produit le même résultat."
+   },
+   {
+    "prompt": "Que fait ignoreUnknownKeys pour une application ?",
+    "options": [
+     "Il évite un plantage si le serveur ajoute un champ",
+     "Il masque les erreurs réseau"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'application résiste mieux aux évolutions."
+   },
+   {
+    "prompt": "Quels éléments conviennent à OkHttp et Retrofit ?",
+    "options": [
+     "Un seul client partagé",
+     "Des délais d'attente",
+     "Un client par requête"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Le client mutualise ses connexions."
+   },
+   {
+    "prompt": "Quelle stratégie évite de surcharger un serveur défaillant ?",
+    "options": [
+     "L'attente exponentielle",
+     "Réessayer sans pause"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le délai double à chaque essai."
+   },
+   {
+    "prompt": "Où conserver un secret d'API ?",
+    "options": [
+     "Sur le serveur",
+     "Dans une chaîne de l'APK"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Un APK peut être analysé."
+   },
+   {
+    "prompt": "Que lit l'écran dans une application hors ligne d'abord ?",
+    "options": [
+     "La base locale",
+     "Directement le réseau"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est la source de vérité."
+   },
+   {
+    "prompt": "Quelle réponse donner à l'erreur CLEARTEXT communication not permitted ?",
+    "options": [
+     "Passer le serveur en HTTPS",
+     "Autoriser le clair pour tous les domaines"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'autorisation globale est dangereuse."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Room",
+   "url": "https://developer.android.com/training/data-storage/room"
+  },
+  {
+   "title": "DataStore",
+   "url": "https://developer.android.com/topic/libraries/architecture/datastore"
+  },
+  {
+   "title": "Développer hors ligne d'abord",
+   "url": "https://developer.android.com/topic/architecture/data-layer/offline-first"
+  },
+  {
+   "title": "Configuration de sécurité réseau",
+   "url": "https://developer.android.com/privacy-and-security/security-config"
+  },
+  {
+   "title": "Credential Manager",
+   "url": "https://developer.android.com/identity/sign-in/credential-manager"
+  },
+  {
+   "title": "Retrofit sur GitHub",
+   "url": "https://github.com/square/retrofit"
+  },
+  {
+   "title": "OkHttp sur GitHub",
+   "url": "https://github.com/square/okhttp"
+  },
+  {
+   "title": "kotlinx.serialization",
+   "url": "https://github.com/Kotlin/kotlinx.serialization"
+  },
+  {
+   "title": "Documentation de SQLite",
+   "url": "https://www.sqlite.org/docs.html"
+  }
+ ]
+}

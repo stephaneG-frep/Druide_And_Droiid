@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Phase 5, en cours — 2026-11-05
+
+- Module 5 Interfaces Android rédigé : dix leçons et évaluation.
+- Module 6 Données et réseaux rédigé : dix leçons et évaluation.
+- Le contrôle des exemples prend en charge kotlinx.serialization.
+- Nouvel outil `tool/check_android_snippets.py`, qui compile les extraits Android dans un vrai projet Gradle.
+- Module 4 : chaîne de compatibilité entre bibliothèques, `compileSdk`, AGP et Gradle.
+
 ## Phase 5, en cours — 2026-11-04
 
 - Module 3 Java pour Android rédigé : neuf leçons et évaluation.

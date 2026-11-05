@@ -22,7 +22,24 @@ KOTLIN_HOME = pathlib.Path(
 )
 JAVA_HOME = os.environ.get("JAVA_HOME", "/opt/android-studio/jbr")
 LIB = KOTLIN_HOME / "lib"
-CLASSPATH = [LIB / "kotlin-stdlib.jar", LIB / "kotlinx-coroutines-core-jvm.jar"]
+GRADLE_CACHE = pathlib.Path.home() / ".gradle/caches/modules-2/files-2.1"
+SERIALIZATION_PLUGIN = LIB / "kotlinx-serialization-compiler-plugin.jar"
+
+
+def gradle_jar(group, name, version):
+    """Trouve une bibliothèque déjà téléchargée par Gradle."""
+    jars = sorted((GRADLE_CACHE / group / name / version).glob(f"*/{name}-{version}.jar"))
+    if not jars:
+        sys.exit(f"Bibliothèque absente du cache Gradle : {name} {version}")
+    return jars[0]
+
+
+CLASSPATH = [
+    LIB / "kotlin-stdlib.jar",
+    LIB / "kotlinx-coroutines-core-jvm.jar",
+    gradle_jar("org.jetbrains.kotlinx", "kotlinx-serialization-core-jvm", "1.8.1"),
+    gradle_jar("org.jetbrains.kotlinx", "kotlinx-serialization-json-jvm", "1.8.1"),
+]
 COURSES = pathlib.Path("assets/courses")
 LANGUAGES = ("kotlin", "java")
 
@@ -83,6 +100,7 @@ def compile_all(runnable, tmp):
                 "-d",
                 str(output),
                 "-nowarn",
+                f"-Xplugin={SERIALIZATION_PLUGIN}",
             ],
             env=env,
             capture_output=True,

@@ -1,5 +1,46 @@
 # Rapport de tests
 
+## Phase 5, tour 3 — 2026-11-05
+
+La phase n'est pas terminée : modules 1 à 6 sur douze.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux | **4 tests sur 5** : voir ci-dessous |
+| Intégration sur Honor | **Non lancée** : voir ci-dessous |
+| Exemples Kotlin et Java compilés, exécutés et comparés | 83 sur 83 |
+| Extraits Android compilés dans un projet Gradle | 53 sur 53 |
+| Requêtes SQL du cours | Exécutées sur SQLite, résultats cohérents |
+| Police de code | Tous les caractères des blocs sont présents |
+
+L'outil de compilation a été éprouvé : une table inexistante dans une requête Room et une erreur de type ont bien fait échouer la compilation. 141 classes ont été produites, et KSP a généré le code Room.
+
+Vérifié sur des rendus de test : quatre leçons des modules 5 et 6.
+
+Sources contrôlées : developer.android.com pour l'état, la navigation, le cycle de vie, ViewModel, les fenêtres adaptatives, Room, DataStore, la sécurité réseau, le hors-ligne et Credential Manager ; le dépôt GitHub de Retrofit ; les dépôts Maven pour les versions.
+
+### Échec du test d'intégration Linux
+
+Le test du coffre échoue avec `PlatformException(KeyringLocked)`. Le trousseau GNOME était verrouillé sur cette session, après un redémarrage de la machine. Le code du coffre n'a pas changé, mais le test n'a pas été rejoué avec un trousseau déverrouillé.
+
+Ce résultat montre aussi un manque : l'application ne présente pas encore ce cas à l'utilisateur. C'est à traiter en phase 6.
+
+### Tests d'intégration non lancés sur le Honor
+
+Ces tests désinstallent l'application, et la base du téléphone contient désormais la progression réelle de l'utilisateur. Ils n'ont donc pas été lancés. L'APK a été installé par-dessus, et le contenu de la base est identique avant et après l'installation. L'application n'a pas été parcourue sur le téléphone, qui était verrouillé.
+
+### Non vérifié
+
+- **Comportement des extraits Android** : ils compilent, mais aucun n'a été exécuté.
+- **Compilation du projet par rapport aux modules 1 à 4** : `tool/check_android_snippets.py` n'a été lancé que sur les modules 5 et 6.
+- **Fragments XML** : les balises isolées, comme `<uses-permission>`, ne sont pas compilées.
+- **Recommandation sur Navigation 3** : déduite de la documentation, qui l'oriente vers les projets Compose. Aucune page lue ne le formule comme une consigne générale.
+- **Repères d'accessibilité** : 48 dp et 4,5:1 viennent de mes connaissances, la page d'accueil lue ne les cite pas.
+- **Site de Retrofit** : la page historique renvoie une erreur 404, et le README renvoie vers un domaine non vérifié. Le cours pointe vers le dépôt GitHub.
+- **Le contenu n'a pas été relu par un tiers.**
+
 ## Phase 5, tour 2 — 2026-11-04
 
 La phase n'est pas terminée : modules 1 à 4 sur douze.

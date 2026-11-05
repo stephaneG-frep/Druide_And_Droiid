@@ -697,7 +697,7 @@
     },
     {
      "type": "warning",
-     "text": "Une version de Gradle, d'AGP et de Kotlin doivent être compatibles entre elles. Si la compilation casse après une mise à jour, vérifiez d'abord leurs tableaux de compatibilité."
+     "text": "Gradle, AGP et Kotlin doivent être compatibles entre eux, et les bibliothèques imposent aussi leur `compileSdk`. Ces exigences s'enchaînent : des bibliothèques qui demandent `compileSdk 37` ont ainsi exigé AGP 9.5, qui exige lui-même Gradle 9.6. Si la compilation casse après une mise à jour, lisez le message d'erreur et remontez cette chaîne."
     },
     {
      "type": "tip",
