@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Compile et exécute les exemples Kotlin et Java des cours.
+"""Compile et exécute les exemples Kotlin, Java et Dart des cours.
 
-Sont exécutés les blocs `code` et les corrigés contenant `fun main` (Kotlin) ou
-`public class Main` (Java). Un bloc avec `output` doit produire exactement ce
+Sont exécutés les blocs `code` et les corrigés contenant `fun main` (Kotlin),
+`public class Main` (Java) ou `main` sans paquet Flutter (Dart). Le C++ est
+vérifié avec le compilateur du NDK, sans être exécuté. Un bloc avec `output` doit produire exactement ce
 texte. Les autres extraits (API Android, Gradle, fragments) sont listés comme
 non vérifiés.
 
@@ -41,7 +42,7 @@ CLASSPATH = [
     gradle_jar("org.jetbrains.kotlinx", "kotlinx-serialization-json-jvm", "1.8.1"),
 ]
 COURSES = pathlib.Path("assets/courses")
-LANGUAGES = ("kotlin", "java")
+LANGUAGES = ("kotlin", "java", "dart", "cpp")
 
 
 def snippets():
@@ -66,7 +67,63 @@ def snippets():
 
 
 def is_runnable(language, code):
-    return "fun main" in code if language == "kotlin" else "public class Main" in code
+    if language == "kotlin":
+        return "fun main" in code
+    if language == "java":
+        return "public class Main" in code
+    if language == "dart":
+        return " main(" in code and "package:" not in code
+    return False
+
+
+def check_cpp(snippets_cpp, tmp):
+    """Vérifie le C++ avec le NDK. Renvoie le nombre d'erreurs."""
+    ndks = sorted((pathlib.Path.home() / "Android/Sdk/ndk").glob("*"))
+    if not ndks:
+        sys.exit("NDK absent : impossible de vérifier le C++.")
+    compiler = ndks[-1] / "toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+    errors = 0
+    for index, (name, _, code, _) in enumerate(snippets_cpp):
+        source = tmp / f"bloc{index}.cpp"
+        source.write_text(code + "\n", encoding="utf8")
+        build = subprocess.run(
+            [
+                str(compiler),
+                "--target=aarch64-linux-android24",
+                "-std=c++17",
+                "-fsyntax-only",
+                str(source),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if build.returncode != 0:
+            errors += 1
+            print(f"ÉCHEC C++ {name}\n{build.stderr[:800]}")
+    return errors
+
+
+def run_dart(name, code, expected, tmp, index):
+    source = tmp / f"dart{index}.dart"
+    source.write_text(code + "\n", encoding="utf8")
+    run = subprocess.run(
+        ["dart", "run", str(source)],
+        capture_output=True,
+        text=True,
+        encoding="utf8",
+        timeout=60,
+    )
+    actual = run.stdout.rstrip("\n")
+    if run.returncode != 0:
+        print(f"ÉCHEC {name}\n{(run.stderr or run.stdout)[:500]}")
+        return 1
+    if expected is not None and actual != expected:
+        print(f"ÉCART {name}\n--- attendu\n{expected}\n--- obtenu\n{actual}")
+        return 1
+    if expected is None and "#" in name:
+        print(f"SORTIE MANQUANTE {name}\n{actual}")
+        return 1
+    return 0
 
 
 def compile_all(runnable, tmp):
@@ -77,6 +134,8 @@ def compile_all(runnable, tmp):
     kotlin, java = [], []
 
     for index, (name, language, code, _) in enumerate(runnable):
+        if language == "dart":
+            continue
         package = f"s{index}"
         folder = tmp / "src" / package
         folder.mkdir(parents=True)
@@ -145,8 +204,13 @@ def main():
                 print(f"s{index} = {name}")
             return 1
 
-        failures = 0
-        for index, (name, language, _, expected) in enumerate(runnable):
+        cpp = [snippet for snippet in skipped if snippet[1] == "cpp"]
+        failures = check_cpp(cpp, tmp)
+        skipped = [snippet for snippet in skipped if snippet[1] != "cpp"]
+        for index, (name, language, code, expected) in enumerate(runnable):
+            if language == "dart":
+                failures += run_dart(name, code, expected, tmp, index)
+                continue
             main_class = f"s{index}.MainKt" if language == "kotlin" else f"s{index}.Main"
             run = subprocess.run(
                 [
@@ -173,7 +237,7 @@ def main():
                 failures += 1
                 print(f"SORTIE MANQUANTE {name}\n{actual}")
 
-    print(f"{len(runnable)} exemples exécutés, {failures} en erreur.")
+    print(f"{len(runnable)} exemples exécutés, {len(cpp)} blocs C++ vérifiés, {failures} en erreur.")
     print(f"{len(skipped)} extraits non exécutés (API Android, Gradle ou fragments) :")
     for name, _, _, _ in skipped:
         print(f"  {name}")

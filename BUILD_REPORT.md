@@ -1,5 +1,17 @@
 # Rapport de compilation
 
+## Phase 5, tour 4 — 2026-11-06
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter test integration_test -d linux` | Réussi, compilé et exécuté par ces tests |
+| Exemples | `python3 tool/check_course_code.py` | 93 exemples exécutés, 2 blocs C++ vérifiés |
+| Extraits Flutter | `python3 tool/check_flutter_snippets.py flutter` | 17 extraits analysés, APK de preuve compilé |
+| Extraits Android | `python3 tool/check_android_snippets.py avance` | 10 extraits compilés |
+
+Le projet de preuve Flutter monte à AGP 9.5.0, Gradle 9.6.0 et `compileSdk 37`, et active la désucration de la bibliothèque Java : `permission_handler` et `flutter_local_notifications` les exigent. Ces réglages ne concernent que `build/flutter_snippets`, pas l'application.
+
 ## Phase 5, tour 3 — 2026-11-05
 
 | Cible | Commande | Résultat |

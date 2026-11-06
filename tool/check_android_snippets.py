@@ -40,9 +40,15 @@ VERSIONS = {
 }
 
 IMPORTS = """
+import android.app.ActivityManager
+import android.app.Application
+import android.content.ComponentCallbacks2
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,8 +121,10 @@ import androidx.window.core.layout.WindowSizeClass
 import androidx.work.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
@@ -133,6 +141,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import preuve.BuildConfig
 import preuve.R
 import preuve.databinding.ActivityExempleBinding
 import preuve.stubs.*
@@ -167,6 +176,7 @@ android {{
         targetSdk = 36
     }}
     buildFeatures {{
+        buildConfig = true
         compose = true
         viewBinding = true
     }}
@@ -229,6 +239,8 @@ def generate(modules):
     write(PROJECT / "app/src/main/AndroidManifest.xml", "<manifest />\n")
     write(source / "preuve/stubs/Stubs.kt", STUBS)
     write(res / "layout/fragment_profil.xml", FRAGMENT_LAYOUT)
+    # L'import de ActivityExempleBinding doit se résoudre pour tous les modules.
+    write(res / "layout/activity_exemple.xml", FRAGMENT_LAYOUT)
     write(PROJECT / "app/build.gradle.kts", BUILD.format(**VERSIONS))
     write(
         PROJECT / "settings.gradle.kts",

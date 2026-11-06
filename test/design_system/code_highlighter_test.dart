@@ -15,6 +15,7 @@ void main() {
       CodeLanguage.xml: '<!-- note --><a b="c">texte</a>',
       CodeLanguage.shell: '# note\nadb install -r "app.apk" # fin',
       CodeLanguage.text: 'app/\n├── src/   # Code',
+      CodeLanguage.cpp: 'int main() { return 0; } // fin',
     };
 
     for (final MapEntry(key: language, value: code) in samples.entries) {

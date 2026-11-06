@@ -3,6 +3,7 @@ enum CodeLanguage {
   java('Java'),
   dart('Dart'),
   xml('XML'),
+  cpp('C++'),
   shell('Shell'),
 
   /// Arborescences, fichiers de configuration, journaux.
@@ -85,6 +86,11 @@ const _keywords = <CodeLanguage, Set<String>>{
     'package',
     'this',
     'super',
+  },
+  CodeLanguage.cpp: {
+    'if', 'else', 'for', 'while', 'return', 'class', 'struct', 'const', 'auto',
+    'void', 'int', 'long', 'bool', 'char', 'float', 'double', 'extern',
+    'static', 'nullptr', 'true', 'false', 'namespace', 'using', 'include',
   },
   CodeLanguage.dart: {
     'class',

@@ -1,5 +1,42 @@
 # Rapport de tests
 
+## Phase 5, tour 4 — 2026-11-06
+
+La phase n'est pas terminée : modules 1 à 8 sur douze.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux | 5 tests sur 5 réussis |
+| Intégration sur Honor | Réussie au début du tour, sur le code de `main` : 5 sur 5, voir ci-dessous |
+| Exemples Kotlin, Java et Dart compilés, exécutés et comparés | 93 sur 93 |
+| Blocs C++ analysés par le NDK (syntaxe seulement) | 2 sur 2 |
+| Extraits Flutter analysés dans un projet Flutter | 17 sur 17, aucun problème |
+| Activité Kotlin hôte du module 7 compilée dans un APK | Réussi |
+| Extraits Android du module 8 compilés | 10 sur 10 |
+| Extraits Android des modules 5 et 6, après modification de l'outil | 53 sur 53 |
+| Police de code | Tous les caractères des modules 7 et 8 sont présents |
+| Mise à jour sur Honor sans désinstallation | Empreinte de la base identique avant et après (`fcdad39c312487c9b38b`), lancement sans plantage |
+
+Vérifié sur des rendus de test : deux leçons du module 8, dont les avertissements de la leçon Fastboot.
+
+Commandes lancées sur le Honor pour le module 8, toutes en lecture seule : `getprop`, `getconf PAGE_SIZE`, `top -n 1`, `ps -A`, `pm path`, `pidof`, `wm size`, `am get-inactive`, `dumpsys battery`, `dumpsys deviceidle whitelist`, `dumpsys gfxinfo`, `dumpsys activity activities`, `logcat -b crash -d`. Le temps de démarrage a été mesuré avec `am start -W`.
+
+Sources contrôlées : developer.android.com pour ADB, les ANR, Doze, WorkManager, la mémoire, les ABI, JNI, les pages de 16 Ko et les limites de mémoire d'Android 17 ; source.android.com pour Fastboot et le déverrouillage ; le dépôt GitHub de Termux.
+
+### Test d'intégration sur le Honor
+
+Le test a été lancé avec l'accord de l'utilisateur, suivant cette procédure : sauvegarde de la base, 5 tests sur 5, réinstallation, restauration de la base, puis contrôle de l'empreinte et du contenu (45 XP, une leçon, un quiz, trois exercices).
+
+### Non vérifié
+
+- **Commandes qui modifient l'appareil** : Doze forcé, `pm grant` et `revoke`, `am kill`, `pm clear`, `adb pair`, `fastboot` n'ont pas été lancés sur le Honor. Leur syntaxe vient de la documentation. `fastboot version` a seulement été contrôlé.
+- **JNI** : les blocs C++ passent l'analyse syntaxique, mais aucune bibliothèque n'a été construite ni chargée.
+- **Comportement des extraits Flutter et Android** : ils se typent et compilent, mais aucun n'a été exécuté.
+- **CMake, `ndk-stack`, `retrace`, LeakCanary** : présentés d'après la documentation, sans exécution.
+- **Autres fabricants** : la remarque sur leurs restrictions de batterie ne repose sur aucun test.
+
 ## Phase 5, tour 3 — 2026-11-05
 
 La phase n'est pas terminée : modules 1 à 6 sur douze.

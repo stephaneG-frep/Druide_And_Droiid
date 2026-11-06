@@ -89,6 +89,10 @@ Aucun exercice n'exécute de code : la correction ne prétend jamais avoir compi
 
 `tool/check_android_snippets.py` compile les extraits Android des modules indiqués dans un vrai projet Gradle, généré dans `build/android_snippets` : Kotlin, KSP pour vérifier le SQL de Room, mises en page et fichiers XML de sécurité réseau. Il prouve que le code compile, pas qu'il se comporte comme annoncé. Les lignes `import` étant omises dans les cours, il les ajoute. Ses versions sont fixées en tête du script.
 
+Ce même outil exécute aussi les exemples Dart sans paquet, avec `dart run`, et analyse la syntaxe des blocs C++ avec le compilateur du NDK.
+
+`tool/check_flutter_snippets.py` crée dans `build/flutter_snippets` un projet Flutter avec les paquets du cours, y lance `flutter analyze` sur les extraits Dart, puis compile le code Kotlin hôte dans un APK. Il prouve que le code se type, pas qu'il se comporte comme annoncé.
+
 Règles de progression, dans `rewards.dart` :
 
 | Action | Condition | XP |

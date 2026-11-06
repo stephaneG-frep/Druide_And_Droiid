@@ -1,0 +1,1535 @@
+{
+ "moduleId": "flutter",
+ "lessons": [
+  {
+   "id": "fl-01-natif",
+   "title": "Flutter face au natif",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Flutter** permet d'écrire une application en **Dart** pour Android, iOS, le web et le bureau, à partir d'une seule base de code. Sur Android, ce résultat reste une vraie application : un APK, avec une activité et un manifeste."
+    },
+    {
+     "type": "heading",
+     "text": "Comment Flutter fonctionne"
+    },
+    {
+     "type": "layers",
+     "title": "Les couches de Flutter",
+     "layers": [
+      {
+       "name": "Framework",
+       "detail": "En Dart : widgets, Material, animations, gestes. C'est là que vous travaillez."
+      },
+      {
+       "name": "Moteur",
+       "detail": "Surtout en C++ : le rendu avec Impeller, le texte et le runtime Dart."
+      },
+      {
+       "name": "Embedder",
+       "detail": "Le code propre à la plateforme. Sur Android, il s'appuie sur une activité et fournit la surface de dessin."
+      },
+      {
+       "name": "Runner",
+       "detail": "Votre projet Android, généré par flutter create, qui assemble le tout."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "La différence essentielle : **Flutter dessine lui-même tous ses widgets**. Il n'utilise pas les boutons d'Android, il peint ses propres pixels sur une surface. C'est pourquoi une application paraît identique d'une version d'Android à l'autre."
+    },
+    {
+     "type": "heading",
+     "text": "Le code compilé"
+    },
+    {
+     "type": "paragraph",
+     "text": "En développement, le code tourne dans une machine virtuelle qui permet le **rechargement à chaud**. En release, le Dart est compilé directement en code machine ARM ou x64."
+    },
+    {
+     "type": "heading",
+     "text": "Comparer les approches"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Interface** : Compose et Flutter sont tous deux déclaratifs. Flutter dessine ses propres composants, Compose s'intègre à Android.",
+      "**Langage** : Dart pour Flutter, Kotlin pour le natif.",
+      "**Partage de code** : une base unique avec Flutter. Le natif n'en partage pas par défaut, sauf avec Kotlin Multiplatform.",
+      "**Accès au système** : direct en natif. Flutter passe par des plugins ou des canaux.",
+      "**Taille** : Flutter embarque son moteur, ce qui augmente l'APK.",
+      "**Nouveautés d'Android** : disponibles aussitôt en natif, parfois avec un délai dans Flutter."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Quand choisir quoi ?"
+    },
+    {
+     "type": "paragraph",
+     "text": "Flutter convient bien à une application qui vise plusieurs plateformes avec une interface sur mesure. Le natif reste préférable pour une intégration profonde au système, comme un clavier ou un service d'accessibilité."
+    },
+    {
+     "type": "info",
+     "text": "Cette application, Druide And-Droiīd, est écrite avec Flutter. Son APK contient `libflutter.so`, le moteur, et elle tourne aussi sur Linux à partir du même code."
+    },
+    {
+     "type": "tip",
+     "text": "Flutter ne vous dispense pas de comprendre Android. Le jour où un plugin casse, tout ce que vous avez appris dans les modules précédents vous sauvera !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui dessine les boutons d'une application Flutter ?",
+     "options": [
+      "Flutter lui-même",
+      "Le système Android",
+      "Le Play Store"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Flutter peint ses propres pixels."
+    },
+    {
+     "prompt": "Comment le Dart est-il compilé en release ?",
+     "options": [
+      "En code machine",
+      "En bytecode DEX",
+      "Il n'est pas compilé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le rechargement à chaud n'existe qu'en debug."
+    },
+    {
+     "prompt": "Quelle couche contient le rendu et le runtime Dart ?",
+     "options": [
+      "Le moteur",
+      "Le framework",
+      "Le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est écrit surtout en C++."
+    },
+    {
+     "prompt": "Quel est un coût de Flutter ?",
+     "options": [
+      "Un APK plus lourd",
+      "L'impossibilité de publier",
+      "L'absence d'animations"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le moteur est embarqué."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-01-ex1",
+     "kind": "fill",
+     "prompt": "Comment s'appelle le moteur de rendu de Flutter ?",
+     "accepted": [
+      "Impeller"
+     ],
+     "solution": "Impeller."
+    },
+    {
+     "id": "fl-01-ex2",
+     "kind": "self",
+     "prompt": "Une entreprise veut un clavier personnalisé pour Android, et une autre une application de réservation pour Android et iOS. Que conseillez-vous à chacune ?",
+     "solution": "Pour le clavier, le natif : il dépend d'un service du système et n'a pas d'intérêt multiplateforme. Pour la réservation, Flutter : une seule base de code couvre les deux plateformes, et l'application n'a pas besoin d'une intégration profonde au système."
+    }
+   ]
+  },
+  {
+   "id": "fl-02-dart",
+   "title": "Le langage Dart",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Si vous connaissez Kotlin, Dart vous semblera familier. Voici les points essentiels, et ses différences."
+    },
+    {
+     "type": "heading",
+     "text": "Variables et nullité"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "void main() {\n  final nom = 'Merlin';\n  var niveau = 1;\n  const maximum = 100;\n\n  niveau++;\n  String? surnom;\n\n  print('$nom : niveau $niveau sur $maximum');\n  print(surnom?.length ?? 0);\n  print('Longueur : ${nom.length}');\n}",
+     "output": "Merlin : niveau 2 sur 100\n0\nLongueur : 6"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`final` : assigné une seule fois, à l'exécution.",
+      "`const` : connu à la compilation.",
+      "`?`, `?.` et `??` : la sécurité face à null, comme en Kotlin avec `?:`."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Fonctions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les paramètres nommés s'écrivent entre accolades, et `required` les rend obligatoires."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "String potion(String nom, {int doses = 1, required bool magique}) {\n  final type = magique ? 'magique' : 'simple';\n  return '$doses dose(s) de $nom, $type';\n}\n\nvoid main() {\n  print(potion('Force', magique: true));\n  print(potion('Sommeil', doses: 2, magique: false));\n}",
+     "output": "1 dose(s) de Force, magique\n2 dose(s) de Sommeil, simple"
+    },
+    {
+     "type": "heading",
+     "text": "Classes"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "class Sort {\n  const Sort(this.nom, {this.niveau = 1});\n\n  final String nom;\n  final int niveau;\n\n  Sort renforce() => Sort(nom, niveau: niveau + 1);\n\n  @override\n  String toString() => '$nom (niveau $niveau)';\n}\n\nvoid main() {\n  const feu = Sort('Feu');\n  print(feu);\n  print(feu.renforce());\n}",
+     "output": "Feu (niveau 1)\nFeu (niveau 2)"
+    },
+    {
+     "type": "heading",
+     "text": "Collections"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "void main() {\n  final notes = [12, 8, 15, 19];\n\n  print(notes.where((n) => n >= 10).map((n) => n * 2).toList());\n  print(notes.reduce((a, b) => a + b));\n\n  final niveaux = {'Merlin': 7, 'Viviane': 9};\n  print(niveaux['Viviane']);\n  print({1, 2, 2, 3}.length);\n}",
+     "output": "[24, 30, 38]\n54\n9\n3"
+    },
+    {
+     "type": "heading",
+     "text": "Asynchrone"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dart exécute votre code sur un seul fil, avec une **boucle d'événements**. Une `Future` représente un résultat à venir, et `await` l'attend sans bloquer cette boucle. Un `Stream` émet plusieurs valeurs, comme un `Flow`."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "Future<String> chargerNom() async {\n  await Future<void>.delayed(const Duration(milliseconds: 10));\n  return 'Merlin';\n}\n\nStream<int> compteur() async* {\n  for (var i = 1; i <= 3; i++) {\n    yield i;\n  }\n}\n\nFuture<void> main() async {\n  print('Début');\n  print(await chargerNom());\n\n  await for (final valeur in compteur()) {\n    print(valeur);\n  }\n\n  try {\n    await Future<void>.error(Exception('réseau'));\n  } on Exception catch (erreur) {\n    print('Attrapée : $erreur');\n  }\n}",
+     "output": "Début\nMerlin\n1\n2\n3\nAttrapée : Exception: réseau"
+    },
+    {
+     "type": "warning",
+     "text": "`async` ne crée pas de fil. Un calcul lourd dans une fonction `async` bloque quand même l'interface. Pour cela, on utilise un **isolate**, par exemple avec `Isolate.run`."
+    },
+    {
+     "type": "heading",
+     "text": "Patterns et enregistrements"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dart moderne permet de renvoyer plusieurs valeurs avec un **enregistrement**, et de tester des cas avec `switch`. Avec une classe `sealed`, le compilateur vérifie que tous les cas sont traités."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "sealed class Etat {}\n\nclass Chargement extends Etat {}\n\nclass Pret extends Etat {\n  Pret(this.nom);\n  final String nom;\n}\n\nString texte(Etat etat) => switch (etat) {\n  Chargement() => 'Patientez...',\n  Pret(:final nom) => 'Bonjour, $nom',\n};\n\n(int, String) profil() => (7, 'Merlin');\n\nvoid main() {\n  print(texte(Chargement()));\n  print(texte(Pret('Viviane')));\n\n  final (niveau, nom) = profil();\n  print('$nom : $niveau');\n}",
+     "output": "Patientez...\nBonjour, Viviane\nMerlin : 7"
+    },
+    {
+     "type": "tip",
+     "text": "Vous avez appris `sealed` en Kotlin ? Le même réflexe s'applique ici. Les bonnes idées voyagent !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle différence entre final et const ?",
+     "options": [
+      "const est connu à la compilation",
+      "final est plus rapide",
+      "Aucune"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "final est assigné une fois, à l'exécution."
+    },
+    {
+     "prompt": "Que vaut `null ?? 3` ?",
+     "options": [
+      "3",
+      "null",
+      "0"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est l'équivalent de l'opérateur Elvis."
+    },
+    {
+     "prompt": "Que représente une Future ?",
+     "options": [
+      "Un résultat à venir",
+      "Une liste",
+      "Un widget"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "await l'attend sans bloquer la boucle d'événements."
+    },
+    {
+     "prompt": "Un calcul lourd dans une fonction async bloque-t-il l'interface ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "async ne crée pas de fil : utilisez un isolate."
+    },
+    {
+     "prompt": "Quel mot-clé rend un paramètre nommé obligatoire ?",
+     "options": [
+      "required",
+      "final",
+      "late"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les paramètres nommés sont entre accolades."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-02-ex1",
+     "kind": "fill",
+     "prompt": "Quel mot-clé attend une Future ?",
+     "accepted": [
+      "await"
+     ],
+     "solution": "await."
+    },
+    {
+     "id": "fl-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme Dart qui affiche la somme des nombres pairs de la liste `[1, 2, 3, 4, 5, 6]`.",
+     "solution": "void main() {\n  final nombres = [1, 2, 3, 4, 5, 6];\n  print(nombres.where((n) => n.isEven).reduce((a, b) => a + b));\n}",
+     "language": "dart"
+    }
+   ]
+  },
+  {
+   "id": "fl-03-widgets",
+   "title": "Les widgets",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Dans Flutter, **tout est widget** : un texte, une marge, un écran entier. Un widget est une description immuable d'une partie de l'interface."
+    },
+    {
+     "type": "heading",
+     "text": "StatelessWidget"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `StatelessWidget` n'a pas d'état interne : son affichage dépend uniquement de ses paramètres."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass CarteSort extends StatelessWidget {\n  const CarteSort({required this.nom, required this.niveau, super.key});\n\n  final String nom;\n  final int niveau;\n\n  @override\n  Widget build(BuildContext context) {\n    return Card(\n      child: Padding(\n        padding: const EdgeInsets.all(16),\n        child: Column(\n          crossAxisAlignment: CrossAxisAlignment.start,\n          children: [\n            Text(nom, style: Theme.of(context).textTheme.titleMedium),\n            Text('Niveau $niveau'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Flutter compose de petits widgets spécialisés : la marge est elle-même un widget, `Padding`, et non une propriété."
+    },
+    {
+     "type": "heading",
+     "text": "StatefulWidget"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `StatefulWidget` garde son état dans un objet `State`. `setState` indique que l'état a changé, et Flutter reconstruit le widget."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass Compteur extends StatefulWidget {\n  const Compteur({super.key});\n\n  @override\n  State<Compteur> createState() => _CompteurState();\n}\n\nclass _CompteurState extends State<Compteur> {\n  int _clics = 0;\n\n  @override\n  Widget build(BuildContext context) {\n    return FilledButton(\n      onPressed: () => setState(() => _clics++),\n      child: Text('Cliqué $_clics fois'),\n    );\n  }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Le cycle de vie de State"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`initState` : une fois, à la création. C'est ici que l'on prépare les contrôleurs.",
+      "`build` : à chaque reconstruction. Cette méthode doit rester rapide et sans effet de bord.",
+      "`dispose` : à la fin. Libérez ici ce que vous avez créé."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass Recherche extends StatefulWidget {\n  const Recherche({super.key});\n\n  @override\n  State<Recherche> createState() => _RechercheState();\n}\n\nclass _RechercheState extends State<Recherche> {\n  final _controleur = TextEditingController();\n\n  @override\n  void dispose() {\n    _controleur.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return TextField(controller: _controleur);\n  }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Après un `await`, le widget a pu disparaître. Vérifiez `mounted` avant d'appeler `setState` ou d'utiliser `context`, sinon vous provoquerez une erreur."
+    },
+    {
+     "type": "heading",
+     "text": "Mise en page"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Column` et `Row` : empilent leurs enfants.",
+      "`Expanded` : donne à un enfant la place restante.",
+      "`Stack` : superpose ses enfants.",
+      "`ListView.builder` : une liste paresseuse."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "La règle à retenir : **les contraintes descendent, les tailles remontent, et le parent place l'enfant**. Cela explique les fameux débordements à bandes jaunes et noires : un `Column` a donné à un enfant plus de hauteur qu'il n'en reste à l'écran."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass ListeSorts extends StatelessWidget {\n  const ListeSorts({required this.sorts, super.key});\n\n  final List<String> sorts;\n\n  @override\n  Widget build(BuildContext context) {\n    return ListView.builder(\n      itemCount: sorts.length,\n      itemBuilder: (context, index) => ListTile(title: Text(sorts[index])),\n    );\n  }\n}"
+    },
+    {
+     "type": "tip",
+     "text": "Utilisez `const` dès que vous le pouvez : un widget constant n'est pas reconstruit inutilement !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel widget n'a pas d'état interne ?",
+     "options": [
+      "StatelessWidget",
+      "StatefulWidget"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Son affichage dépend de ses paramètres."
+    },
+    {
+     "prompt": "Que déclenche setState ?",
+     "options": [
+      "Une reconstruction du widget",
+      "Une sauvegarde sur disque",
+      "Une requête réseau"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il signale que l'état a changé."
+    },
+    {
+     "prompt": "Où libérer un TextEditingController ?",
+     "options": [
+      "Dans dispose",
+      "Dans build",
+      "Nulle part"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon, il reste en mémoire."
+    },
+    {
+     "prompt": "Que vérifier après un await avant setState ?",
+     "options": [
+      "mounted",
+      "kDebugMode",
+      "hashCode"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le widget a pu disparaître."
+    },
+    {
+     "prompt": "Quelle est la règle de mise en page ?",
+     "options": [
+      "Les contraintes descendent, les tailles remontent",
+      "Les tailles descendent, les contraintes remontent"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le parent place ensuite l'enfant."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode du State est appelée une seule fois à la création ?",
+     "accepted": [
+      "initState",
+      "initState()"
+     ],
+     "solution": "initState."
+    },
+    {
+     "id": "fl-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un `StatelessWidget` nommé `Titre`, qui affiche un texte reçu en paramètre.",
+     "solution": "import 'package:flutter/material.dart';\n\nclass Titre extends StatelessWidget {\n  const Titre(this.texte, {super.key});\n\n  final String texte;\n\n  @override\n  Widget build(BuildContext context) => Text(texte);\n}",
+     "language": "dart"
+    }
+   ]
+  },
+  {
+   "id": "fl-04-navigation",
+   "title": "La navigation",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Flutter propose un `Navigator` intégré, qui gère une pile d'écrans. Pour une application complète, on utilise souvent **go_router**, le paquet choisi dans cette application."
+    },
+    {
+     "type": "heading",
+     "text": "Le Navigator"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass Accueil extends StatelessWidget {\n  const Accueil({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return FilledButton(\n      onPressed: () async {\n        final choix = await Navigator.of(context).push<String>(\n          MaterialPageRoute(builder: (_) => const Choix()),\n        );\n        debugPrint('Choisi : $choix');\n      },\n      child: const Text('Choisir'),\n    );\n  }\n}\n\nclass Choix extends StatelessWidget {\n  const Choix({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return TextButton(\n      onPressed: () => Navigator.of(context).pop('Feu'),\n      child: const Text('Feu'),\n    );\n  }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`push` ajoute un écran, `pop` revient en arrière, et peut renvoyer une valeur."
+    },
+    {
+     "type": "heading",
+     "text": "go_router"
+    },
+    {
+     "type": "paragraph",
+     "text": "**go_router** décrit l'application par des routes, comme des adresses web. Il gère les paramètres, les liens profonds et les onglets."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\nimport 'package:go_router/go_router.dart';\n\nfinal routeur = GoRouter(\n  initialLocation: '/modules',\n  errorBuilder: (context, state) => const Text('Page introuvable'),\n  routes: [\n    GoRoute(\n      path: '/modules',\n      builder: (context, state) => const Text('Liste'),\n      routes: [\n        GoRoute(\n          path: ':id',\n          builder: (context, state) {\n            final id = state.pathParameters['id']!;\n            return Text('Module $id');\n          },\n        ),\n      ],\n    ),\n  ],\n);\n\nclass Application extends StatelessWidget {\n  const Application({super.key});\n\n  @override\n  Widget build(BuildContext context) => MaterialApp.router(routerConfig: routeur);\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`context.go('/modules/kotlin')` : remplace la pile pour aller à cette adresse.",
+      "`context.push('/modules/kotlin')` : ajoute par-dessus l'écran courant."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Cette différence compte pour le bouton Retour : après `go` vers une route de premier niveau, il n'y a plus d'écran précédent."
+    },
+    {
+     "type": "heading",
+     "text": "Des onglets qui gardent leur état"
+    },
+    {
+     "type": "paragraph",
+     "text": "`StatefulShellRoute` conserve la position de chaque onglet quand on passe de l'un à l'autre. C'est ce que fait la barre basse de cette application."
+    },
+    {
+     "type": "warning",
+     "text": "Ne placez pas d'objet complet dans une adresse. Passez un identifiant, et rechargez les données à partir de lui, comme en natif."
+    },
+    {
+     "type": "tip",
+     "text": "Touchez un onglet actif dans cette application : il revient à sa page de départ. C'est `initialLocation` de `goBranch` qui s'en charge !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait Navigator.pop ?",
+     "options": [
+      "Il revient à l'écran précédent",
+      "Il ajoute un écran",
+      "Il ferme l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il peut aussi renvoyer une valeur."
+    },
+    {
+     "prompt": "Quelle différence entre go et push ?",
+     "options": [
+      "go remplace la pile, push ajoute par-dessus",
+      "Aucune",
+      "push efface les données"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela change le comportement du bouton Retour."
+    },
+    {
+     "prompt": "Quel élément conserve la position des onglets ?",
+     "options": [
+      "StatefulShellRoute",
+      "ListView",
+      "Column"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque onglet a sa propre pile."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode de `Navigator` ajoute un écran à la pile ?",
+     "accepted": [
+      "push",
+      "push()"
+     ],
+     "solution": "push."
+    },
+    {
+     "id": "fl-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une route go_router `/profil/:nom` qui affiche le nom reçu.",
+     "solution": "import 'package:flutter/material.dart';\nimport 'package:go_router/go_router.dart';\n\nfinal routeProfil = GoRoute(\n  path: '/profil/:nom',\n  builder: (context, state) => Text(state.pathParameters['nom']!),\n);",
+     "language": "dart"
+    }
+   ]
+  },
+  {
+   "id": "fl-05-etat",
+   "title": "La gestion d'état",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "`setState` suffit pour un état local. Dès que plusieurs écrans partagent une donnée, il faut une solution dédiée."
+    },
+    {
+     "type": "heading",
+     "text": "Le problème"
+    },
+    {
+     "type": "paragraph",
+     "text": "Faire passer une valeur de widget en widget à travers dix niveaux devient vite ingérable. La remontée d'état ne suffit plus : il faut un endroit partagé, comme le ViewModel en natif."
+    },
+    {
+     "type": "heading",
+     "text": "Riverpod"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Riverpod**, utilisé par cette application, déclare des **fournisseurs** globaux, vérifiés à la compilation et faciles à remplacer en test."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\nimport 'package:flutter_riverpod/flutter_riverpod.dart';\n\nclass CompteurControleur extends Notifier<int> {\n  @override\n  int build() => 0;\n\n  void incrementer() => state++;\n}\n\nfinal compteurProvider = NotifierProvider<CompteurControleur, int>(\n  CompteurControleur.new,\n);\n\nclass EcranCompteur extends ConsumerWidget {\n  const EcranCompteur({super.key});\n\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    final valeur = ref.watch(compteurProvider);\n\n    return FilledButton(\n      onPressed: () => ref.read(compteurProvider.notifier).incrementer(),\n      child: Text('$valeur'),\n    );\n  }\n}\n\nvoid main() {\n  runApp(const ProviderScope(child: MaterialApp(home: EcranCompteur())));\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`ref.watch` : dans `build`, reconstruit le widget à chaque changement.",
+      "`ref.read` : dans un gestionnaire d'événement, lit sans s'abonner."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "N'appelez pas `ref.read` dans `build` pour afficher une valeur : l'écran ne se mettrait pas à jour. Inversement, n'utilisez pas `ref.watch` dans un `onPressed`."
+    },
+    {
+     "type": "heading",
+     "text": "Données asynchrones"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `FutureProvider` ou un `StreamProvider` expose un `AsyncValue`, avec ses états de chargement, de données et d'erreur."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\nimport 'package:flutter_riverpod/flutter_riverpod.dart';\n\nfinal profilProvider = FutureProvider<String>((ref) async {\n  await Future<void>.delayed(const Duration(milliseconds: 100));\n  return 'Merlin';\n});\n\nclass Profil extends ConsumerWidget {\n  const Profil({super.key});\n\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    return ref.watch(profilProvider).when(\n      loading: () => const CircularProgressIndicator(),\n      error: (erreur, _) => const Text('Chargement impossible'),\n      data: (nom) => Text('Bonjour, $nom'),\n    );\n  }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Tester sans effort"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un fournisseur se remplace par une fausse version dans un test, sans toucher au code de l'écran : `ProviderContainer(overrides: [...])`. C'est ce que font les tests de cette application pour utiliser une base en mémoire."
+    },
+    {
+     "type": "info",
+     "text": "Provider, Bloc et Riverpod sont les solutions les plus répandues. Le concept compte plus que la bibliothèque : l'état descend, les événements remontent."
+    },
+    {
+     "type": "tip",
+     "text": "Un état ne sert qu'à un seul widget ? Gardez `setState`. Inutile de sortir l'artillerie lourde pour une case à cocher !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait ref.watch ?",
+     "options": [
+      "Il abonne le widget aux changements",
+      "Il lit une seule fois",
+      "Il sauvegarde la valeur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le widget se reconstruit à chaque changement."
+    },
+    {
+     "prompt": "Où utiliser ref.read ?",
+     "options": [
+      "Dans un gestionnaire d'événement",
+      "Dans build pour afficher une valeur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne s'abonne pas."
+    },
+    {
+     "prompt": "Que représente AsyncValue ?",
+     "options": [
+      "Le chargement, les données ou une erreur",
+      "Une couleur",
+      "Un widget de liste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il oblige à traiter ces trois cas."
+    },
+    {
+     "prompt": "Pourquoi les fournisseurs facilitent-ils les tests ?",
+     "options": [
+      "On peut les remplacer par de faux",
+      "Ils désactivent les tests",
+      "Ils évitent Dart"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple une base en mémoire."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-05-ex1",
+     "kind": "fill",
+     "prompt": "Quel widget doit entourer l'application pour utiliser Riverpod ?",
+     "accepted": [
+      "ProviderScope"
+     ],
+     "solution": "ProviderScope."
+    },
+    {
+     "id": "fl-05-ex2",
+     "kind": "self",
+     "prompt": "Déclarez un `Provider<String>` nommé `versionProvider` qui renvoie `1.0.0`.",
+     "solution": "import 'package:flutter_riverpod/flutter_riverpod.dart';\n\nfinal versionProvider = Provider<String>((ref) => '1.0.0');",
+     "language": "dart"
+    }
+   ]
+  },
+  {
+   "id": "fl-06-plugins",
+   "title": "Plugins, permissions, notifications et stockage",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un **plugin** est un paquet qui contient du code natif : c'est le pont entre Dart et le système. Tout ce que vous avez appris sur Android reste valable dessous."
+    },
+    {
+     "type": "heading",
+     "text": "Ajouter un paquet"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "flutter pub add path_provider\nflutter pub outdated"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le fichier `pubspec.yaml` liste les dépendances, et `pubspec.lock` fixe leurs versions exactes. Sur pub.dev, vérifiez les plateformes prises en charge, la date de mise à jour et le score."
+    },
+    {
+     "type": "warning",
+     "text": "Un plugin ajoute du code natif à votre application, et parfois des permissions. Lisez sa page et son manifeste fusionné avant de l'adopter."
+    },
+    {
+     "type": "heading",
+     "text": "Les permissions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les règles d'Android s'appliquent : déclarez la permission dans `android/app/src/main/AndroidManifest.xml`, puis demandez-la à l'exécution. Le plugin `permission_handler` facilite cette demande."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:permission_handler/permission_handler.dart';\n\nFuture<bool> demanderCamera() async {\n  final statut = await Permission.camera.request();\n\n  if (statut.isPermanentlyDenied) {\n    await openAppSettings();\n    return false;\n  }\n  return statut.isGranted;\n}"
+    },
+    {
+     "type": "warning",
+     "text": "La permission `INTERNET` est présente en debug pour que `flutter run` fonctionne, mais le modèle standard ne l'ajoute pas au manifeste de release. Une application qui marche en debug peut donc perdre tout accès réseau en release. C'est une panne très classique."
+    },
+    {
+     "type": "heading",
+     "text": "Les notifications"
+    },
+    {
+     "type": "paragraph",
+     "text": "`flutter_local_notifications` crée le canal et affiche la notification. La permission `POST_NOTIFICATIONS` reste nécessaire depuis Android 13."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter_local_notifications/flutter_local_notifications.dart';\n\nfinal notifications = FlutterLocalNotificationsPlugin();\n\nFuture<void> preparer() async {\n  await notifications.initialize(\n    settings: const InitializationSettings(\n      android: AndroidInitializationSettings('ic_notification'),\n    ),\n  );\n}\n\nFuture<void> rappeler() async {\n  await notifications.show(\n    id: 1,\n    title: 'Révision',\n    body: 'Votre quiz du jour vous attend.',\n    notificationDetails: const NotificationDetails(\n      android: AndroidNotificationDetails('rappels', 'Rappels de révision'),\n    ),\n  );\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Ce paquet exige la désucration de la bibliothèque Java. Sans elle, la compilation Android échoue avec le message `requires core library desugaring to be enabled`. Activez-la dans `android/app/build.gradle.kts`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    compileOptions {\n        isCoreLibraryDesugaringEnabled = true\n    }\n}\n\ndependencies {\n    coreLibraryDesugaring(\"com.android.tools:desugar_jdk_libs:2.1.5\")\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Le stockage"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`path_provider` : les dossiers de l'application.",
+      "`shared_preferences` : de petits réglages.",
+      "`drift` ou `sqflite` : une base SQLite. Cette application utilise drift.",
+      "`flutter_secure_storage` : les secrets, dans le Keystore sur Android."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'dart:io';\n\nimport 'package:path/path.dart' as p;\nimport 'package:path_provider/path_provider.dart';\n\nFuture<File> fichierNotes() async {\n  final dossier = await getApplicationSupportDirectory();\n  return File(p.join(dossier.path, 'notes.txt'));\n}"
+    },
+    {
+     "type": "info",
+     "text": "`getApplicationDocumentsDirectory` pointe vers un dossier privé sur Android, mais vers `~/Documents` sur Linux. Cette application a d'ailleurs corrigé ce piège. Vérifiez chaque plateforme."
+    },
+    {
+     "type": "tip",
+     "text": "Un plugin n'est pas magique : ouvrez son dossier `android/`, vous y trouverez du Kotlin que vous savez lire désormais !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qu'est-ce qu'un plugin Flutter ?",
+     "options": [
+      "Un paquet avec du code natif",
+      "Un thème",
+      "Un fichier de logs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il relie Dart au système."
+    },
+    {
+     "prompt": "Quel fichier fixe les versions exactes des dépendances ?",
+     "options": [
+      "pubspec.lock",
+      "README.md",
+      "main.dart"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "pubspec.yaml indique les contraintes."
+    },
+    {
+     "prompt": "Quel piège guette INTERNET ?",
+     "options": [
+      "Elle peut manquer dans le manifeste de release",
+      "Elle ralentit l'écran",
+      "Elle est interdite"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'application marche alors en debug seulement."
+    },
+    {
+     "prompt": "Où stocker une clé d'API ?",
+     "options": [
+      "flutter_secure_storage",
+      "shared_preferences"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il s'appuie sur le Keystore."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande ajoute un paquet à un projet Flutter ?",
+     "accepted": [
+      "flutter pub add"
+     ],
+     "solution": "flutter pub add."
+    },
+    {
+     "id": "fl-06-ex2",
+     "kind": "self",
+     "prompt": "Votre application fonctionne avec `flutter run`, mais tous ses appels réseau échouent dans l'APK de release. Quelle est la cause la plus probable, et comment la corriger ?",
+     "solution": "La permission INTERNET manque dans le manifeste principal : le mode debug la fournit, pas le modèle de release. Il faut ajouter <uses-permission android:name=\"android.permission.INTERNET\"/> dans android/app/src/main/AndroidManifest.xml, puis tester à nouveau l'APK de release."
+    }
+   ]
+  },
+  {
+   "id": "fl-07-canaux",
+   "title": "Platform Channels et Kotlin",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Quand aucun plugin ne répond à votre besoin, vous pouvez appeler vous-même du code Kotlin depuis Dart."
+    },
+    {
+     "type": "heading",
+     "text": "Le principe"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **canal** relie Dart et la plateforme par un nom unique. Les messages sont asynchrones, et les valeurs simples sont converties automatiquement : `int`, `String`, `List`, `Map`."
+    },
+    {
+     "type": "heading",
+     "text": "Côté Dart"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/services.dart';\n\nconst _canal = MethodChannel('com.exemple.druide/batterie');\n\nFuture<int?> niveauBatterie() async {\n  try {\n    return await _canal.invokeMethod<int>('niveau');\n  } on PlatformException catch (erreur) {\n    return Future.error('Batterie illisible : ${erreur.message}');\n  } on MissingPluginException {\n    return null;\n  }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`MissingPluginException` survient si la plateforme n'implémente pas ce canal, par exemple sur Linux. Une application multiplateforme doit prévoir ce cas."
+    },
+    {
+     "type": "heading",
+     "text": "Côté Kotlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le canal se déclare dans `android/app/src/main/kotlin/.../MainActivity.kt`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class MainActivity : FlutterActivity() {\n    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {\n        super.configureFlutterEngine(flutterEngine)\n\n        MethodChannel(\n            flutterEngine.dartExecutor.binaryMessenger,\n            \"com.exemple.druide/batterie\",\n        ).setMethodCallHandler { appel, resultat ->\n            if (appel.method == \"niveau\") {\n                val gestionnaire = getSystemService(Context.BATTERY_SERVICE) as BatteryManager\n                val niveau = gestionnaire.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)\n                if (niveau >= 0) {\n                    resultat.success(niveau)\n                } else {\n                    resultat.error(\"INDISPONIBLE\", \"Niveau inconnu\", null)\n                }\n            } else {\n                resultat.notImplemented()\n            }\n        }\n    }\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`resultat.success` : renvoie une valeur à Dart.",
+      "`resultat.error` : devient une `PlatformException`.",
+      "`resultat.notImplemented` : devient une `MissingPluginException`."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Répondez exactement une fois à chaque appel, sinon le `await` côté Dart n'aboutira jamais. Et par défaut, ce code tourne sur le fil principal : une opération longue y provoquerait un gel de l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Les règles de fils"
+    },
+    {
+     "type": "paragraph",
+     "text": "Envoyez toujours vos messages vers Flutter depuis le fil principal. Après un travail en arrière-plan, revenez-y avec `Handler(Looper.getMainLooper())`."
+    },
+    {
+     "type": "heading",
+     "text": "Les solutions plus sûres"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `MethodChannel` n'est pas typé : une faute de frappe dans un nom de méthode ne se voit qu'à l'exécution. La documentation de Flutter recommande désormais d'autres outils pour les nouveaux projets :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Pigeon** : génère un code typé à partir d'un contrat écrit en Dart.",
+      "**FFIgen** et `dart:ffi` : appellent directement du code C.",
+      "**JNIgen** : appelle du Java ou du Kotlin via JNI."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le `MethodChannel` reste utile pour comprendre le mécanisme, et il est partout dans le code existant."
+    },
+    {
+     "type": "tip",
+     "text": "Quand un plugin plante, vous verrez `PlatformException`. Vous savez maintenant que l'erreur vient de l'autre côté du canal !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que relie un canal ?",
+     "options": [
+      "Dart et la plateforme",
+      "Deux téléphones",
+      "Gradle et pub.dev"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par un nom unique."
+    },
+    {
+     "prompt": "Que devient resultat.error côté Dart ?",
+     "options": [
+      "Une PlatformException",
+      "Un null silencieux",
+      "Un crash obligatoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut l'attraper."
+    },
+    {
+     "prompt": "Que se passe-t-il si on ne répond jamais ?",
+     "options": [
+      "Le await n'aboutit jamais",
+      "Dart réessaie",
+      "L'application redémarre"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Répondez exactement une fois."
+    },
+    {
+     "prompt": "Quel outil génère des canaux typés ?",
+     "options": [
+      "Pigeon",
+      "Gradle",
+      "R8"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il part d'un contrat écrit en Dart."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode indique côté Kotlin qu'une méthode de canal n'existe pas ?",
+     "accepted": [
+      "notImplemented",
+      "notImplemented()",
+      "resultat.notImplemented",
+      "result.notImplemented"
+     ],
+     "solution": "notImplemented."
+    },
+    {
+     "id": "fl-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la fonction Dart qui appelle la méthode `version` sur le canal `com.exemple/systeme` et renvoie un `String?`.",
+     "solution": "import 'package:flutter/services.dart';\n\nconst _systeme = MethodChannel('com.exemple/systeme');\n\nFuture<String?> versionSysteme() {\n  return _systeme.invokeMethod<String>('version');\n}",
+     "language": "dart"
+    }
+   ]
+  },
+  {
+   "id": "fl-08-compilation",
+   "title": "Compiler et signer",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Flutter s'appuie sur Gradle et sur tout ce que vous avez vu au module 4, avec quelques commandes en plus."
+    },
+    {
+     "type": "heading",
+     "text": "Produire une application"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# AAB pour Google Play\nflutter build appbundle\n\n# Un APK par architecture, recommandé pour distribuer des APK\nflutter build apk --split-per-abi\n\n# Installer sur l'appareil connecté\nflutter install"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sans `--split-per-abi`, l'APK contient toutes les architectures, et il est bien plus lourd. La commande produit `app-arm64-v8a-release.apk` et ses variantes dans `build/app/outputs/flutter-apk/`."
+    },
+    {
+     "type": "heading",
+     "text": "Les versions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans `pubspec.yaml`, `version: 1.2.0+7` donne `versionName` 1.2.0 et `versionCode` 7. Chaque envoi sur le Play Store exige un `versionCode` plus élevé."
+    },
+    {
+     "type": "heading",
+     "text": "Signer"
+    },
+    {
+     "type": "paragraph",
+     "text": "Créez une clé d'envoi, puis un fichier `android/key.properties`, à laisser hors de Git."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA \\\n  -storetype JKS -keysize 2048 -validity 10000 -alias upload"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.FileInputStream\nimport java.util.Properties\n\nval proprietes = Properties()\nval fichier = rootProject.file(\"key.properties\")\nif (fichier.exists()) {\n    proprietes.load(FileInputStream(fichier))\n}\n\nandroid {\n    signingConfigs {\n        create(\"release\") {\n            keyAlias = proprietes.getProperty(\"keyAlias\")\n            keyPassword = proprietes.getProperty(\"keyPassword\")\n            storeFile = proprietes.getProperty(\"storeFile\")?.let { file(it) }\n            storePassword = proprietes.getProperty(\"storePassword\")\n        }\n    }\n    buildTypes {\n        release {\n            signingConfig = signingConfigs.getByName(\"release\")\n        }\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Le modèle généré par Flutter signe la release avec la clé de debug. Elle fonctionne pour tester, mais Google Play la refuse. C'est encore le cas de cette application, et ce sera corrigé avant sa livraison."
+    },
+    {
+     "type": "heading",
+     "text": "Avant de publier"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Remplacez l'identifiant `applicationId` par défaut : il ne pourra plus changer une fois l'application envoyée sur le Play Store.",
+      "Réglez `android:label`, le nom affiché.",
+      "Vérifiez la permission `INTERNET`.",
+      "Testez la version release sur un vrai téléphone : R8 y est actif."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "`flutter clean` règle bien des comportements étranges après un changement de signature ou de Gradle. Mais comprenez d'abord pourquoi ça cassait !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle commande produit un AAB ?",
+     "options": [
+      "flutter build appbundle",
+      "flutter build apk",
+      "flutter run"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est le format attendu par Google Play."
+    },
+    {
+     "prompt": "Que fait --split-per-abi ?",
+     "options": [
+      "Il produit un APK par architecture",
+      "Il divise le code Dart",
+      "Il signe l'APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque APK est plus léger."
+    },
+    {
+     "prompt": "Dans version: 1.2.0+7, que vaut versionCode ?",
+     "options": [
+      "7",
+      "1",
+      "120"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "1.2.0 est le versionName."
+    },
+    {
+     "prompt": "Que fait le modèle Flutter pour la release par défaut ?",
+     "options": [
+      "Il la signe avec la clé de debug",
+      "Il refuse de compiler",
+      "Il envoie l'APK sur le Play Store"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut configurer votre propre clé."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel fichier indique à Gradle votre mot de passe de clé dans un projet Flutter ?",
+     "accepted": [
+      "key.properties",
+      "android/key.properties"
+     ],
+     "solution": "android/key.properties."
+    },
+    {
+     "id": "fl-08-ex2",
+     "kind": "self",
+     "prompt": "Votre APK universel pèse 60 Mo, et vos utilisateurs se plaignent. Que proposez-vous ?",
+     "solution": "Pour Google Play, publier un AAB, qui envoie seulement le nécessaire à chaque appareil. Pour une distribution directe, utiliser flutter build apk --split-per-abi, et donner le fichier arm64-v8a à la plupart des téléphones récents."
+    }
+   ]
+  },
+  {
+   "id": "fl-09-optimisation",
+   "title": "Débogage et optimisation",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Flutter offre un excellent confort de débogage, à condition de mesurer au bon endroit."
+    },
+    {
+     "type": "heading",
+     "text": "Les trois modes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Debug** : rechargement à chaud et assertions actives, performances dégradées.",
+      "**Profile** : proche de la release, avec juste assez d'outils pour mesurer. Il n'est pas disponible sur émulateur.",
+      "**Release** : optimisé pour les utilisateurs, sans outils de débogage."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "flutter run              # debug\nflutter run --profile    # mesurer les performances\nflutter run --release    # tester comme un utilisateur"
+    },
+    {
+     "type": "warning",
+     "text": "Ne jugez jamais les performances en mode debug. Mesurez en mode profile, sur un vrai téléphone, de préférence le moins puissant que vous visez."
+    },
+    {
+     "type": "heading",
+     "text": "Le rechargement à chaud"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **hot reload** injecte vos modifications et conserve l'état. Le **hot restart** relance l'application et perd l'état. Certains changements, comme le code natif, exigent une recompilation complète."
+    },
+    {
+     "type": "heading",
+     "text": "Déboguer"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`flutter analyze` : l'analyse statique.",
+      "`flutter doctor` : l'état de votre installation.",
+      "`debugPrint` : des journaux que Flutter limite pour ne pas en perdre.",
+      "**DevTools** : inspecteur de widgets, performances, mémoire et réseau.",
+      "`flutter logs` : les journaux de l'appareil."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le budget d'une image"
+    },
+    {
+     "type": "paragraph",
+     "text": "À 60 images par seconde, vous disposez de **16 ms** par image, répartis entre la construction et le rendu : environ 8 ms pour chacun. À 120 images par seconde, il faut tout faire en moins de 8 ms."
+    },
+    {
+     "type": "heading",
+     "text": "Écrire du code rapide"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter/material.dart';\n\nclass Bon extends StatelessWidget {\n  const Bon({required this.valeur, super.key});\n\n  final int valeur;\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        // Constant : Flutter réutilise le même widget\n        const Text('Titre fixe'),\n        // Seul ce texte dépend de la valeur\n        Text('$valeur'),\n      ],\n    );\n  }\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Gardez `build` léger, sans calcul coûteux.",
+      "Appelez `setState` le plus bas possible dans l'arbre.",
+      "Préférez un petit `StatelessWidget` à une fonction qui renvoie un widget.",
+      "Utilisez `ListView.builder` plutôt qu'une `Column` de cent éléments.",
+      "Évitez `Opacity` dans une animation : préférez `AnimatedOpacity` ou une couleur semi-transparente.",
+      "Évitez les découpages inutiles : `borderRadius` coûte moins qu'un `ClipRRect`."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les calculs lourds"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dart exécute votre code sur un seul fil. `Isolate.run` place un calcul dans un autre isolate, et l'interface reste fluide."
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'dart:isolate';\n\nint somme(int limite) {\n  var total = 0;\n  for (var i = 1; i <= limite; i++) {\n    total += i;\n  }\n  return total;\n}\n\nFuture<void> main() async {\n  final resultat = await Isolate.run(() => somme(1000000));\n  print(resultat);\n}",
+     "output": "500000500000"
+    },
+    {
+     "type": "info",
+     "text": "Sur Android, `flutter build apk --analyze-size` et les outils de taille de DevTools aident à comprendre ce qui alourdit votre application."
+    },
+    {
+     "type": "tip",
+     "text": "Une saccade se mesure avant de se corriger. Optimiser à l'aveugle, c'est lancer un sort les yeux bandés !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Dans quel mode mesurer les performances ?",
+     "options": [
+      "Profile",
+      "Debug",
+      "Hot reload"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sur un vrai téléphone."
+    },
+    {
+     "prompt": "Quel est le budget d'une image à 60 Hz ?",
+     "options": [
+      "16 ms",
+      "100 ms",
+      "1 s"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Partagé entre construction et rendu."
+    },
+    {
+     "prompt": "Que conserve le hot reload ?",
+     "options": [
+      "L'état de l'application",
+      "Le code natif modifié",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le hot restart perd l'état."
+    },
+    {
+     "prompt": "Comment garder l'interface fluide pendant un gros calcul ?",
+     "options": [
+      "Avec Isolate.run",
+      "Avec async seul",
+      "Avec plus de setState"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "async ne crée pas de fil."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "fl-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande vérifie l'état d'une installation Flutter ?",
+     "accepted": [
+      "flutter doctor"
+     ],
+     "solution": "flutter doctor."
+    },
+    {
+     "id": "fl-09-ex2",
+     "kind": "self",
+     "prompt": "Lancez dans un isolate le calcul de la somme des carrés de 1 à 1000, puis affichez le résultat.",
+     "solution": "import 'dart:isolate';\n\nFuture<void> main() async {\n  final resultat = await Isolate.run(() {\n    var total = 0;\n    for (var i = 1; i <= 1000; i++) {\n      total += i * i;\n    }\n    return total;\n  });\n  print(resultat);\n}",
+     "language": "dart"
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Pourquoi une application Flutter paraît-elle identique selon les versions d'Android ?",
+    "options": [
+     "Flutter dessine ses propres widgets",
+     "Android les copie",
+     "Le Play Store les uniformise"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il peint ses pixels sur une surface."
+   },
+   {
+    "prompt": "Que vaut `'abc'.length` en Dart ?",
+    "options": [
+     "3",
+     "abc"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Une propriété, pas une méthode."
+   },
+   {
+    "prompt": "Que fait setState ?",
+    "options": [
+     "Il reconstruit le widget",
+     "Il persiste la donnée"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La donnée reste en mémoire."
+   },
+   {
+    "prompt": "Où libérer un contrôleur ?",
+    "options": [
+     "Dans dispose",
+     "Dans build"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "build peut être rappelé très souvent."
+   },
+   {
+    "prompt": "Avec go_router, quelle méthode empile un écran ?",
+    "options": [
+     "context.push",
+     "context.go"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "go remplace la pile."
+   },
+   {
+    "prompt": "Quels éléments conviennent à Riverpod ?",
+    "options": [
+     "ref.watch dans build",
+     "ref.read dans un onPressed",
+     "ref.watch dans un onPressed"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "read s'utilise dans les événements."
+   },
+   {
+    "prompt": "Que peut-il manquer à un APK release qui n'a plus de réseau ?",
+    "options": [
+     "La permission INTERNET",
+     "Le hot reload"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Elle n'est fournie qu'en debug par le modèle."
+   },
+   {
+    "prompt": "Que recommande Flutter pour un nouveau pont typé vers Kotlin ?",
+    "options": [
+     "Pigeon ou JNIgen",
+     "Des chaînes écrites à la main"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le MethodChannel n'est pas typé."
+   },
+   {
+    "prompt": "Quel fichier donne versionName et versionCode ?",
+    "options": [
+     "pubspec.yaml",
+     "build.yaml"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Sous la forme 1.2.0+7."
+   },
+   {
+    "prompt": "Où mesurer les performances ?",
+    "options": [
+     "En mode profile, sur un vrai téléphone",
+     "En mode debug, sur l'émulateur"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le mode profile n'existe pas sur émulateur."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Architecture de Flutter",
+   "url": "https://docs.flutter.dev/resources/architectural-overview"
+  },
+  {
+   "title": "Canaux de plateforme",
+   "url": "https://docs.flutter.dev/platform-integration/platform-channels"
+  },
+  {
+   "title": "Publier pour Android",
+   "url": "https://docs.flutter.dev/deployment/android"
+  },
+  {
+   "title": "Modes de compilation",
+   "url": "https://docs.flutter.dev/testing/build-modes"
+  },
+  {
+   "title": "Bonnes pratiques de performance",
+   "url": "https://docs.flutter.dev/perf/best-practices"
+  },
+  {
+   "title": "Pub, le dépôt de paquets",
+   "url": "https://pub.dev/"
+  },
+  {
+   "title": "Riverpod",
+   "url": "https://riverpod.dev/"
+  }
+ ]
+}
