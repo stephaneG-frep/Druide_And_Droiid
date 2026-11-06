@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Phase 5 — 2026-11-06
+
+- Module 11 Publication et maintenance rédigé : douze leçons et évaluation.
+- Module 12 Expert Android rédigé : onze leçons, trois projets et une grille d'évaluation sur projet réel.
+- Tous les extraits Android et Flutter des douze modules sont vérifiés d'un seul passage.
+- `tool/check_android_snippets.py` compile aussi les extraits écrits comme des instructions.
+- Le test « module sans contenu » utilise un index réduit, puisque plus aucun module n'est vide.
+
 ## Phase 5, en cours — 2026-11-06, tour 5
 
 - Module 9 Sécurité Android rédigé : onze leçons et évaluation. Les exercices offensifs sont limités aux applications de démonstration et aux environnements autorisés.

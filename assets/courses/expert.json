@@ -1,0 +1,1952 @@
+{
+ "moduleId": "expert",
+ "lessons": [
+  {
+   "id": "exp-01-methode",
+   "title": "Mener un projet complet",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Ce module change de nature. Il n'y a plus de petites leçons isolées : vous allez construire de vraies applications, de bout en bout, et les présenter."
+    },
+    {
+     "type": "heading",
+     "text": "Le parcours"
+    },
+    {
+     "type": "layers",
+     "title": "Trois projets de difficulté croissante",
+     "layers": [
+      {
+       "name": "Projet 1 : Grimoire",
+       "detail": "Une application native en Kotlin et Compose, hors ligne d'abord."
+      },
+      {
+       "name": "Projet 2 : Quêtes",
+       "detail": "Une application Flutter connectée à une API."
+      },
+      {
+       "name": "Projet final",
+       "detail": "Votre propre application, publiable, qui sert d'évaluation."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Cadrer avant de coder"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Quel problème l'application résout-elle, et pour qui ?",
+      "Quelles fonctions sont indispensables à la première version ?",
+      "Quelles données manipule-t-elle ?",
+      "Qu'est-ce qui reste hors périmètre ?"
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Le risque principal d'un projet personnel est d'en faire trop. Une petite application terminée vaut mieux qu'une grande abandonnée. Écrivez ce que vous ne ferez **pas**."
+    },
+    {
+     "type": "heading",
+     "text": "Découper"
+    },
+    {
+     "type": "paragraph",
+     "text": "Découpez le travail en tranches verticales : chaque tranche traverse l'interface, la logique et les données, et produit quelque chose d'utilisable."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Mauvais découpage :\n1. Toute la base de données\n2. Tout le réseau\n3. Toute l'interface\n\nBon découpage :\n1. Créer et afficher une note, en local\n2. Modifier et supprimer une note\n3. Synchroniser les notes"
+    },
+    {
+     "type": "heading",
+     "text": "Une définition de « terminé »"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le code est relu et fusionné.",
+      "Les tests passent en CI.",
+      "La fonction a été essayée sur un appareil.",
+      "La documentation est à jour."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Git au quotidien"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "git switch -c ajout-recherche\ngit add app/src/main\ngit commit -m \"Ajoute la recherche dans les notes\"\ngit push -u origin ajout-recherche"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une branche par sujet, des commits courts, une demande de fusion relue, même par vous-même, le lendemain."
+    },
+    {
+     "type": "heading",
+     "text": "Noter les décisions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **ADR**, Architecture Decision Record, est un court document qui garde la trace d'un choix important et de sa raison. Dans six mois, vous en aurez besoin."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "# 003 — Room plutôt que des fichiers JSON\n\nContexte : les notes doivent être recherchées et triées.\nDécision : stocker les notes dans Room.\nConséquences : des migrations à écrire, des requêtes vérifiées à la compilation."
+    },
+    {
+     "type": "tip",
+     "text": "Un mage expert n'est pas celui qui connaît le plus de sorts. C'est celui qui sait lequel ne pas lancer !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel est le principal risque d'un projet personnel ?",
+     "options": [
+      "En faire trop",
+      "Écrire trop de tests"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Écrivez ce que vous ne ferez pas."
+    },
+    {
+     "prompt": "Qu'est-ce qu'une tranche verticale ?",
+     "options": [
+      "Une fonction complète, de l'interface aux données",
+      "Une couche technique entière"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle produit quelque chose d'utilisable."
+    },
+    {
+     "prompt": "À quoi sert un ADR ?",
+     "options": [
+      "À garder la trace d'une décision et de sa raison",
+      "À signer l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il tient en quelques lignes."
+    },
+    {
+     "prompt": "Une fonction est-elle terminée si elle compile ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle doit être testée et relue."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel sigle désigne un document de décision d'architecture ?",
+     "accepted": [
+      "ADR"
+     ],
+     "solution": "ADR."
+    },
+    {
+     "id": "exp-01-ex2",
+     "kind": "self",
+     "prompt": "Cadrez une application de votre choix en cinq lignes : problème, public, trois fonctions, données, hors périmètre.",
+     "solution": "Exemple : problème : oublier d'arroser ses plantes. Public : amateurs de plantes. Fonctions : ajouter une plante, être rappelé, marquer l'arrosage. Données : plantes et dates, en local. Hors périmètre : compte en ligne, reconnaissance par photo, partage."
+    }
+   ]
+  },
+  {
+   "id": "exp-02-architecture",
+   "title": "Architecture avancée",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une bonne architecture rend le changement facile. Android publie des recommandations claires : suivons-les, en sachant pourquoi."
+    },
+    {
+     "type": "heading",
+     "text": "Les couches"
+    },
+    {
+     "type": "layers",
+     "title": "L'architecture recommandée",
+     "layers": [
+      {
+       "name": "Interface",
+       "detail": "Composables et ViewModel. Affiche un état, reçoit des actions."
+      },
+      {
+       "name": "Domaine, facultatif",
+       "detail": "Cas d'usage réutilisés, pour les applications importantes."
+      },
+      {
+       "name": "Données",
+       "detail": "Dépôts et sources de données : base, réseau, préférences."
+      }
+     ]
+    },
+    {
+     "type": "list",
+     "items": [
+      "L'interface ne parle jamais directement à une source de données.",
+      "Le flux de données est unidirectionnel : l'état descend, les actions remontent.",
+      "Chaque donnée a une **source de vérité** unique."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un dépôt"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Note(val id: Long, val titre: String)\n\ninterface NotesLocal {\n    fun observer(): Flow<List<Note>>\n}\n\ninterface NotesDistant {\n    suspend fun recuperer(): List<Note>\n}\n\nclass NotesDepot(\n    private val local: NotesLocal,\n    private val distant: NotesDistant,\n    private val enregistrer: suspend (List<Note>) -> Unit,\n) {\n    fun notes(): Flow<List<Note>> = local.observer()\n\n    suspend fun actualiser() {\n        enregistrer(distant.recuperer())\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "La base locale est ici la source de vérité : l'écran l'observe, et le réseau ne fait que la mettre à jour."
+    },
+    {
+     "type": "heading",
+     "text": "L'injection de dépendances"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une classe reçoit ce dont elle a besoin, au lieu de le créer. Les tests peuvent alors fournir des fakes. Google recommande **Hilt** pour un projet complexe, et l'injection manuelle pour un petit projet."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Conteneur(context: Context) {\n    private val appContext = context.applicationContext\n\n    val depot: PreferencesDepot by lazy { PreferencesDepot(appContext) }\n}\n\nclass PreferencesDepot(private val context: Context)"
+    },
+    {
+     "type": "heading",
+     "text": "Modulariser"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un grand projet se découpe en modules Gradle : par exemple `:app`, `:feature:notes`, `:core:data`, `:core:ui`."
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Avantages** : responsabilités claires, code réutilisable, compilation parfois plus rapide.",
+      "**Risques** : trop de petits modules alourdissent la configuration."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ne modularisez pas un petit projet par principe. La documentation Android le précise : cela n'a pas toujours de sens si le projet ne doit pas grandir."
+    },
+    {
+     "type": "paragraph",
+     "text": "`implementation` cache une dépendance aux modules qui vous utilisent. `api` l'expose. Préférez `implementation`."
+    },
+    {
+     "type": "heading",
+     "text": "Le ViewModel"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Pas de `Context`, ni d'objet lié au cycle de vie.",
+      "Un état unique, `uiState`, sous forme de `StateFlow`.",
+      "Pas d'événement envoyé à l'interface : on met à jour l'état."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class AccueilUiState(val notes: List<Note> = emptyList(), val chargement: Boolean = true)\n\nclass AccueilViewModel(depot: NotesDepot) : ViewModel() {\n    val uiState: StateFlow<AccueilUiState> = depot.notes()\n        .map { AccueilUiState(notes = it, chargement = false) }\n        .stateIn(\n            scope = viewModelScope,\n            started = SharingStarted.WhileSubscribed(5_000),\n            initialValue = AccueilUiState(),\n        )\n}"
+    },
+    {
+     "type": "info",
+     "text": "Ces recommandations restent des conseils, pas des obligations. Adaptez-les à la taille de votre projet, et notez vos écarts dans un ADR."
+    },
+    {
+     "type": "tip",
+     "text": "L'architecture parfaite n'existe pas. Celle qui vous laisse changer d'avis sans douleur s'en approche !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Avec quoi l'interface doit-elle parler ?",
+     "options": [
+      "Un dépôt, via le ViewModel",
+      "Directement la base"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les sources restent cachées."
+    },
+    {
+     "prompt": "Que signifie un flux unidirectionnel ?",
+     "options": [
+      "L'état descend, les actions remontent",
+      "Tout passe par le réseau"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le ViewModel centralise."
+    },
+    {
+     "prompt": "La couche domaine est-elle obligatoire ?",
+     "options": [
+      "Non, elle sert surtout aux grandes applications",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "N'ajoutez pas de couche inutile."
+    },
+    {
+     "prompt": "Que recommande Android pour l'injection dans un projet complexe ?",
+     "options": [
+      "Hilt",
+      "Un singleton global"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'injection manuelle convient à un petit projet."
+    },
+    {
+     "prompt": "Faut-il toujours modulariser ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela dépend de la taille du projet."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-02-ex1",
+     "kind": "fill",
+     "prompt": "Quel opérateur transforme un Flow en StateFlow ?",
+     "accepted": [
+      "stateIn"
+     ],
+     "solution": "stateIn."
+    },
+    {
+     "id": "exp-02-ex2",
+     "kind": "self",
+     "prompt": "Proposez un découpage en modules pour une application avec des notes, un calendrier et une synchronisation commune.",
+     "solution": ":app\n:feature:notes\n:feature:calendrier\n:core:data (dépôts, base, réseau)\n:core:ui (thème, composants)\nLes modules feature ne dépendent pas l'un de l'autre : ils passent par core."
+    }
+   ]
+  },
+  {
+   "id": "exp-03-grimoire",
+   "title": "Projet 1 : Grimoire, en natif",
+   "minutes": 20,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Votre premier projet complet : un carnet de sorts personnel, c'est-à-dire de notes techniques, en Kotlin et Compose. Il fonctionne entièrement hors ligne."
+    },
+    {
+     "type": "heading",
+     "text": "Le cahier des charges"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Créer, lire, modifier et supprimer une fiche.",
+      "Marquer des favoris, et filtrer par étiquette.",
+      "Rechercher dans le titre et le contenu.",
+      "Thème clair et sombre, écran adaptatif.",
+      "Export d'une sauvegarde dans un fichier choisi par l'utilisateur.",
+      "Rappel quotidien facultatif, avec WorkManager."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les contraintes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une seule activité, Compose et navigation.",
+      "Room comme source de vérité.",
+      "Un `uiState` par écran.",
+      "Au moins dix tests unitaires.",
+      "Aucune suppression sans confirmation.",
+      "Aucune permission superflue."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le modèle de données"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Entity(tableName = \"fiches\")\ndata class Fiche(\n    @PrimaryKey(autoGenerate = true) val id: Long = 0,\n    val titre: String,\n    val contenu: String,\n    val favori: Boolean = false,\n    val modifieLe: Long,\n)\n\n@Dao\ninterface FicheDao {\n    @Query(\"SELECT * FROM fiches ORDER BY modifieLe DESC\")\n    fun toutes(): Flow<List<Fiche>>\n\n    @Query(\"SELECT * FROM fiches WHERE titre LIKE '%' || :terme || '%' OR contenu LIKE '%' || :terme || '%'\")\n    fun rechercher(terme: String): Flow<List<Fiche>>\n\n    @Upsert\n    suspend fun enregistrer(fiche: Fiche)\n\n    @Delete\n    suspend fun supprimer(fiche: Fiche)\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les étapes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Créez le projet, le dépôt Git et la CI dès le premier jour.",
+      "Écrivez `Fiche`, le DAO et le dépôt, avec leurs tests.",
+      "Réalisez la liste, puis l'édition.",
+      "Ajoutez la recherche et les favoris.",
+      "Ajoutez l'export.",
+      "Ajoutez le rappel.",
+      "Testez : rotation, mort du processus, texte agrandi, TalkBack.",
+      "Compilez une release, et vérifiez-la."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le filtrage, à tester sans Android"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class FicheSimple(val titre: String, val favori: Boolean)\n\nfun filtrer(fiches: List<FicheSimple>, terme: String, favorisSeuls: Boolean): List<FicheSimple> =\n    fiches\n        .filter { !favorisSeuls || it.favori }\n        .filter { it.titre.contains(terme.trim(), ignoreCase = true) }\n\nfun main() {\n    val fiches = listOf(\n        FicheSimple(\"Coroutines\", true),\n        FicheSimple(\"Room\", false),\n        FicheSimple(\"Flow et coroutines\", false),\n    )\n\n    println(filtrer(fiches, \"coroutines\", false).map { it.titre })\n    println(filtrer(fiches, \" COROUTINES \", true).map { it.titre })\n}",
+     "output": "[Coroutines, Flow et coroutines]\n[Coroutines]"
+    },
+    {
+     "type": "warning",
+     "text": "L'export doit passer par le sélecteur de fichiers du système. Il ne demande aucune permission, et l'utilisateur choisit l'emplacement. Prévenez que le fichier n'est pas chiffré."
+    },
+    {
+     "type": "heading",
+     "text": "Livrables"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un dépôt Git avec un historique lisible.",
+      "Un README qui explique comment compiler.",
+      "Un APK de release signé avec votre propre clé.",
+      "Un rapport court : tests, mesures, limites connues."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Reliez vos décisions aux leçons précédentes. Ce projet est la mémoire de tout ce que vous avez appris !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle est la source de vérité du Grimoire ?",
+     "options": [
+      "Room",
+      "L'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'interface l'observe."
+    },
+    {
+     "prompt": "Comment exporter sans permission ?",
+     "options": [
+      "Par le sélecteur de fichiers du système",
+      "En demandant tout le stockage"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'utilisateur choisit l'emplacement."
+    },
+    {
+     "prompt": "Que faire avant toute suppression ?",
+     "options": [
+      "Demander une confirmation",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une règle de ce projet."
+    },
+    {
+     "prompt": "Pourquoi isoler le filtrage dans une fonction pure ?",
+     "options": [
+      "Pour le tester sans Android",
+      "Pour le ralentir"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un test unitaire suffit."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation Room insère ou met à jour une ligne ?",
+     "accepted": [
+      "@Upsert",
+      "Upsert"
+     ],
+     "solution": "@Upsert."
+    },
+    {
+     "id": "exp-03-ex2",
+     "kind": "self",
+     "prompt": "Réalisez le projet Grimoire. Notez ici l'adresse de votre dépôt, puis ce qui fonctionne, ce qui manque, et ce que vous referiez autrement.",
+     "solution": "Il n'y a pas de corrigé unique. Vérifiez vous-même : chaque point du cahier des charges est essayé sur un appareil, la CI passe, l'APK de release s'installe, et le README permet à une autre personne de compiler."
+    }
+   ]
+  },
+  {
+   "id": "exp-04-quetes",
+   "title": "Projet 2 : Quêtes, en Flutter",
+   "minutes": 20,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Deuxième projet : un suivi d'objectifs partagés, en Flutter, avec une API. Vous reprendrez les concepts du Grimoire dans un autre cadre."
+    },
+    {
+     "type": "heading",
+     "text": "Le cahier des charges"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Créer des quêtes, avec des étapes et une progression.",
+      "Fonctionner hors ligne, puis synchroniser.",
+      "S'authentifier auprès d'une API de démonstration.",
+      "Afficher un écran de statistiques.",
+      "Lire le niveau de batterie par un canal de plateforme, pour reporter une synchronisation lourde."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les contraintes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Riverpod pour l'état, et go_router pour la navigation.",
+      "Une base locale, comme source de vérité.",
+      "Le jeton dans `flutter_secure_storage`.",
+      "`flutter analyze` sans erreur, et des tests de widgets.",
+      "Une compilation Android et Linux."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "L'API de démonstration"
+    },
+    {
+     "type": "paragraph",
+     "text": "Écrivez vous-même un petit serveur local, en Dart, en Python ou en Kotlin. Vous maîtrisez alors les deux côtés, sans service payant."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "POST /connexion           → { \"jeton\": \"...\" }\nGET  /quetes              → [ { \"id\": 1, \"titre\": \"...\", \"version\": 3 } ]\nPUT  /quetes/{id}         → 200, ou 409 si la version a changé"
+    },
+    {
+     "type": "warning",
+     "text": "Ce serveur est un outil de développement. Il écoute sur votre machine, sans TLS : ne l'exposez pas sur Internet, et n'y mettez aucune donnée réelle."
+    },
+    {
+     "type": "heading",
+     "text": "L'état, avec Riverpod"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "import 'package:flutter_riverpod/flutter_riverpod.dart';\n\nclass Quete {\n  const Quete(this.titre, {this.terminee = false});\n\n  final String titre;\n  final bool terminee;\n}\n\nclass QuetesNotifier extends Notifier<List<Quete>> {\n  @override\n  List<Quete> build() => const [];\n\n  void ajouter(String titre) {\n    final propre = titre.trim();\n    if (propre.isEmpty) return;\n    state = [...state, Quete(propre)];\n  }\n}\n\nfinal quetesProvider = NotifierProvider<QuetesNotifier, List<Quete>>(\n  QuetesNotifier.new,\n);"
+    },
+    {
+     "type": "heading",
+     "text": "La progression"
+    },
+    {
+     "type": "code",
+     "language": "dart",
+     "code": "int progression(List<bool> etapes) {\n  if (etapes.isEmpty) return 0;\n  final faites = etapes.where((etape) => etape).length;\n  return (faites * 100 / etapes.length).round();\n}\n\nvoid main() {\n  print(progression([true, true, false, false]));\n  print(progression([true, false, false]));\n  print(progression([]));\n}",
+     "output": "50\n33\n0"
+    },
+    {
+     "type": "heading",
+     "text": "Les étapes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Créez le projet et la CI.",
+      "Écrivez le serveur de démonstration.",
+      "Réalisez les quêtes en local, avec leurs tests.",
+      "Ajoutez la connexion.",
+      "Ajoutez la synchronisation et les conflits, vus à la leçon suivante.",
+      "Ajoutez le canal de plateforme.",
+      "Compilez pour Android et Linux."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Livrables"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le dépôt de l'application et celui du serveur.",
+      "Un APK et un paquet Linux.",
+      "Une comparaison écrite avec le projet 1 : ce qui a été plus simple, ou plus difficile."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Comparer deux outils sur un même type de problème, c'est ce qui forge le jugement d'un expert !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où stocker le jeton dans Quêtes ?",
+     "options": [
+      "Dans flutter_secure_storage",
+      "Dans un fichier texte"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il s'appuie sur le Keystore."
+    },
+    {
+     "prompt": "Pourquoi écrire son propre serveur ?",
+     "options": [
+      "Pour maîtriser les deux côtés, sans coût",
+      "Pour le publier sur Internet"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il reste local."
+    },
+    {
+     "prompt": "Quelle est la source de vérité ?",
+     "options": [
+      "La base locale",
+      "L'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le réseau la met à jour."
+    },
+    {
+     "prompt": "Que renvoie l'API en cas de conflit de version ?",
+     "options": [
+      "409",
+      "200"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le client doit résoudre le conflit."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle classe Riverpod gère ici la liste des quêtes ?",
+     "accepted": [
+      "Notifier",
+      "QuetesNotifier"
+     ],
+     "solution": "Un Notifier, ici QuetesNotifier."
+    },
+    {
+     "id": "exp-04-ex2",
+     "kind": "self",
+     "prompt": "Réalisez le projet Quêtes. Notez l'adresse des dépôts, puis votre comparaison avec le projet Grimoire.",
+     "solution": "Il n'y a pas de corrigé unique. Vérifiez que l'application fonctionne hors ligne, qu'elle synchronise au retour du réseau, que le jeton n'apparaît nulle part dans les journaux, et que les deux compilations réussissent."
+    }
+   ]
+  },
+  {
+   "id": "exp-05-api",
+   "title": "API et bases de données",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le cœur d'un projet connecté, c'est la cohérence : que se passe-t-il quand l'appareil et le serveur ne sont pas d'accord ?"
+    },
+    {
+     "type": "heading",
+     "text": "Hors ligne d'abord"
+    },
+    {
+     "type": "list",
+     "items": [
+      "L'interface lit et écrit uniquement dans la base locale.",
+      "Les modifications sont placées dans une **file d'attente**.",
+      "Un travail en arrière-plan envoie la file, puis récupère les nouveautés."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Entity(tableName = \"envois_en_attente\")\ndata class EnvoiEnAttente(\n    @PrimaryKey(autoGenerate = true) val id: Long = 0,\n    val ficheId: Long,\n    val action: String,\n    val creeLe: Long,\n)\n\nclass SynchronisationWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result = try {\n        envoyerLaFile()\n        Result.success()\n    } catch (e: IOException) {\n        Result.retry()\n    }\n\n    private suspend fun envoyerLaFile() {\n        // Lit la file, envoie chaque élément, puis le retire.\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Un élément ne quitte la file qu'**après** la confirmation du serveur. Sinon, une coupure réseau fait perdre la modification."
+    },
+    {
+     "type": "heading",
+     "text": "Les conflits"
+    },
+    {
+     "type": "paragraph",
+     "text": "Deux appareils modifient la même fiche hors ligne. Il faut une règle, connue à l'avance."
+    },
+    {
+     "type": "list",
+     "items": [
+      "**La dernière écriture gagne** : simple, mais une modification peut disparaître.",
+      "**Fusion** : par champ, si les changements ne se recoupent pas.",
+      "**Demander à l'utilisateur** : le plus sûr pour un contenu important."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Version(val texte: String, val base: Int, val modifieLe: Long)\n\nfun resoudre(local: Version, distant: Version, baseCommune: Int): String = when {\n    local.base == baseCommune && distant.base == baseCommune -> \"aucun changement\"\n    distant.base == baseCommune -> \"garder le local\"\n    local.base == baseCommune -> \"garder le distant\"\n    else -> \"conflit : demander à l'utilisateur\"\n}\n\nfun main() {\n    val base = 3\n    println(resoudre(Version(\"A\", 3, 10), Version(\"A\", 3, 10), base))\n    println(resoudre(Version(\"B\", 4, 20), Version(\"A\", 3, 10), base))\n    println(resoudre(Version(\"B\", 4, 20), Version(\"C\", 4, 30), base))\n}",
+     "output": "aucun changement\ngarder le local\nconflit : demander à l'utilisateur"
+    },
+    {
+     "type": "heading",
+     "text": "Rendre l'envoi sûr"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur un réseau instable, une requête peut réussir sans que la réponse arrive. L'application la renvoie alors. Une clé d'**idempotence**, envoyée avec la requête, permet au serveur d'ignorer le doublon."
+    },
+    {
+     "type": "heading",
+     "text": "Le schéma de la base"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Des clés étrangères, pour garder des données cohérentes.",
+      "Des index sur les colonnes de recherche et de tri.",
+      "Des dates en temps universel, converties à l'affichage.",
+      "Un test pour chaque migration."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Le contrat d'API"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Documentez chaque route, et ses erreurs.",
+      "Versionnez : `/v1/`.",
+      "Paginez les listes.",
+      "Renvoyez des erreurs structurées, jamais une trace interne."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Coupez le réseau au milieu d'un envoi. Si rien n'est perdu et rien n'est doublé, vous avez gagné votre grade !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où l'interface écrit-elle dans une application hors ligne d'abord ?",
+     "options": [
+      "Dans la base locale",
+      "Directement sur le serveur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La synchronisation vient après."
+    },
+    {
+     "prompt": "Quand retirer un élément de la file d'attente ?",
+     "options": [
+      "Après la confirmation du serveur",
+      "Avant l'envoi"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon il peut être perdu."
+    },
+    {
+     "prompt": "Quel est le défaut de « la dernière écriture gagne » ?",
+     "options": [
+      "Une modification peut disparaître",
+      "Elle est trop complexe"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle reste simple, mais risquée."
+    },
+    {
+     "prompt": "À quoi sert une clé d'idempotence ?",
+     "options": [
+      "À éviter un doublon lors d'un nouvel envoi",
+      "À chiffrer la requête"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le serveur reconnaît la requête."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-05-ex1",
+     "kind": "fill",
+     "prompt": "Comment appelle-t-on une requête rejouable sans effet supplémentaire ?",
+     "accepted": [
+      "idempotente",
+      "idempotent"
+     ],
+     "solution": "Une requête idempotente."
+    },
+    {
+     "id": "exp-05-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui fusionne deux modifications : le titre vient du local, le contenu du distant, car chacun n'a changé que ce champ.",
+     "solution": "data class Fiche(val titre: String, val contenu: String)\n\nfun fusionner(base: Fiche, local: Fiche, distant: Fiche) = Fiche(\n    titre = if (local.titre != base.titre) local.titre else distant.titre,\n    contenu = if (local.contenu != base.contenu) local.contenu else distant.contenu,\n)\n\nfun main() {\n    val base = Fiche(\"Titre\", \"Texte\")\n    val local = base.copy(titre = \"Nouveau titre\")\n    val distant = base.copy(contenu = \"Nouveau texte\")\n    println(fusionner(base, local, distant))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "exp-06-securite",
+   "title": "La sécurité d'un projet réel",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Appliquez le module 9 à vos propres projets. Vous êtes ici à la fois le défenseur et l'analyste."
+    },
+    {
+     "type": "warning",
+     "text": "Cette revue porte uniquement sur **vos** applications et votre serveur de démonstration."
+    },
+    {
+     "type": "heading",
+     "text": "Le modèle de menaces"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Atout : le jeton de session\nMenace : une application tierce ou un téléphone perdu\nDéfense : Keystore, jeton de courte durée, révocation\nVérification : recherche du jeton dans Logcat et les fichiers"
+    },
+    {
+     "type": "paragraph",
+     "text": "Faites une ligne par atout : compte, données personnelles, clé de signature, serveur."
+    },
+    {
+     "type": "heading",
+     "text": "Parcourir le MASVS"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**STORAGE** : où sont les données sensibles ?",
+      "**CRYPTO** : quels algorithmes, et où sont les clés ?",
+      "**AUTH** : le serveur vérifie-t-il chaque droit ?",
+      "**NETWORK** : tout passe-t-il en HTTPS ?",
+      "**PLATFORM** : quels composants sont exportés ?",
+      "**CODE** : les dépendances sont-elles à jour ?",
+      "**RESILIENCE** : qu'expose l'APK ?",
+      "**PRIVACY** : que collectez-vous vraiment ?"
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Analyser votre APK"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "aapt2 dump permissions app-release.apk\naapt2 dump badging app-release.apk | grep debuggable\napksigner verify --print-certs app-release.apk\njadx -d analyse app-release.apk\ngrep -rniE \"api[_-]?key|secret|password|http://\" analyse/sources | head"
+    },
+    {
+     "type": "heading",
+     "text": "Tester votre API"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une requête sans jeton est-elle refusée ?",
+      "Le jeton d'un utilisateur donne-t-il accès aux données d'un autre ?",
+      "Une entrée énorme est-elle rejetée ?",
+      "Une erreur révèle-t-elle des détails internes ?"
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Requete(val utilisateur: String?, val proprietaire: String)\n\nfun autoriser(requete: Requete): Int = when {\n    requete.utilisateur == null -> 401\n    requete.utilisateur != requete.proprietaire -> 403\n    else -> 200\n}\n\nfun main() {\n    println(autoriser(Requete(null, \"ana\")))\n    println(autoriser(Requete(\"leo\", \"ana\")))\n    println(autoriser(Requete(\"ana\", \"ana\")))\n}",
+     "output": "401\n403\n200"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce contrôle d'accès aux objets, oublié sur de nombreuses API, se teste très simplement."
+    },
+    {
+     "type": "heading",
+     "text": "Le rapport"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le problème, et sa gravité.",
+      "Comment le reproduire.",
+      "La correction.",
+      "Le test qui l'empêche de revenir."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Attaquez-vous avant qu'un autre ne le fasse. Mais seulement vous-même !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que doit renvoyer une requête sans jeton ?",
+     "options": [
+      "401",
+      "200"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle n'est pas authentifiée."
+    },
+    {
+     "prompt": "Que doit renvoyer un utilisateur qui lit la ressource d'un autre ?",
+     "options": [
+      "403",
+      "200"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il n'a pas le droit."
+    },
+    {
+     "prompt": "Que décrit un modèle de menaces ?",
+     "options": [
+      "Les atouts, les menaces et les défenses",
+      "Les couleurs du thème"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Avec la façon de vérifier."
+    },
+    {
+     "prompt": "Sur quoi porte cette revue ?",
+     "options": [
+      "Vos applications uniquement",
+      "Les applications des autres"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est la règle du module 9."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-06-ex1",
+     "kind": "fill",
+     "prompt": "Quel code HTTP signifie « authentifié, mais pas autorisé » ?",
+     "accepted": [
+      "403"
+     ],
+     "solution": "403."
+    },
+    {
+     "id": "exp-06-ex2",
+     "kind": "self",
+     "prompt": "Faites la revue de votre projet Grimoire ou Quêtes avec les huit groupes du MASVS. Notez trois constats, et leur correction.",
+     "solution": "Exemple : STORAGE : l'export n'est pas chiffré, je préviens l'utilisateur. PLATFORM : aucune activité exportée en dehors de l'accueil. CODE : deux dépendances à mettre à jour. Chaque constat reçoit une correction et un test ou un contrôle automatique."
+    }
+   ]
+  },
+  {
+   "id": "exp-07-tests",
+   "title": "La stratégie de tests d'un projet",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Dans un vrai projet, on ne peut pas tout tester. Il faut choisir, selon le risque."
+    },
+    {
+     "type": "heading",
+     "text": "Que tester en priorité ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ce qui perd des données : migrations, sauvegarde, synchronisation.",
+      "Ce qui coûte cher : paiements, appels payants.",
+      "Ce qui touche à la sécurité : droits, jetons.",
+      "Les règles métier centrales."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Tester une règle métier"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun niveau(points: Int): Int {\n    require(points >= 0) { \"Points négatifs\" }\n    return points / 100 + 1\n}\n\nfun verifier(nom: String, condition: Boolean) {\n    println(\"${if (condition) \"OK\" else \"ÉCHEC\"} : $nom\")\n}\n\nfun main() {\n    verifier(\"zéro point donne le niveau 1\", niveau(0) == 1)\n    verifier(\"99 points restent au niveau 1\", niveau(99) == 1)\n    verifier(\"100 points donnent le niveau 2\", niveau(100) == 2)\n    verifier(\"négatif refusé\", runCatching { niveau(-1) }.isFailure)\n}",
+     "output": "OK : zéro point donne le niveau 1\nOK : 99 points restent au niveau 1\nOK : 100 points donnent le niveau 2\nOK : négatif refusé"
+    },
+    {
+     "type": "paragraph",
+     "text": "Testez les **limites** : 0, 99 et 100. C'est là que se cachent les erreurs."
+    },
+    {
+     "type": "heading",
+     "text": "Tester une migration"
+    },
+    {
+     "type": "paragraph",
+     "text": "Room fournit `MigrationTestHelper` : il crée une base à l'ancienne version, applique la migration, puis permet de vérifier les données. Les données d'avant doivent être intactes."
+    },
+    {
+     "type": "heading",
+     "text": "Écrire un test avant de corriger"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Reproduisez le bug avec un test qui échoue.",
+      "Corrigez le code.",
+      "Le test réussit, et protège désormais le projet."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Tester sans réseau réel"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un fake d'API, ou **MockWebServer** d'OkHttp, simule le serveur. Vous pouvez tester les erreurs 401, 429 et 500, impossibles à provoquer à la demande sur un vrai serveur."
+    },
+    {
+     "type": "heading",
+     "text": "Mesurer la couverture"
+    },
+    {
+     "type": "paragraph",
+     "text": "La couverture indique ce qui a été exécuté par les tests, pas ce qui a été vérifié. Un objectif de 100 % n'a pas de sens. Regardez plutôt si le code à risque est couvert."
+    },
+    {
+     "type": "warning",
+     "text": "Un test instable, qui échoue une fois sur dix, détruit la confiance dans la CI. Corrigez-le ou retirez-le, ne le relancez pas en espérant."
+    },
+    {
+     "type": "heading",
+     "text": "La grille de sortie"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Tous les tests automatiques réussis.",
+      "Une mise à jour testée depuis la version précédente.",
+      "Un essai sur appareil réel, en release.",
+      "Les parcours clés avec TalkBack."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Quand un bug passe, ne demandez pas qui l'a écrit. Demandez quel test l'aurait attrapé !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que tester en priorité ?",
+     "options": [
+      "Ce qui perd des données ou touche à la sécurité",
+      "Les couleurs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Choisissez selon le risque."
+    },
+    {
+     "prompt": "Où se cachent souvent les erreurs ?",
+     "options": [
+      "Aux valeurs limites",
+      "Dans les commentaires"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Testez 0, 99 et 100."
+    },
+    {
+     "prompt": "Quel outil simule un serveur HTTP ?",
+     "options": [
+      "MockWebServer",
+      "Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il simule aussi les erreurs."
+    },
+    {
+     "prompt": "Une couverture de 100 % prouve-t-elle l'absence de bugs ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle mesure l'exécution, pas la vérification."
+    },
+    {
+     "prompt": "Que faire d'un test instable ?",
+     "options": [
+      "Le corriger ou le retirer",
+      "Le relancer jusqu'à ce qu'il passe"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il détruit la confiance."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle classe Room aide à tester une migration ?",
+     "accepted": [
+      "MigrationTestHelper"
+     ],
+     "solution": "MigrationTestHelper."
+    },
+    {
+     "id": "exp-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui vérifie les valeurs limites d'une fonction `estMajeur(age: Int)`.",
+     "solution": "fun estMajeur(age: Int) = age >= 18\n\nfun main() {\n    println(estMajeur(17))\n    println(estMajeur(18))\n    println(estMajeur(19))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "exp-08-optimisation",
+   "title": "Optimiser un projet réel",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Vos projets fonctionnent. Sont-ils agréables sur un téléphone modeste ? Reprenez les outils des modules 8 et 11, sur votre propre code."
+    },
+    {
+     "type": "heading",
+     "text": "Fixer des objectifs"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Démarrage à froid : à mesurer, sur l'appareil le plus modeste visé\nImages lentes pendant le défilement : à mesurer\nTaille de l'application : à comparer à chaque version\nMémoire après dix ouvertures d'écran : stable"
+    },
+    {
+     "type": "paragraph",
+     "text": "Commencez par mesurer l'existant. Sans point de départ, aucun progrès n'est visible."
+    },
+    {
+     "type": "heading",
+     "text": "Le cycle"
+    },
+    {
+     "type": "layers",
+     "title": "Optimiser avec méthode",
+     "layers": [
+      {
+       "name": "Mesurer",
+       "detail": "Une version de release, plusieurs fois."
+      },
+      {
+       "name": "Trouver",
+       "detail": "Le Profiler, ou Perfetto, montre où part le temps."
+      },
+      {
+       "name": "Corriger",
+       "detail": "Une seule cause à la fois."
+      },
+      {
+       "name": "Vérifier",
+       "detail": "La mesure doit bouger, et les tests passer."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Calculer une médiane"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une seule mesure ne dit rien. Répétez, puis retenez la médiane : elle résiste à une valeur anormale."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun mediane(valeurs: List<Int>): Double {\n    val triees = valeurs.sorted()\n    val milieu = triees.size / 2\n    return if (triees.size % 2 == 1) {\n        triees[milieu].toDouble()\n    } else {\n        (triees[milieu - 1] + triees[milieu]) / 2.0\n    }\n}\n\nfun main() {\n    println(mediane(listOf(910, 880, 2400, 900, 870)))\n    println(mediane(listOf(910, 880, 900, 870)))\n}",
+     "output": "900.0\n890.0"
+    },
+    {
+     "type": "paragraph",
+     "text": "La mesure aberrante de 2 400 ms n'a pas d'effet sur le résultat, alors qu'elle aurait faussé une moyenne."
+    },
+    {
+     "type": "heading",
+     "text": "Les corrections fréquentes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une liste Compose avec `key`, pour éviter de tout recomposer.",
+      "Des calculs déplacés hors de la composition.",
+      "Des images décodées à la taille d'affichage.",
+      "Des requêtes avec index, et une pagination.",
+      "Moins d'initialisations au démarrage."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Ligne(val id: Long, val titre: String)\n\n@Composable\nfun Liste(lignes: List<Ligne>) {\n    LazyColumn {\n        items(lignes, key = { it.id }) { ligne ->\n            Text(ligne.titre)\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Flutter"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Mesurez en mode profil : `flutter run --profile`.",
+      "Utilisez `ListView.builder` pour les longues listes.",
+      "Déclarez les widgets `const` quand c'est possible."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Une optimisation rend souvent le code plus complexe. Si la mesure ne s'améliore pas, retirez-la."
+    },
+    {
+     "type": "tip",
+     "text": "Optimiser sans mesurer, c'est lancer des sorts dans le noir !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle est la première étape ?",
+     "options": [
+      "Mesurer",
+      "Réécrire le code"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut un point de départ."
+    },
+    {
+     "prompt": "Pourquoi préférer la médiane ?",
+     "options": [
+      "Elle résiste aux valeurs anormales",
+      "Elle est toujours plus basse"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une moyenne serait faussée."
+    },
+    {
+     "prompt": "Quel paramètre aide une LazyColumn ?",
+     "options": [
+      "key",
+      "color"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il identifie chaque élément."
+    },
+    {
+     "prompt": "Dans quel mode mesurer une application Flutter ?",
+     "options": [
+      "Profil",
+      "Debug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "flutter run --profile."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel outil d'analyse de traces Android est cité dans la leçon ?",
+     "accepted": [
+      "Perfetto"
+     ],
+     "solution": "Perfetto."
+    },
+    {
+     "id": "exp-08-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui calcule le gain en pourcentage quand le démarrage passe de 1 000 à 750 ms.",
+     "solution": "fun main() {\n    val avant = 1000\n    val apres = 750\n    println((avant - apres) * 100 / avant)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "exp-09-documentation",
+   "title": "Documenter un projet",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un projet sans documentation ne vit qu'avec son auteur. Une bonne documentation est courte, juste, et à jour."
+    },
+    {
+     "type": "heading",
+     "text": "Le README"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "# Grimoire\n\nCarnet de notes techniques, hors ligne, pour Android.\n\n## Fonctions\n- Fiches, favoris, recherche\n- Export dans un fichier\n\n## Compiler\nPrérequis : Android Studio, JDK 21.\n    ./gradlew assembleDebug\n\n## Tester\n    ./gradlew testDebugUnitTest\n\n## Licence\nApache 2.0"
+    },
+    {
+     "type": "paragraph",
+     "text": "Testez-le : suivez vos instructions sur une copie neuve du dépôt. Si une étape manque, vous le verrez tout de suite."
+    },
+    {
+     "type": "heading",
+     "text": "Les autres documents"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`ARCHITECTURE.md` : les couches, et les choix importants.",
+      "`CHANGELOG.md` : les changements, par version.",
+      "`docs/adr/` : les décisions.",
+      "Un guide utilisateur, si l'application le justifie."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Documenter le code"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un bon nom vaut mieux qu'un commentaire. Commentez le **pourquoi**, pas le comment."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "/** Compare les versions sans casse : le serveur renvoie parfois \"V2\". */\nfun memeVersion(a: String, b: String): Boolean = a.equals(b, ignoreCase = true)\n\nfun main() {\n    println(memeVersion(\"V2\", \"v2\"))\n}",
+     "output": "true"
+    },
+    {
+     "type": "heading",
+     "text": "Les limites connues"
+    },
+    {
+     "type": "paragraph",
+     "text": "Écrivez ce qui ne fonctionne pas, ou ce qui n'a pas été vérifié. Une limite annoncée inspire confiance. Une limite cachée la détruit."
+    },
+    {
+     "type": "warning",
+     "text": "Ne prétendez jamais qu'une fonction marche sans l'avoir vérifiée. Dans un rapport, distinguez ce qui est testé, ce qui est relu, et ce qui reste supposé."
+    },
+    {
+     "type": "heading",
+     "text": "Rendre compte"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ce qui a été fait.",
+      "Comment cela a été vérifié.",
+      "Ce qui reste à faire ou à vérifier."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un dépôt soigné"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une licence explicite.",
+      "Aucun secret, même dans l'historique.",
+      "Des captures d'écran.",
+      "Des messages de commit qui expliquent le changement."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Le premier lecteur de votre documentation, c'est vous, dans un an. Soyez gentil avec lui !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que doit permettre un README ?",
+     "options": [
+      "Compiler et tester sans aide",
+      "Lire tout le code"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Essayez-le sur une copie neuve."
+    },
+    {
+     "prompt": "Que commenter dans le code ?",
+     "options": [
+      "Le pourquoi",
+      "Chaque ligne"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le comment se lit dans le code."
+    },
+    {
+     "prompt": "Faut-il écrire les limites connues ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela inspire confiance."
+    },
+    {
+     "prompt": "Où noter les changements par version ?",
+     "options": [
+      "CHANGELOG.md",
+      "gradle.properties"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il s'adresse à des humains."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-09-ex1",
+     "kind": "fill",
+     "prompt": "Quel fichier présente un projet à la racine d'un dépôt ?",
+     "accepted": [
+      "README",
+      "README.md"
+     ],
+     "solution": "README.md."
+    },
+    {
+     "id": "exp-09-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un compte rendu en trois parties pour une fonction de recherche que vous venez de terminer.",
+     "solution": "Fait : recherche dans le titre et le contenu, sans distinction de casse. Vérifié : six tests unitaires, essai sur un téléphone avec 500 fiches. Reste à faire : gérer les accents, non vérifié avec TalkBack."
+    }
+   ]
+  },
+  {
+   "id": "exp-10-publication",
+   "title": "Livrer un projet",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La dernière étape d'un projet professionnel : le livrer pour de vrai, même à quelques personnes."
+    },
+    {
+     "type": "heading",
+     "text": "Choisir son canal"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Un APK signé**, partagé avec des proches testeurs.",
+      "**Le test interne de Google Play**, jusqu'à 100 personnes.",
+      "**La production**, après toutes les étapes du module 11.",
+      "**GitHub Releases**, pour un projet ouvert."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Vous n'êtes pas obligé de publier sur Google Play pour réussir ce module : un compte, des frais et des délais s'y ajoutent. Une livraison signée, à de vrais testeurs, suffit."
+    },
+    {
+     "type": "heading",
+     "text": "Une version sur GitHub"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "git tag -a v1.0.0 -m \"Première version\"\ngit push origin v1.0.0\ngh release create v1.0.0 app-release.apk --title \"Version 1.0.0\" --notes-file NOTES.md"
+    },
+    {
+     "type": "warning",
+     "text": "Vérifiez avant d'envoyer : l'APK est le bon, il est signé avec votre clé, et il ne contient pas de secret. Une publication publique peut être copiée, même après sa suppression."
+    },
+    {
+     "type": "heading",
+     "text": "Recueillir des retours"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Trouvez au moins trois testeurs.",
+      "Regardez-les utiliser l'application, sans les aider.",
+      "Notez où ils hésitent.",
+      "Posez des questions ouvertes."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Vous verrez des problèmes invisibles pour vous : vous connaissez trop bien votre application."
+    },
+    {
+     "type": "heading",
+     "text": "Corriger, puis republier"
+    },
+    {
+     "type": "paragraph",
+     "text": "Faites au moins un cycle complet : un retour, une correction, une nouvelle version signée, avec un `versionCode` supérieur, installée par-dessus la précédente. Les données doivent survivre."
+    },
+    {
+     "type": "heading",
+     "text": "Présenter son travail"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le problème résolu.",
+      "Une démonstration de deux minutes.",
+      "Un choix d'architecture, et sa raison.",
+      "Une difficulté, et comment vous l'avez résolue.",
+      "Ce que vous feriez autrement."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Ce dépôt et cette présentation constituent un vrai portfolio pour un entretien."
+    },
+    {
+     "type": "tip",
+     "text": "Livrer, c'est accepter que ce n'est pas parfait. Mais c'est réel, et ça change tout !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Faut-il publier sur Google Play pour réussir ?",
+     "options": [
+      "Non, une livraison signée à de vrais testeurs suffit",
+      "Oui, obligatoirement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un compte et des délais s'y ajoutent."
+    },
+    {
+     "prompt": "Combien de personnes accepte le test interne ?",
+     "options": [
+      "Jusqu'à 100",
+      "10 000"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il convient à une première diffusion."
+    },
+    {
+     "prompt": "Que vérifier après une mise à jour ?",
+     "options": [
+      "Que les données ont survécu",
+      "Que l'icône a changé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Installez-la par-dessus."
+    },
+    {
+     "prompt": "Pourquoi observer des testeurs sans les aider ?",
+     "options": [
+      "Pour voir où ils hésitent",
+      "Pour gagner du temps"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Vous connaissez trop votre application."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-10-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande de l'outil `gh` crée une version sur GitHub ?",
+     "accepted": [
+      "gh release create"
+     ],
+     "solution": "gh release create."
+    },
+    {
+     "id": "exp-10-ex2",
+     "kind": "self",
+     "prompt": "Préparez le plan de votre présentation de cinq minutes.",
+     "solution": "Une minute : le problème et le public. Deux minutes : démonstration. Une minute : un choix d'architecture et une difficulté. Une minute : les vérifications faites, les limites, et la suite."
+    }
+   ]
+  },
+  {
+   "id": "exp-11-final",
+   "title": "Projet final : votre évaluation",
+   "minutes": 30,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Voici l'évaluation finale de l'Académie : **un véritable projet**, conçu par vous, utile à au moins une personne réelle."
+    },
+    {
+     "type": "heading",
+     "text": "Le sujet"
+    },
+    {
+     "type": "paragraph",
+     "text": "Choisissez un problème réel : le vôtre, celui d'un proche ou d'une association. Réalisez une application Android, en natif ou en Flutter, qui le résout."
+    },
+    {
+     "type": "heading",
+     "text": "Les exigences"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Architecture en couches, documentée.",
+      "Une base de données locale, avec au moins une migration testée.",
+      "Une API ou une synchronisation.",
+      "Une revue de sécurité écrite.",
+      "Des tests automatiques, lancés par une CI.",
+      "Une mesure de performance, avant et après une amélioration.",
+      "Une version signée, livrée à au moins trois testeurs.",
+      "Un README et un compte rendu honnête, avec les limites."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "La grille"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque critère vaut un nombre de points. Le projet est validé à partir de 70 points sur 100, avec au moins 10 points en sécurité et 10 en tests."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Critere(val nom: String, val obtenu: Int, val maximum: Int)\n\nfun bilan(criteres: List<Critere>): String {\n    val total = criteres.sumOf { it.obtenu }\n    val securite = criteres.first { it.nom == \"Sécurité\" }.obtenu\n    val tests = criteres.first { it.nom == \"Tests\" }.obtenu\n    val valide = total >= 70 && securite >= 10 && tests >= 10\n    return \"$total / 100 : ${if (valide) \"validé\" else \"à reprendre\"}\"\n}\n\nfun main() {\n    val projet = listOf(\n        Critere(\"Utilité réelle\", 12, 15),\n        Critere(\"Architecture\", 14, 20),\n        Critere(\"Données et API\", 11, 15),\n        Critere(\"Sécurité\", 10, 15),\n        Critere(\"Tests\", 8, 15),\n        Critere(\"Optimisation\", 6, 10),\n        Critere(\"Livraison et documentation\", 8, 10),\n    )\n    println(projet.sumOf { it.maximum })\n    println(bilan(projet))\n}",
+     "output": "100\n69 / 100 : à reprendre"
+    },
+    {
+     "type": "heading",
+     "text": "Ce que vous devez fournir"
+    },
+    {
+     "type": "list",
+     "items": [
+      "L'adresse du dépôt.",
+      "L'APK ou l'AAB signé.",
+      "Le dernier résultat de la CI.",
+      "La revue de sécurité.",
+      "Les mesures de performance.",
+      "Les retours de trois testeurs, et ce que vous en avez fait.",
+      "Votre grille remplie, avec une preuve pour chaque note."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Cette évaluation repose sur votre honnêteté : aucune machine ne peut, à elle seule, juger une application entière. Faites relire votre grille par une autre personne, si vous le pouvez. Une note sans preuve vaut zéro."
+    },
+    {
+     "type": "info",
+     "text": "Le certificat de l'Académie est un certificat interne de réussite. Ce n'est pas une certification professionnelle officielle."
+    },
+    {
+     "type": "heading",
+     "text": "Si le projet n'est pas validé"
+    },
+    {
+     "type": "paragraph",
+     "text": "C'est une étape, pas un échec. Reprenez les critères faibles, corrigez, puis présentez une nouvelle version."
+    },
+    {
+     "type": "tip",
+     "text": "Vous étiez un apprenti devant un écran noir. Vous livrez maintenant de vraies applications. Je vous salue, futur Maître !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel score valide le projet ?",
+     "options": [
+      "70 sur 100, avec 10 en sécurité et 10 en tests",
+      "50 sur 100"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les deux minimums sont obligatoires."
+    },
+    {
+     "prompt": "Que vaut une note sans preuve ?",
+     "options": [
+      "Zéro",
+      "Le maximum"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque note doit être justifiée."
+    },
+    {
+     "prompt": "Le certificat de l'Académie est-il une certification officielle ?",
+     "options": [
+      "Non, c'est un certificat interne",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne faut pas le présenter autrement."
+    },
+    {
+     "prompt": "À combien de testeurs livrer le projet ?",
+     "options": [
+      "Au moins trois",
+      "Aucun"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "De vraies personnes."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "exp-11-ex1",
+     "kind": "fill",
+     "prompt": "Quel total minimal valide le projet final ?",
+     "accepted": [
+      "70",
+      "70/100",
+      "70 sur 100"
+     ],
+     "solution": "70 sur 100."
+    },
+    {
+     "id": "exp-11-ex2",
+     "kind": "self",
+     "prompt": "Rendez votre projet final ici : l'adresse du dépôt, votre note pour chaque critère avec sa preuve, et votre bilan.",
+     "solution": "Il n'y a pas de corrigé. Vérifiez que chaque note renvoie à une preuve consultable : un fichier, un résultat de CI, une mesure, un retour de testeur. Si vous n'atteignez pas 70 points, ou le minimum en sécurité et en tests, listez les corrections, puis recommencez."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Dans ce module, qu'est-ce qui constitue l'évaluation finale ?",
+    "options": [
+     "Le projet final réel, avec sa grille",
+     "Ce questionnaire seul"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Ce questionnaire vérifie seulement la méthode."
+   },
+   {
+    "prompt": "Votre écran lit directement la base. Que corriger ?",
+    "options": [
+     "Passer par un dépôt, via le ViewModel",
+     "Rien"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'interface ne parle pas aux sources."
+   },
+   {
+    "prompt": "Deux appareils modifient la même note. Que décider ?",
+    "options": [
+     "Une règle de conflit connue à l'avance",
+     "Laisser faire le hasard"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Dernière écriture, fusion, ou choix de l'utilisateur."
+   },
+   {
+    "prompt": "Votre test échoue une fois sur dix. Que faire ?",
+    "options": [
+     "Le corriger ou le retirer",
+     "Le relancer jusqu'au succès"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il détruit la confiance."
+   },
+   {
+    "prompt": "L'APK de votre projet contient une clé d'API. Que faire ?",
+    "options": [
+     "La révoquer et la déplacer sur un serveur",
+     "La renommer"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Elle est compromise."
+   },
+   {
+    "prompt": "Le démarrage semble lent. Par quoi commencer ?",
+    "options": [
+     "Mesurer en release",
+     "Réécrire l'application"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il faut un point de départ."
+   },
+   {
+    "prompt": "Une requête d'envoi peut être rejouée. Que prévoir ?",
+    "options": [
+     "Une clé d'idempotence",
+     "Rien"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le serveur ignore le doublon."
+   },
+   {
+    "prompt": "Quels documents sont attendus ?",
+    "options": [
+     "Un README",
+     "Un compte rendu avec les limites",
+     "Un mot de passe de signature"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Un secret ne se documente pas."
+   },
+   {
+    "prompt": "Une version ratée a été déployée. Que faire ?",
+    "options": [
+     "Suspendre, corriger, publier une version supérieure",
+     "Baisser le versionCode"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le versionCode ne redescend pas."
+   },
+   {
+    "prompt": "Que prouve une grille de projet remplie ?",
+    "options": [
+     "Rien sans preuves associées",
+     "Tout, même sans preuve"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Une note sans preuve vaut zéro."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Recommandations d'architecture",
+   "url": "https://developer.android.com/topic/architecture/recommendations"
+  },
+  {
+   "title": "Modularisation",
+   "url": "https://developer.android.com/topic/modularization"
+  },
+  {
+   "title": "Stabilité dans Compose",
+   "url": "https://developer.android.com/develop/ui/compose/performance/stability"
+  },
+  {
+   "title": "Application exemple Now in Android",
+   "url": "https://github.com/android/nowinandroid"
+  },
+  {
+   "title": "OWASP MASVS",
+   "url": "https://mas.owasp.org/MASVS/"
+  },
+  {
+   "title": "Documentation Flutter",
+   "url": "https://docs.flutter.dev"
+  }
+ ]
+}

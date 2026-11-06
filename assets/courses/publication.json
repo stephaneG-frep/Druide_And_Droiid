@@ -1,0 +1,2182 @@
+{
+ "moduleId": "publication",
+ "lessons": [
+  {
+   "id": "pub-01-release",
+   "title": "Compiler une version de publication",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une version de debug sert à développer. Une version de **release** est celle que reçoivent les utilisateurs : optimisée, signée, non débogable."
+    },
+    {
+     "type": "heading",
+     "text": "APK ou AAB ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**APK** : un fichier installable directement.",
+      "**AAB**, Android App Bundle : un paquet envoyé à Google Play, qui génère des APK adaptés à chaque appareil."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur Google Play, on publie un AAB. L'APK reste utile pour tester ou pour une distribution hors de Google Play."
+    },
+    {
+     "type": "heading",
+     "text": "Avec Gradle"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# L'AAB, pour Google Play\n./gradlew bundleRelease\n\n# Un APK de release\n./gradlew assembleRelease"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les fichiers arrivent dans `app/build/outputs/`, dans les dossiers `bundle/` et `apk/`."
+    },
+    {
+     "type": "heading",
+     "text": "Avec Flutter"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "flutter build appbundle --release\nflutter build apk --release"
+    },
+    {
+     "type": "heading",
+     "text": "Activer l'optimisation"
+    },
+    {
+     "type": "paragraph",
+     "text": "R8 réduit et accélère l'application. Depuis AGP 9.3, un bloc `optimization` simplifie sa configuration :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    buildTypes {\n        release {\n            optimization {\n                enable = true\n            }\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Avant AGP 9.3, ou dans un projet existant, vous verrez cette forme, qui reste prise en charge :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    buildTypes {\n        release {\n            isMinifyEnabled = true\n            isShrinkResources = true\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\",\n            )\n        }\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Une application peut fonctionner en debug et planter en release, car R8 a retiré du code utilisé par réflexion. Testez toujours la version de release elle-même, sur un appareil réel, avant de la publier."
+    },
+    {
+     "type": "heading",
+     "text": "Le chemin de vérification"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Installer l'APK de release sur un appareil\nadb install -r app/build/outputs/apk/release/app-release.apk\n\n# Vérifier qu'elle n'est pas débogable : aucune ligne attendue\naapt2 dump badging app/build/outputs/apk/release/app-release.apk | grep debuggable"
+    },
+    {
+     "type": "heading",
+     "text": "Avant de compiler"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Retirez les journaux de debug et les fonctions de test.",
+      "Vérifiez que l'adresse du serveur est celle de la production.",
+      "Mettez à jour le numéro de version.",
+      "Lancez tous les tests."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Ne publiez jamais une version que vous n'avez pas lancée vous-même. La release, c'est le moment où la potion quitte le laboratoire !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel format publie-t-on sur Google Play ?",
+     "options": [
+      "L'AAB",
+      "Le JAR",
+      "Le ZIP"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Google Play en génère des APK adaptés."
+    },
+    {
+     "prompt": "Quelle tâche Gradle construit un AAB de release ?",
+     "options": [
+      "bundleRelease",
+      "assembleDebug",
+      "lintDebug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "assembleRelease construit un APK."
+    },
+    {
+     "prompt": "Pourquoi une application peut-elle planter seulement en release ?",
+     "options": [
+      "R8 a retiré ou renommé du code",
+      "Le debug n'a pas de manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Testez la version de release."
+    },
+    {
+     "prompt": "Quelle commande Flutter construit un AAB ?",
+     "options": [
+      "flutter build appbundle",
+      "flutter pub get",
+      "flutter analyze"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Avec --release, par défaut."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel bloc Gradle active R8 depuis AGP 9.3 ?",
+     "accepted": [
+      "optimization",
+      "optimization {}"
+     ],
+     "solution": "Le bloc optimization, avec enable = true."
+    },
+    {
+     "id": "pub-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les commandes Gradle qui construisent un APK de release puis l'installent sur l'appareil branché, en gardant les données.",
+     "solution": "./gradlew assembleRelease\nadb install -r app/build/outputs/apk/release/app-release.apk",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "pub-02-signature",
+   "title": "Signer une application",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Android refuse d'installer une application non signée. La signature prouve que chaque mise à jour vient bien du même auteur."
+    },
+    {
+     "type": "heading",
+     "text": "Deux clés"
+    },
+    {
+     "type": "layers",
+     "title": "Play App Signing",
+     "layers": [
+      {
+       "name": "Clé d'envoi",
+       "detail": "Vous la gardez. Elle signe l'AAB que vous envoyez à Google Play."
+      },
+      {
+       "name": "Clé de signature",
+       "detail": "Google la protège. Elle signe les APK livrés aux utilisateurs."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Une application créée depuis août 2021 passe par **Play App Signing**. Si vous perdez la clé d'envoi, vous pouvez demander sa réinitialisation, car la clé de signature reste protégée."
+    },
+    {
+     "type": "heading",
+     "text": "Créer une clé d'envoi"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "keytool -genkeypair -v \\\n  -keystore upload.jks \\\n  -alias upload \\\n  -keyalg RSA -keysize 4096 \\\n  -validity 10000"
+    },
+    {
+     "type": "paragraph",
+     "text": "`keytool` est fourni avec le JDK. Il demande un mot de passe, puis votre identité. Cette commande a été testée : elle crée un fichier de clés au format PKCS12, valable environ 27 ans."
+    },
+    {
+     "type": "info",
+     "text": "La documentation recommande une validité d'au moins 25 ans. Sur Google Play, la clé doit rester valide après le 22 octobre 2033."
+    },
+    {
+     "type": "warning",
+     "text": "Une clé d'envoi ne doit jamais entrer dans Git. Ajoutez `*.jks` et `keystore.properties` à `.gitignore` **avant** de créer ces fichiers, et conservez une copie chiffrée ailleurs. Sans Play App Signing, perdre sa clé empêche définitivement toute mise à jour."
+    },
+    {
+     "type": "heading",
+     "text": "Sortir les secrets du script"
+    },
+    {
+     "type": "paragraph",
+     "text": "Créez un fichier `keystore.properties`, ignoré par Git :"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "storePassword=votre_mot_de_passe\nkeyPassword=votre_mot_de_passe\nkeyAlias=upload\nstoreFile=../upload.jks"
+    },
+    {
+     "type": "paragraph",
+     "text": "Puis lisez-le dans `app/build.gradle.kts`. Le chargement se fait avant le bloc `android` :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.FileInputStream\nimport java.util.Properties\n\nval proprietes = Properties().apply {\n    load(FileInputStream(rootProject.file(\"keystore.properties\")))\n}\n\nandroid {\n    signingConfigs {\n        create(\"publication\") {\n            keyAlias = proprietes[\"keyAlias\"] as String\n            keyPassword = proprietes[\"keyPassword\"] as String\n            storeFile = file(proprietes[\"storeFile\"] as String)\n            storePassword = proprietes[\"storePassword\"] as String\n        }\n    }\n    buildTypes {\n        release {\n            signingConfig = signingConfigs.getByName(\"publication\")\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Vérifier"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Une signature d'APK\napksigner verify --print-certs app-release.apk\n\n# Toutes les signatures du projet\n./gradlew signingReport\n\n# Le contenu d'un fichier de clés\nkeytool -list -keystore upload.jks"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'empreinte SHA-256 du certificat est publique : les services tiers, comme Google Sign-In, la demandent. Ne la confondez pas avec la clé privée."
+    },
+    {
+     "type": "info",
+     "text": "Google Play signe l'application finale avec sa propre clé. Pour un service tiers, utilisez l'empreinte du certificat de signature indiquée dans Play Console, à la page Signature de l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Le piège du debug"
+    },
+    {
+     "type": "paragraph",
+     "text": "La clé de debug est générée automatiquement. Google Play refuse une application signée avec elle. Elle sert uniquement au développement."
+    },
+    {
+     "type": "tip",
+     "text": "Votre clé, c'est votre sceau de mage. Rangez-la au coffre, et n'en parlez à personne !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui garde la clé d'envoi ?",
+     "options": [
+      "Vous",
+      "Google",
+      "Les utilisateurs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Google garde la clé de signature."
+    },
+    {
+     "prompt": "Que faire si la clé d'envoi est perdue avec Play App Signing ?",
+     "options": [
+      "Demander sa réinitialisation",
+      "Changer le nom du paquet"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La clé de signature reste protégée."
+    },
+    {
+     "prompt": "Une empreinte SHA-256 de certificat est-elle secrète ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle est faite pour être partagée."
+    },
+    {
+     "prompt": "Où ranger les mots de passe de signature ?",
+     "options": [
+      "Dans un fichier ignoré par Git",
+      "Dans build.gradle.kts commité"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ou dans les secrets de la CI."
+    },
+    {
+     "prompt": "Google Play accepte-t-il la clé de debug ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle n'est pas sécurisée."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle tâche Gradle affiche les informations de signature ?",
+     "accepted": [
+      "signingReport",
+      "./gradlew signingReport"
+     ],
+     "solution": "signingReport."
+    },
+    {
+     "id": "pub-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les lignes du fichier `.gitignore` qui protègent vos fichiers de signature.",
+     "solution": "*.jks\n*.keystore\nkeystore.properties"
+    }
+   ]
+  },
+  {
+   "id": "pub-03-versions",
+   "title": "Le versionnement",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Chaque version publiée porte deux numéros, qui n'ont pas le même rôle."
+    },
+    {
+     "type": "heading",
+     "text": "versionCode et versionName"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`versionCode` : un entier, pour le système. Il doit augmenter à chaque envoi.",
+      "`versionName` : un texte, pour l'utilisateur, comme `1.2.3`."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    defaultConfig {\n        versionCode = 12\n        versionName = \"1.2.3\"\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur Google Play, `versionCode` ne peut pas dépasser 2 100 000 000. Dans Flutter, les deux se trouvent dans `pubspec.yaml`, sous la forme `version: 1.2.3+12`."
+    },
+    {
+     "type": "heading",
+     "text": "Le versionnement sémantique"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**MAJEUR** : un changement incompatible.",
+      "**MINEUR** : une nouveauté compatible.",
+      "**CORRECTIF** : une correction."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Calculer un versionCode"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une formule évite les erreurs manuelles, et garantit que les numéros augmentent :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun versionCode(majeur: Int, mineur: Int, correctif: Int): Int {\n    require(mineur in 0..99 && correctif in 0..99)\n    return majeur * 10_000 + mineur * 100 + correctif\n}\n\nfun main() {\n    println(versionCode(1, 2, 3))\n    println(versionCode(1, 10, 0))\n    println(versionCode(2, 0, 0))\n    println(versionCode(1, 2, 3) < versionCode(1, 10, 0))\n}",
+     "output": "10203\n11000\n20000\ntrue"
+    },
+    {
+     "type": "warning",
+     "text": "Un `versionCode` déjà envoyé ne peut plus resservir, même pour une version annulée. Il faut toujours un nombre supérieur."
+    },
+    {
+     "type": "heading",
+     "text": "Journal des modifications"
+    },
+    {
+     "type": "paragraph",
+     "text": "Tenez un fichier `CHANGELOG.md`, écrit pour des humains : ce qui change, ce qui est corrigé. Google Play demande aussi des notes de version, à chaque publication."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "## 1.2.3 — 2026-11-06\n\n### Corrigé\n- Plantage à l'ouverture d'une note vide.\n\n### Ajouté\n- Export des notes en texte."
+    },
+    {
+     "type": "heading",
+     "text": "Marquer les versions dans Git"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "git tag -a v1.2.3 -m \"Version 1.2.3\"\ngit push origin v1.2.3"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une étiquette relie une version publiée au code exact. Vous pourrez toujours reconstruire ou analyser un plantage ancien."
+    },
+    {
+     "type": "tip",
+     "text": "Le jour où un utilisateur signale un bug sur la 1.1.4, vous remercierez l'apprenti qui avait posé une étiquette !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui lit le versionCode ?",
+     "options": [
+      "Le système et Google Play",
+      "Uniquement l'utilisateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'utilisateur voit versionName."
+    },
+    {
+     "prompt": "Que change une version MINEURE ?",
+     "options": [
+      "Une nouveauté compatible",
+      "Un changement incompatible"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La MAJEURE est incompatible."
+    },
+    {
+     "prompt": "Peut-on réutiliser un versionCode envoyé ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut un nombre supérieur."
+    },
+    {
+     "prompt": "Que signifie version: 1.2.3+12 dans pubspec.yaml ?",
+     "options": [
+      "versionName 1.2.3, versionCode 12",
+      "Douze correctifs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est la forme Flutter."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande Git crée une étiquette annotée ?",
+     "accepted": [
+      "git tag -a",
+      "git tag"
+     ],
+     "solution": "git tag -a."
+    },
+    {
+     "id": "pub-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui transforme `\"1.4.2\"` en versionCode avec la formule de la leçon.",
+     "solution": "fun main() {\n    val (majeur, mineur, correctif) = \"1.4.2\".split(\".\").map { it.toInt() }\n    println(majeur * 10_000 + mineur * 100 + correctif)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "pub-04-console",
+   "title": "Google Play Console",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Google Play Console** est l'interface de publication. Avant le premier envoi, plusieurs formulaires sont à remplir, et ils engagent votre responsabilité."
+    },
+    {
+     "type": "heading",
+     "text": "La fiche de l'application"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Nom : 30 caractères au maximum.",
+      "Description courte : 80 caractères.",
+      "Description complète : 4 000 caractères.",
+      "Icône, captures d'écran et image de présentation."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les déclarations"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Sécurité des données** : ce que vous collectez et partagez.",
+      "**Politique de confidentialité** : un lien public.",
+      "**Classification du contenu** : un questionnaire.",
+      "**Public cible**.",
+      "**Accès à l'application** : comment tester si une connexion est nécessaire."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ces déclarations doivent être exactes. Une bibliothèque qui collecte des données compte aussi. Une déclaration fausse peut entraîner le refus ou le retrait de l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Le niveau d'API cible"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis le 31 août 2026, une nouvelle application ou une mise à jour doit cibler Android 16, soit l'API 36, sur téléphone. Ce seuil augmente chaque année : vérifiez la page officielle avant de publier."
+    },
+    {
+     "type": "paragraph",
+     "text": "Une application existante qui ne suit pas devient indisponible pour les nouveaux utilisateurs sur les versions récentes d'Android."
+    },
+    {
+     "type": "heading",
+     "text": "Les parcours de test"
+    },
+    {
+     "type": "layers",
+     "title": "Les quatre parcours",
+     "layers": [
+      {
+       "name": "Test interne",
+       "detail": "Jusqu'à 100 testeurs choisis."
+      },
+      {
+       "name": "Test fermé",
+       "detail": "Un groupe de testeurs que vous invitez."
+      },
+      {
+       "name": "Test ouvert",
+       "detail": "Toute personne peut rejoindre depuis la fiche."
+      },
+      {
+       "name": "Production",
+       "detail": "Tous les utilisateurs des pays choisis."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Pour un **compte personnel** créé après le 13 novembre 2023, l'accès à la production exige un test fermé avec au moins **12 testeurs** inscrits sans interruption pendant au moins **14 jours**. Prévoyez ce délai dans votre planning."
+    },
+    {
+     "type": "heading",
+     "text": "Publier"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Choisissez un parcours.",
+      "Envoyez l'AAB.",
+      "Rédigez les notes de version.",
+      "Corrigez les erreurs signalées.",
+      "Envoyez pour examen."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **rapport de pré-lancement** teste automatiquement votre application sur des appareils réels, et signale les plantages et les problèmes d'accessibilité."
+    },
+    {
+     "type": "heading",
+     "text": "L'examen"
+    },
+    {
+     "type": "paragraph",
+     "text": "Google vérifie l'application et ses déclarations. Le délai varie, et il peut être plus long pour un nouveau compte. En cas de refus, lisez le motif, corrigez, puis renvoyez."
+    },
+    {
+     "type": "tip",
+     "text": "Préparez la fiche et les déclarations pendant le développement, pas la veille de la sortie. La paperasse aussi fait partie du sortilège !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle est la longueur maximale du nom d'une application ?",
+     "options": [
+      "30 caractères",
+      "300 caractères",
+      "10 caractères"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La description courte en a 80."
+    },
+    {
+     "prompt": "Quel niveau d'API cibler sur téléphone depuis le 31 août 2026 ?",
+     "options": [
+      "API 36",
+      "API 30",
+      "API 21"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il augmente chaque année."
+    },
+    {
+     "prompt": "Combien de testeurs accepte le test interne ?",
+     "options": [
+      "Jusqu'à 100",
+      "Un seul",
+      "Un million"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est le parcours le plus rapide."
+    },
+    {
+     "prompt": "Quelle condition concerne un compte personnel récent ?",
+     "options": [
+      "12 testeurs pendant 14 jours",
+      "Aucune"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Dans un test fermé."
+    },
+    {
+     "prompt": "Une bibliothèque qui collecte des données compte-t-elle ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Déclarez-la dans la Sécurité des données."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-04-ex1",
+     "kind": "fill",
+     "prompt": "Quel formulaire de Play Console décrit la collecte des données ?",
+     "accepted": [
+      "Sécurité des données",
+      "securite des donnees",
+      "Data safety"
+     ],
+     "solution": "Sécurité des données."
+    },
+    {
+     "id": "pub-04-ex2",
+     "kind": "self",
+     "prompt": "Vous êtes développeur indépendant, avec un compte personnel neuf, et vous voulez sortir dans six semaines. Établissez votre planning.",
+     "solution": "Semaine 1 : version candidate en test interne. Semaine 2 : corrections, et test fermé avec au moins 12 testeurs. Semaines 2 à 4 : les testeurs restent inscrits 14 jours sans interruption, et je corrige les retours. Semaine 5 : demande d'accès à la production, déclarations relues. Semaine 6 : envoi pour examen, avec une marge pour un refus."
+    }
+   ]
+  },
+  {
+   "id": "pub-05-tests",
+   "title": "Tester avant de publier",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Publier sans tests, c'est faire tester vos utilisateurs à votre place. Une bonne stratégie combine plusieurs niveaux."
+    },
+    {
+     "type": "heading",
+     "text": "La pyramide"
+    },
+    {
+     "type": "layers",
+     "title": "Les niveaux de tests",
+     "layers": [
+      {
+       "name": "Tests unitaires",
+       "detail": "Nombreux et rapides : ViewModel, dépôts, règles métier."
+      },
+      {
+       "name": "Tests d'interface",
+       "detail": "Un écran ou un parcours complet."
+      },
+      {
+       "name": "Tests de performance",
+       "detail": "Démarrage et fluidité, avec Macrobenchmark."
+      },
+      {
+       "name": "Tests manuels",
+       "detail": "Sur de vrais appareils, juste avant la sortie."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Le guide d'architecture Android recommande au minimum : des tests unitaires pour les ViewModel et la couche de données, des tests de navigation, et des tests de performance."
+    },
+    {
+     "type": "heading",
+     "text": "Préférez les doublures simples"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **fake** est une petite implémentation réelle, en mémoire. Google le préfère aux mocks, car il teste un vrai comportement."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "interface NotesDepot {\n    fun toutes(): List<String>\n    fun ajouter(note: String)\n}\n\nclass FakeNotesDepot : NotesDepot {\n    private val notes = mutableListOf<String>()\n    override fun toutes() = notes.toList()\n    override fun ajouter(note: String) {\n        notes += note\n    }\n}\n\nclass AjouterNote(private val depot: NotesDepot) {\n    fun executer(texte: String): Boolean {\n        val note = texte.trim()\n        if (note.isEmpty()) return false\n        depot.ajouter(note)\n        return true\n    }\n}\n\nfun main() {\n    val depot = FakeNotesDepot()\n    val ajouter = AjouterNote(depot)\n\n    println(ajouter.executer(\"  Acheter du thé  \"))\n    println(ajouter.executer(\"   \"))\n    println(depot.toutes())\n}",
+     "output": "true\nfalse\n[Acheter du thé]"
+    },
+    {
+     "type": "heading",
+     "text": "Tester l'interface Compose"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Compteur() {\n    var valeur by remember { mutableIntStateOf(0) }\n    Button(onClick = { valeur++ }) {\n        Text(\"Valeur : $valeur\")\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un test `createComposeRule` affiche ce composable, clique sur le bouton, puis vérifie le texte, sur un émulateur ou un appareil."
+    },
+    {
+     "type": "heading",
+     "text": "Les commandes"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Tests unitaires\n./gradlew testDebugUnitTest\n\n# Tests sur appareil\n./gradlew connectedDebugAndroidTest\n\n# Flutter\nflutter test\nflutter test integration_test"
+    },
+    {
+     "type": "warning",
+     "text": "Un test d'intégration Flutter lancé sur un téléphone peut désinstaller l'application, et donc effacer ses données. Sauvegardez d'abord, ou utilisez un appareil de test."
+    },
+    {
+     "type": "heading",
+     "text": "Tester ce que l'utilisateur subit"
+    },
+    {
+     "type": "list",
+     "items": [
+      "La rotation de l'écran.",
+      "La mort du processus en arrière-plan.",
+      "Le mode hors ligne et un réseau lent.",
+      "Un texte agrandi, et TalkBack.",
+      "Une mise à jour depuis la version précédente : les données doivent survivre."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce dernier point est essentiel, et souvent oublié : installez l'ancienne version, ajoutez des données, puis installez la nouvelle par-dessus."
+    },
+    {
+     "type": "tip",
+     "text": "Un test qui passe toujours ne prouve rien. Cassez volontairement le code une fois, pour vérifier que votre test le voit !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quels tests sont les plus nombreux ?",
+     "options": [
+      "Les tests unitaires",
+      "Les tests manuels"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ils sont rapides et stables."
+    },
+    {
+     "prompt": "Que recommande Google, fakes ou mocks ?",
+     "options": [
+      "Les fakes",
+      "Les mocks"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ils testent un vrai comportement."
+    },
+    {
+     "prompt": "Quelle tâche Gradle lance les tests unitaires ?",
+     "options": [
+      "testDebugUnitTest",
+      "bundleRelease"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "connectedDebugAndroidTest vise un appareil."
+    },
+    {
+     "prompt": "Quel test est souvent oublié ?",
+     "options": [
+      "La mise à jour depuis la version précédente",
+      "La compilation"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les données doivent survivre."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle bibliothèque mesure le démarrage et la fluidité ?",
+     "accepted": [
+      "Macrobenchmark"
+     ],
+     "solution": "Macrobenchmark."
+    },
+    {
+     "id": "pub-05-ex2",
+     "kind": "self",
+     "prompt": "Ajoutez à `FakeNotesDepot` une méthode `vider()`, et écrivez un programme qui prouve qu'elle fonctionne.",
+     "solution": "class FakeNotesDepot {\n    private val notes = mutableListOf<String>()\n    fun toutes() = notes.toList()\n    fun ajouter(note: String) {\n        notes += note\n    }\n    fun vider() = notes.clear()\n}\n\nfun main() {\n    val depot = FakeNotesDepot()\n    depot.ajouter(\"Note\")\n    depot.vider()\n    println(depot.toutes().isEmpty())\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "pub-06-ci",
+   "title": "CI/CD et GitHub Actions",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'**intégration continue**, ou CI, vérifie chaque modification automatiquement. Le **déploiement continu**, ou CD, automatise ensuite la livraison."
+    },
+    {
+     "type": "heading",
+     "text": "Pourquoi ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une machine propre : fini le « ça marche sur mon ordinateur ».",
+      "Rien n'entre dans `main` sans passer les contrôles.",
+      "Des compilations reproductibles."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "GitHub Actions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **workflow** est un fichier YAML, placé dans `.github/workflows/`. Il contient des **jobs**, eux-mêmes composés d'étapes."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "name: Android\n\non:\n  push:\n    branches: [main]\n  pull_request:\n\njobs:\n  verifier:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n\n      - uses: actions/setup-java@v6\n        with:\n          distribution: temurin\n          java-version: 21\n\n      - uses: gradle/actions/setup-gradle@v6\n\n      - name: Vérifier\n        run: ./gradlew lintDebug testDebugUnitTest assembleDebug\n\n      - uses: actions/upload-artifact@v7\n        with:\n          name: apk-debug\n          path: app/build/outputs/apk/debug/*.apk"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`on` : ce qui déclenche le workflow.",
+      "`runs-on` : la machine utilisée.",
+      "`uses` : une action réutilisable.",
+      "`run` : une commande."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Les numéros de version ci-dessus étaient les plus récents lors de la rédaction. Vérifiez-les sur la page de chaque action : ils évoluent."
+    },
+    {
+     "type": "heading",
+     "text": "Pour Flutter"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "      - uses: actions/checkout@v7\n\n      - uses: subosito/flutter-action@v2\n        with:\n          channel: stable\n\n      - run: flutter pub get\n      - run: flutter analyze\n      - run: flutter test\n      - run: flutter build apk --debug"
+    },
+    {
+     "type": "heading",
+     "text": "Protéger la branche principale"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans les réglages du dépôt, une **règle de branche** peut exiger que le workflow réussisse avant une fusion. Le contrôle devient alors obligatoire."
+    },
+    {
+     "type": "heading",
+     "text": "Aller vite"
+    },
+    {
+     "type": "list",
+     "items": [
+      "L'action `setup-gradle` gère le cache de Gradle.",
+      "Lancez d'abord les contrôles rapides.",
+      "Séparez les tests lents dans un job dédié."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Une action tierce exécute du code dans votre compilation, avec accès à vos secrets. Choisissez des actions de confiance. Pour renforcer la sécurité, épinglez leur empreinte de commit complète plutôt qu'une étiquette."
+    },
+    {
+     "type": "tip",
+     "text": "La CI, c'est le gardien infatigable de la tour : il ne dort jamais, et il ne laisse rien passer !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où placer un workflow ?",
+     "options": [
+      "Dans .github/workflows/",
+      "Dans app/src/main/",
+      "Dans res/"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un fichier YAML."
+    },
+    {
+     "prompt": "Quelle clé fixe le déclencheur ?",
+     "options": [
+      "on",
+      "runs-on",
+      "uses"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple push ou pull_request."
+    },
+    {
+     "prompt": "Que fait uses ?",
+     "options": [
+      "Il appelle une action réutilisable",
+      "Il lance une commande Shell"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "run lance une commande."
+    },
+    {
+     "prompt": "Comment rendre la CI obligatoire avant une fusion ?",
+     "options": [
+      "Avec une règle de branche",
+      "Avec un README"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Dans les réglages du dépôt."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle clé de YAML choisit la machine d'un job ?",
+     "accepted": [
+      "runs-on"
+     ],
+     "solution": "runs-on."
+    },
+    {
+     "id": "pub-06-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les étapes d'un job qui analyse et teste un projet Flutter.",
+     "solution": "steps:\n  - uses: actions/checkout@v7\n  - uses: subosito/flutter-action@v2\n    with:\n      channel: stable\n  - run: flutter pub get\n  - run: flutter analyze\n  - run: flutter test"
+    }
+   ]
+  },
+  {
+   "id": "pub-07-livraison",
+   "title": "Automatiser la livraison",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une fois la vérification automatisée, la compilation signée peut l'être aussi. Il faut alors confier la clé à la CI, sans l'exposer."
+    },
+    {
+     "type": "heading",
+     "text": "Les secrets"
+    },
+    {
+     "type": "paragraph",
+     "text": "GitHub propose des **secrets** chiffrés, dans les réglages du dépôt. Ils ne figurent ni dans le code ni dans les journaux."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Encoder le fichier de clés sur une seule ligne\nbase64 -w0 upload.jks"
+    },
+    {
+     "type": "paragraph",
+     "text": "Collez le résultat dans un secret nommé `KEYSTORE_BASE64`, puis créez `KEYSTORE_PASSWORD`, `KEY_ALIAS` et `KEY_PASSWORD`."
+    },
+    {
+     "type": "warning",
+     "text": "Ne mettez jamais un secret dans un `echo` visible. GitHub masque ceux qu'il reconnaît, mais une valeur transformée, par exemple encodée, peut apparaître en clair dans les journaux."
+    },
+    {
+     "type": "heading",
+     "text": "Un workflow de publication"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce workflow se déclenche quand vous poussez une étiquette, comme `v1.2.3`."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "name: Publication\n\non:\n  push:\n    tags: ['v*']\n\njobs:\n  compiler:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v7\n\n      - uses: actions/setup-java@v6\n        with:\n          distribution: temurin\n          java-version: 21\n\n      - uses: gradle/actions/setup-gradle@v6\n\n      - name: Recréer le fichier de clés\n        env:\n          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}\n        run: echo \"$KEYSTORE_BASE64\" | base64 --decode > upload.jks\n\n      - name: Compiler\n        env:\n          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}\n          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}\n          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}\n        run: ./gradlew bundleRelease\n\n      - uses: actions/upload-artifact@v7\n        with:\n          name: aab\n          path: app/build/outputs/bundle/release/*.aab"
+    },
+    {
+     "type": "paragraph",
+     "text": "Côté Gradle, lisez ces valeurs depuis l'environnement :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    signingConfigs {\n        create(\"publication\") {\n            storeFile = file(\"../upload.jks\")\n            storePassword = System.getenv(\"KEYSTORE_PASSWORD\")\n            keyAlias = System.getenv(\"KEY_ALIAS\")\n            keyPassword = System.getenv(\"KEY_PASSWORD\")\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Limiter les risques"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un workflow déclenché par une demande de fusion venue d'un dépôt divisé n'a pas accès aux secrets : c'est voulu.",
+      "Utilisez un **environnement** GitHub avec une validation humaine pour la publication.",
+      "Accordez au workflow le minimum de permissions, avec la clé `permissions`.",
+      "Ne publiez pas un fichier signé en artefact public."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Le fichier `.jks` recréé ne doit pas rester accessible. Une machine GitHub est détruite après le job, mais une machine auto-hébergée ne l'est pas : nettoyez-la, ou n'y mettez pas de secret."
+    },
+    {
+     "type": "heading",
+     "text": "Envoyer vers Google Play"
+    },
+    {
+     "type": "paragraph",
+     "text": "Play Console propose une API de publication, qui utilise un compte de service. Des outils comme Fastlane ou Gradle Play Publisher s'en servent. Commencez par le parcours de test interne, jamais directement la production."
+    },
+    {
+     "type": "paragraph",
+     "text": "Gardez une **validation humaine** avant la production. L'automatisation prépare, vous décidez."
+    },
+    {
+     "type": "tip",
+     "text": "Automatisez la routine, pas la décision. Le dernier mot revient toujours au mage !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où ranger un mot de passe de signature pour la CI ?",
+     "options": [
+      "Dans les secrets du dépôt",
+      "Dans le workflow YAML"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le YAML est visible."
+    },
+    {
+     "prompt": "Comment placer un fichier binaire dans un secret ?",
+     "options": [
+      "En l'encodant en base64",
+      "En l'envoyant dans un commit"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est décodé dans le job."
+    },
+    {
+     "prompt": "Une demande de fusion venue d'un dépôt divisé a-t-elle accès aux secrets ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela évite leur vol."
+    },
+    {
+     "prompt": "Que garder avant la production ?",
+     "options": [
+      "Une validation humaine",
+      "Rien, tout est automatique"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une erreur toucherait tous les utilisateurs."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-07-ex1",
+     "kind": "fill",
+     "prompt": "Quel motif déclenche un workflow sur des étiquettes commençant par v ?",
+     "accepted": [
+      "v*",
+      "'v*'"
+     ],
+     "solution": "v*."
+    },
+    {
+     "id": "pub-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez l'étape YAML qui recrée `upload.jks` à partir du secret `KEYSTORE_BASE64`.",
+     "solution": "- name: Recréer le fichier de clés\n  env:\n    KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}\n  run: echo \"$KEYSTORE_BASE64\" | base64 --decode > upload.jks"
+    }
+   ]
+  },
+  {
+   "id": "pub-08-compatibilite",
+   "title": "La compatibilité Android",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Votre application tourne sur des milliers d'appareils, avec des versions d'Android très différentes. Trois réglages cadrent cette diversité."
+    },
+    {
+     "type": "heading",
+     "text": "Les trois SDK"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`minSdk` : la version la plus ancienne acceptée.",
+      "`compileSdk` : l'API utilisée à la compilation.",
+      "`targetSdk` : la version pour laquelle l'application a été testée."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Augmenter `compileSdk` donne accès à de nouvelles API. Augmenter `targetSdk` active de nouveaux comportements : il faut alors retester."
+    },
+    {
+     "type": "heading",
+     "text": "Vérifier la version"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun ouvrirNotifications(context: Context, vibrer: () -> Unit) {\n    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n        val gestionnaire = context.getSystemService(NotificationManager::class.java)\n        if (!gestionnaire.areNotificationsEnabled()) vibrer()\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Lint signale une API utilisée sans vérification, avec l'erreur `NewApi`. Les bibliothèques AndroidX cachent une grande partie de ces différences."
+    },
+    {
+     "type": "heading",
+     "text": "Lire les changements de comportement"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque version d'Android a sa page **Behavior changes**. Il y en a deux : celle pour toutes les applications, et celle pour les applications qui ciblent cette version."
+    },
+    {
+     "type": "info",
+     "text": "Exemple : Android 17 impose des limites de mémoire par application, quelle que soit la version ciblée. Votre application peut donc être touchée sans que vous ayez rien changé."
+    },
+    {
+     "type": "heading",
+     "text": "Choisir un minSdk"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `minSdk` bas touche plus d'appareils, mais demande plus de tests. Android Studio affiche la part d'appareils couverts par version. Les bibliothèques récentes font monter ce seuil : ne fixez pas un chiffre sans le justifier."
+    },
+    {
+     "type": "heading",
+     "text": "Les tailles d'écran"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Téléphone, pliable, tablette, écran externe.",
+      "Portrait et paysage.",
+      "Android 16 réduit, pour les applications qui le ciblent, le verrouillage de l'orientation sur grand écran."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les particularités matérielles"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Pages mémoire de 16 Ko, vues au module 8.",
+      "Architectures : un appareil 64 bits uniquement.",
+      "Restrictions de batterie propres aux constructeurs."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Tester large"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Émulateurs de plusieurs versions et tailles.",
+      "Au moins un téléphone modeste réel.",
+      "Le rapport de pré-lancement de Play Console.",
+      "Firebase Test Lab pour des appareils distants."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Testez sur le pire appareil que vous acceptez. S'il tient, tous les autres tiendront !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel réglage active de nouveaux comportements ?",
+     "options": [
+      "targetSdk",
+      "minSdk",
+      "versionCode"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut alors retester."
+    },
+    {
+     "prompt": "Quel réglage donne accès à de nouvelles API à la compilation ?",
+     "options": [
+      "compileSdk",
+      "versionName"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne change pas le comportement."
+    },
+    {
+     "prompt": "Quelle erreur Lint signale une API trop récente ?",
+     "options": [
+      "NewApi",
+      "MissingClass"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ajoutez une vérification de version."
+    },
+    {
+     "prompt": "Un changement « pour toutes les applications » dépend-il de targetSdk ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il s'applique à toutes."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle constante donne la version d'Android à l'exécution ?",
+     "accepted": [
+      "Build.VERSION.SDK_INT",
+      "SDK_INT"
+     ],
+     "solution": "Build.VERSION.SDK_INT."
+    },
+    {
+     "id": "pub-08-ex2",
+     "kind": "self",
+     "prompt": "Vous passez `targetSdk` de 35 à 36. Quelle est votre méthode ?",
+     "solution": "Je lis la page des changements de comportement pour Android 16 et pour les applications qui le ciblent. Je mets à jour les dépendances. Je change targetSdk seul, sur une branche dédiée. Je lance Lint et les tests, puis je teste les parcours touchés, surtout sur grand écran. Je publie progressivement."
+    }
+   ]
+  },
+  {
+   "id": "pub-09-crashs",
+   "title": "Le suivi des plantages",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une fois publiée, votre application tourne sans vous. Vous avez besoin d'yeux sur le terrain."
+    },
+    {
+     "type": "heading",
+     "text": "Android vitals"
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans Play Console, **Android vitals** montre les plantages, les ANR et les problèmes de performance de vos utilisateurs, sans bibliothèque à ajouter. Google Play publie des seuils de mauvais comportement, qui peuvent réduire la visibilité d'une application."
+    },
+    {
+     "type": "heading",
+     "text": "Firebase Crashlytics"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Crashlytics** collecte les plantages et les regroupe, avec leur pile d'appels. Il faut un projet Firebase et son fichier `google-services.json`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "plugins {\n    id(\"com.android.application\")\n    id(\"com.google.gms.google-services\")\n    id(\"com.google.firebase.crashlytics\")\n}\n\ndependencies {\n    implementation(platform(\"com.google.firebase:firebase-bom:35.1.0\"))\n    implementation(\"com.google.firebase:firebase-crashlytics\")\n}"
+    },
+    {
+     "type": "info",
+     "text": "Vérifiez la version de la nomenclature sur la page de Firebase avant de l'utiliser. Le plugin Crashlytics envoie les fichiers de correspondance de R8, ce qui rend les piles lisibles."
+    },
+    {
+     "type": "heading",
+     "text": "Tester l'installation"
+    },
+    {
+     "type": "paragraph",
+     "text": "Provoquez un plantage volontaire, dans une version de test, puis relancez l'application pour que le rapport parte."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun plantageDeTest() {\n    throw RuntimeException(\"Plantage de test\")\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Retirez ce code avant publication, ou réservez-le à une version de debug."
+    },
+    {
+     "type": "heading",
+     "text": "Ajouter du contexte"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun signaler(erreur: Exception, ecran: String) {\n    val crashlytics = FirebaseCrashlytics.getInstance()\n    crashlytics.setCustomKey(\"ecran\", ecran)\n    crashlytics.recordException(erreur)\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`recordException` signale une erreur attrapée, qui n'a pas fait planter l'application."
+    },
+    {
+     "type": "warning",
+     "text": "N'envoyez aucune donnée personnelle dans ces rapports : ni texte saisi, ni jeton. Déclarez cet outil dans la Sécurité des données et la politique de confidentialité. Dans l'Union européenne, vérifiez aussi s'il faut le consentement de l'utilisateur, et proposez de désactiver l'envoi."
+    },
+    {
+     "type": "heading",
+     "text": "Lire et trier"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Quel est le nombre d'utilisateurs touchés ?",
+      "Est-ce nouveau dans cette version ?",
+      "Sur quels appareils et quelle version d'Android ?",
+      "Peut-on le reproduire ?"
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Corrigez d'abord ce qui touche le plus de personnes, ou ce qui perd des données."
+    },
+    {
+     "type": "heading",
+     "text": "Un indicateur simple"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun tauxSansPlantage(sessions: Int, plantages: Int): Double =\n    (sessions - plantages) * 100.0 / sessions\n\nfun main() {\n    println(\"%.2f %%\".format(java.util.Locale.ROOT, tauxSansPlantage(20_000, 40)))\n}",
+     "output": "99.80 %"
+    },
+    {
+     "type": "tip",
+     "text": "Un utilisateur qui plante rarement écrit. Il désinstalle. Vos rapports sont sa seule voix !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où voir les plantages sans bibliothèque ?",
+     "options": [
+      "Android vitals",
+      "Logcat de l'utilisateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Dans Play Console."
+    },
+    {
+     "prompt": "Que fait recordException ?",
+     "options": [
+      "Il signale une erreur attrapée",
+      "Il fait planter l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle continue à fonctionner."
+    },
+    {
+     "prompt": "Que ne faut-il pas mettre dans un rapport ?",
+     "options": [
+      "Des données personnelles",
+      "Le nom de l'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ni jeton ni texte saisi."
+    },
+    {
+     "prompt": "Que corriger en priorité ?",
+     "options": [
+      "Ce qui touche le plus de personnes ou perd des données",
+      "Le plus simple à corriger"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Priorisez selon l'impact."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode de Crashlytics ajoute une information au rapport ?",
+     "accepted": [
+      "setCustomKey"
+     ],
+     "solution": "setCustomKey."
+    },
+    {
+     "id": "pub-09-ex2",
+     "kind": "self",
+     "prompt": "Une nouvelle version fait passer le taux sans plantage de 99,8 % à 97 %. Que faites-vous ?",
+     "solution": "Je suspends le déploiement progressif. Je regarde quel plantage est apparu, sur quels appareils, et je le reproduis avec la version concernée. Je corrige, je teste, puis je publie une nouvelle version avec un versionCode supérieur. Je préviens le support si des utilisateurs sont bloqués."
+    }
+   ]
+  },
+  {
+   "id": "pub-10-maintenance",
+   "title": "Mises à jour et maintenance",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Publier est un début. Une application qui n'est plus entretenue finit par casser, ou par quitter la boutique."
+    },
+    {
+     "type": "heading",
+     "text": "Le déploiement progressif"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour une mise à jour, Play Console permet de choisir un pourcentage d'utilisateurs. Vous observez les indicateurs, puis vous augmentez. Cette option n'existe pas pour une première sortie."
+    },
+    {
+     "type": "layers",
+     "title": "Un déploiement prudent",
+     "layers": [
+      {
+       "name": "5 %",
+       "detail": "Observer plantages et avis."
+      },
+      {
+       "name": "20 %",
+       "detail": "Confirmer sur plus d'appareils."
+      },
+      {
+       "name": "50 %",
+       "detail": "Vérifier la charge du serveur."
+      },
+      {
+       "name": "100 %",
+       "detail": "Terminer, et surveiller encore."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Un déploiement peut être suspendu, mais on ne revient pas en arrière : les utilisateurs déjà mis à jour gardent la version. Pour réparer, publiez une nouvelle version avec un `versionCode` supérieur."
+    },
+    {
+     "type": "heading",
+     "text": "Les mises à jour dans l'application"
+    },
+    {
+     "type": "paragraph",
+     "text": "La bibliothèque **Play In-App Updates** propose deux parcours, sur les appareils Android compatibles :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Flexible** : le téléchargement se fait en arrière-plan, l'utilisateur continue.",
+      "**Immédiat** : un écran bloquant, pour une mise à jour critique."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Migrer les données"
+    },
+    {
+     "type": "paragraph",
+     "text": "La mise à jour la plus risquée touche la base de données. Une migration ratée peut tout perdre."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "val MIGRATION_1_2 = object : Migration(1, 2) {\n    override suspend fun migrate(connection: SQLiteConnection) {\n        connection.execSQL(\"ALTER TABLE notes ADD COLUMN favori INTEGER NOT NULL DEFAULT 0\")\n    }\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Écrivez une migration pour chaque changement de schéma.",
+      "Testez-la depuis chaque ancienne version.",
+      "Évitez la destruction de la base, même en cas d'échec."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "`fallbackToDestructiveMigration` efface toutes les données locales lors d'un changement de schéma. Ne l'utilisez jamais sur une application qui contient des données d'utilisateurs."
+    },
+    {
+     "type": "heading",
+     "text": "Le serveur et les anciennes versions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Certains utilisateurs ne mettent jamais à jour. Votre API doit donc rester compatible, ou être versionnée : `/v1/`, `/v2/`. Prévoyez un moyen d'annoncer qu'une version trop ancienne n'est plus prise en charge."
+    },
+    {
+     "type": "heading",
+     "text": "La maintenance régulière"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Mettez à jour les dépendances, par petites étapes.",
+      "Suivez le niveau d'API exigé par Google Play.",
+      "Surveillez les failles de vos bibliothèques.",
+      "Traitez les avis des utilisateurs.",
+      "Réduisez la dette technique, un peu à chaque version."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Un outil comme Dependabot propose ces mises à jour, et votre CI les teste automatiquement."
+    },
+    {
+     "type": "heading",
+     "text": "Répondre aux utilisateurs"
+    },
+    {
+     "type": "paragraph",
+     "text": "Lisez les avis, répondez poliment, et demandez des précisions. Un bug décrit par un utilisateur est un cadeau."
+    },
+    {
+     "type": "tip",
+     "text": "Une petite mise à jour par mois fait moins peur qu'une énorme par an. Entretenez le jardin, il ne se désherbera pas seul !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment réparer une version déjà déployée ?",
+     "options": [
+      "Publier une version avec un versionCode supérieur",
+      "Revenir à l'ancienne version sur les appareils"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "On ne peut pas redescendre."
+    },
+    {
+     "prompt": "Quel parcours bloque l'application jusqu'à la mise à jour ?",
+     "options": [
+      "Immédiat",
+      "Flexible"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "À réserver au critique."
+    },
+    {
+     "prompt": "Que fait fallbackToDestructiveMigration ?",
+     "options": [
+      "Il efface les données locales",
+      "Il sauvegarde la base"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "À proscrire avec des données réelles."
+    },
+    {
+     "prompt": "Pourquoi versionner une API ?",
+     "options": [
+      "Des utilisateurs gardent d'anciennes versions",
+      "Pour la rendre plus jolie"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ils doivent continuer à fonctionner."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-10-ex1",
+     "kind": "fill",
+     "prompt": "Quel parcours des mises à jour intégrées laisse l'utilisateur continuer ?",
+     "accepted": [
+      "Flexible",
+      "flexible"
+     ],
+     "solution": "Flexible."
+    },
+    {
+     "id": "pub-10-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une migration Room de la version 2 à la version 3 qui ajoute une colonne `couleur` de type texte, avec une valeur par défaut.",
+     "solution": "val MIGRATION_2_3 = object : Migration(2, 3) {\n    override suspend fun migrate(connection: SQLiteConnection) {\n        connection.execSQL(\"ALTER TABLE notes ADD COLUMN couleur TEXT NOT NULL DEFAULT 'gris'\")\n    }\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "pub-11-optimisation",
+   "title": "Optimiser avant la sortie",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application lente ou trop lourde perd des utilisateurs avant même son premier écran. Optimisez à partir de mesures."
+    },
+    {
+     "type": "heading",
+     "text": "Réduire la taille"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Activez R8, code et ressources.",
+      "Publiez un AAB : chaque appareil ne reçoit que ce qui lui sert.",
+      "Préférez WebP et les images vectorielles.",
+      "Retirez les dépendances inutiles.",
+      "Téléchargez les gros contenus à la demande."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Comparer deux versions\napkanalyzer apk compare ancienne.apk nouvelle.apk\n\n# Le poids par dossier\napkanalyzer files list app-release.apk | head"
+    },
+    {
+     "type": "heading",
+     "text": "Les Baseline Profiles"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **Baseline Profile** liste le code critique, à précompiler dès l'installation. Google indique un gain d'environ 30 % sur la vitesse d'exécution de ces parcours, dès le premier lancement."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le plugin Gradle Baseline Profile le génère avec un test.",
+      "Le test tourne sur une variante non obfusquée.",
+      "La release, elle, est obfusquée : R8 adapte les règles.",
+      "Un **Startup Profile** améliore en plus la disposition du code DEX."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Mesurer avec Macrobenchmark"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class DemarrageBenchmark {\n    @get:Rule\n    val regle = MacrobenchmarkRule()\n\n    @Test\n    fun demarrageFroid() = regle.measureRepeated(\n        packageName = \"com.exemple.notes\",\n        metrics = listOf(StartupTimingMetric()),\n        iterations = 5,\n        startupMode = StartupMode.COLD,\n    ) {\n        pressHome()\n        startActivityAndWait()\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce test se place dans un module dédié, et s'exécute sur un appareil réel, plutôt que sur un émulateur."
+    },
+    {
+     "type": "heading",
+     "text": "Compose"
+    },
+    {
+     "type": "paragraph",
+     "text": "Compose peut sauter un composable dont les paramètres n'ont pas changé. Depuis Kotlin 2.0.20, le **mode de saut renforcé** compare les paramètres instables par identité d'objet. Le plus simple reste de ne pas recréer d'objets inutiles."
+    },
+    {
+     "type": "warning",
+     "text": "Testez les performances d'une application Compose sur une version de **release** : en debug, elle est bien plus lente, et les chiffres n'ont aucun sens."
+    },
+    {
+     "type": "heading",
+     "text": "Le démarrage"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Reportez les initialisations lourdes.",
+      "N'accédez pas au disque ni au réseau sur le fil principal.",
+      "Évitez les bibliothèques qui s'initialisent au lancement sans nécessité."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Fixer un budget"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Mesure(val nom: String, val valeur: Int, val limite: Int)\n\nfun main() {\n    val mesures = listOf(\n        Mesure(\"Démarrage (ms)\", 820, 1000),\n        Mesure(\"Taille (Mo)\", 41, 30),\n    )\n\n    mesures.forEach {\n        val etat = if (it.valeur <= it.limite) \"ok\" else \"dépassé\"\n        println(\"${it.nom} : $etat\")\n    }\n}",
+     "output": "Démarrage (ms) : ok\nTaille (Mo) : dépassé"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les chiffres sont des exemples : choisissez vos limites selon votre projet, et faites-les vérifier par la CI."
+    },
+    {
+     "type": "tip",
+     "text": "On n'optimise pas à l'instinct. Mesurez, corrigez, puis mesurez encore !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait un Baseline Profile ?",
+     "options": [
+      "Il précompile le code critique",
+      "Il signe l'APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Dès le premier lancement."
+    },
+    {
+     "prompt": "Quelle bibliothèque mesure le démarrage ?",
+     "options": [
+      "Macrobenchmark",
+      "Room"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sur un appareil réel."
+    },
+    {
+     "prompt": "Sur quelle version mesurer une application Compose ?",
+     "options": [
+      "La release",
+      "Le debug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le debug est bien plus lent."
+    },
+    {
+     "prompt": "Comment comparer deux APK ?",
+     "options": [
+      "apkanalyzer apk compare",
+      "adb logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La commande indique les écarts."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-11-ex1",
+     "kind": "fill",
+     "prompt": "Quel type de profil améliore la disposition du code DEX ?",
+     "accepted": [
+      "Startup Profile",
+      "Startup",
+      "profil de démarrage"
+     ],
+     "solution": "Le Startup Profile."
+    },
+    {
+     "id": "pub-11-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui indique si une taille de 25 Mo respecte une limite de 30 Mo.",
+     "solution": "fun main() {\n    val taille = 25\n    val limite = 30\n    println(if (taille <= limite) \"ok\" else \"dépassé\")\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "pub-12-pro",
+   "title": "La publication professionnelle",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application professionnelle, ce n'est pas seulement du code. C'est un service, avec des engagements."
+    },
+    {
+     "type": "heading",
+     "text": "Avant la sortie"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une politique de confidentialité publique et exacte.",
+      "Des conditions d'utilisation, si le service le justifie.",
+      "Une adresse de contact surveillée.",
+      "Une page de présentation.",
+      "Des captures d'écran fidèles, sans promesse trompeuse."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les licences"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les bibliothèques ouvertes ont des licences à respecter : affichez leurs mentions dans l'application. Vérifiez aussi vos polices, images et sons."
+    },
+    {
+     "type": "warning",
+     "text": "Vérifiez qu'une licence autorise votre usage. La licence GPL, par exemple, impose des obligations sur la diffusion de votre code. En cas de doute, demandez conseil."
+    },
+    {
+     "type": "heading",
+     "text": "Les autres canaux"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**F-Droid** : un dépôt de logiciels libres. L'application doit être libre et compilable depuis ses sources. Les bibliothèques propriétaires de suivi ou de publicité y sont interdites.",
+      "**Boutiques de constructeurs** : chacune a ses règles.",
+      "**Téléchargement direct** : un APK signé, sur votre site. Publiez son empreinte SHA-256."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur Linux, le paquet `.deb` suit la même logique : version, signature ou empreinte, notes de version."
+    },
+    {
+     "type": "heading",
+     "text": "Le lancement"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un test fermé sérieux.",
+      "Un déploiement progressif.",
+      "Une surveillance renforcée pendant les premiers jours.",
+      "Une correction prête à partir."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "La liste finale"
+    },
+    {
+     "type": "layers",
+     "title": "Avant d'appuyer sur Publier",
+     "layers": [
+      {
+       "name": "Code",
+       "detail": "Tests réussis, CI verte, version testée en release."
+      },
+      {
+       "name": "Sécurité",
+       "detail": "Aucun secret dans l'APK, debuggable à faux, dépendances à jour."
+      },
+      {
+       "name": "Données",
+       "detail": "Migrations testées, sauvegarde maîtrisée."
+      },
+      {
+       "name": "Boutique",
+       "detail": "Déclarations exactes, fiche, captures, notes de version."
+      },
+      {
+       "name": "Suivi",
+       "detail": "Rapports de plantage actifs, support prêt."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Après"
+    },
+    {
+     "type": "paragraph",
+     "text": "Analysez les indicateurs, lisez les avis, puis écrivez un bilan : ce qui a bien marché, ce qui a posé problème. La version suivante n'en sera que meilleure."
+    },
+    {
+     "type": "tip",
+     "text": "Le code fait une application. Le soin que vous lui portez après la sortie fait un produit !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que publier avec un APK en téléchargement direct ?",
+     "options": [
+      "Son empreinte SHA-256",
+      "Sa clé privée"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'utilisateur peut vérifier le fichier."
+    },
+    {
+     "prompt": "Quelle condition impose F-Droid ?",
+     "options": [
+      "Une application libre et compilable depuis ses sources",
+      "Un abonnement payant"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les bibliothèques de suivi y sont interdites."
+    },
+    {
+     "prompt": "Doit-on afficher les licences des bibliothèques ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une obligation fréquente."
+    },
+    {
+     "prompt": "Quel est l'objet du bilan après sortie ?",
+     "options": [
+      "Améliorer la version suivante",
+      "Faire la fête uniquement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Même si la fête est permise."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "pub-12-ex1",
+     "kind": "fill",
+     "prompt": "Quel dépôt d'applications libres pour Android est présenté dans la leçon ?",
+     "accepted": [
+      "F-Droid",
+      "FDroid"
+     ],
+     "solution": "F-Droid."
+    },
+    {
+     "id": "pub-12-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande qui calcule l'empreinte SHA-256 de `app-release.apk` sous Linux.",
+     "solution": "sha256sum app-release.apk",
+     "language": "shell"
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Quel format envoyer sur Google Play ?",
+    "options": [
+     "AAB",
+     "DEX"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il génère des APK adaptés."
+   },
+   {
+    "prompt": "Que protège Play App Signing ?",
+    "options": [
+     "La clé de signature",
+     "Le code source"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Vous gardez la clé d'envoi."
+   },
+   {
+    "prompt": "Que doit faire versionCode à chaque envoi ?",
+    "options": [
+     "Augmenter",
+     "Rester identique"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il ne redescend jamais."
+   },
+   {
+    "prompt": "Quel niveau d'API exige Google Play sur téléphone depuis le 31 août 2026 ?",
+    "options": [
+     "API 36",
+     "API 28"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il augmente chaque année."
+   },
+   {
+    "prompt": "Quel est l'objet d'un fake ?",
+    "options": [
+     "Une implémentation simple en mémoire",
+     "Un bug volontaire"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Google le préfère aux mocks."
+   },
+   {
+    "prompt": "Où ranger un mot de passe pour GitHub Actions ?",
+    "options": [
+     "Dans les secrets",
+     "Dans le fichier YAML"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le YAML est visible."
+   },
+   {
+    "prompt": "Quels éléments cadrent la compatibilité ?",
+    "options": [
+     "minSdk",
+     "targetSdk",
+     "Le nom de l'icône"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "compileSdk en fait aussi partie."
+   },
+   {
+    "prompt": "Que faut-il exclure des rapports de plantage ?",
+    "options": [
+     "Les données personnelles",
+     "Le nom de l'écran"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Ni jeton ni saisie."
+   },
+   {
+    "prompt": "Peut-on revenir à une version antérieure après déploiement ?",
+    "options": [
+     "Non, il faut publier une version supérieure",
+     "Oui, d'un clic"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Suspendez, corrigez, republiez."
+   },
+   {
+    "prompt": "Que mesurer avant d'optimiser ?",
+    "options": [
+     "Le démarrage et la fluidité en release",
+     "Le nombre de commentaires"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Avec Macrobenchmark."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Signer une application",
+   "url": "https://developer.android.com/studio/publish/app-signing"
+  },
+  {
+   "title": "Niveau d'API cible",
+   "url": "https://developer.android.com/google/play/requirements/target-sdk"
+  },
+  {
+   "title": "Optimiser avec R8",
+   "url": "https://developer.android.com/topic/performance/app-optimization/enable-app-optimization"
+  },
+  {
+   "title": "Baseline Profiles",
+   "url": "https://developer.android.com/topic/performance/baselineprofiles/overview"
+  },
+  {
+   "title": "Mises à jour dans l'application",
+   "url": "https://developer.android.com/guide/playcore/in-app-updates"
+  },
+  {
+   "title": "Firebase Crashlytics",
+   "url": "https://firebase.google.com/docs/crashlytics/android/get-started"
+  },
+  {
+   "title": "Documentation de GitHub Actions",
+   "url": "https://docs.github.com/actions"
+  },
+  {
+   "title": "Règles d'inclusion de F-Droid",
+   "url": "https://f-droid.org/docs/Inclusion_Policy/"
+  }
+ ]
+}

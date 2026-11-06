@@ -21,7 +21,21 @@ import sys
 
 PROJECT = pathlib.Path("build/android_snippets")
 COURSES = pathlib.Path("assets/courses")
-GRADLE_DSL = re.compile(r"^(plugins|android|dependencies)\s*\{", re.M)
+GRADLE_DSL = re.compile(r"^(plugins|android|dependencies|defaultConfig)\s*\{", re.M)
+
+# Extraits écrits comme des instructions : ils se compilent dans une activité.
+STATEMENT_SNIPPETS = {
+    ("fondations-02-versions", 0),
+    ("fondations-05-permissions", 0),
+    ("fondations-07-processus", 0),
+    ("fondations-08-services", 1),
+}
+HOST = """class Hote : ComponentActivity() {{
+    fun exemple(context: Context) {{
+{code}
+    }}
+}}
+"""
 
 VERSIONS = {
     "agp": "9.5.0",
@@ -40,13 +54,18 @@ VERSIONS = {
 }
 
 IMPORTS = """
+import android.Manifest
+import android.app.Activity
 import android.app.ActivityManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Application
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
@@ -61,6 +80,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,7 +89,11 @@ import android.webkit.WebView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.benchmark.macro.StartupMode
+import androidx.benchmark.macro.StartupTimingMetric
+import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -101,6 +125,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -133,6 +159,7 @@ import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.execSQL
 import androidx.window.core.layout.WindowSizeClass
 import androidx.work.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -165,6 +192,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import org.junit.Rule
+import org.junit.Test
 import preuve.BuildConfig
 import preuve.R
 import preuve.databinding.ActivityExempleBinding
@@ -175,6 +204,21 @@ STUBS = """
 package preuve.stubs
 
 suspend fun synchroniser() {}
+fun ouvrirCamera() {}
+fun expliquerLeRefus() {}
+fun ouvrirSession(nom: String) {}
+fun afficher(valeur: Any?) {}
+
+class Depot {
+    suspend fun chargerProfil() = "profil"
+}
+"""
+
+DRAWABLE = """<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24" />
 """
 
 FRAGMENT_LAYOUT = """<TextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -225,6 +269,10 @@ dependencies {{
     implementation("androidx.work:work-runtime-ktx:{work}")
     implementation("com.squareup.retrofit2:retrofit:{retrofit}")
     implementation("com.squareup.retrofit2:converter-kotlinx-serialization:{retrofit}")
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.5.0")
+    implementation("junit:junit:4.13.2")
+    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.squareup.okhttp3:okhttp:{okhttp}")
     implementation("com.squareup.okhttp3:logging-interceptor:{okhttp}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:{serialization}")
@@ -264,6 +312,7 @@ def generate(modules):
     write(PROJECT / "app/src/main/AndroidManifest.xml", "<manifest />\n")
     write(source / "preuve/stubs/Stubs.kt", STUBS)
     write(res / "layout/fragment_profil.xml", FRAGMENT_LAYOUT)
+    write(res / "drawable/ic_grimoire.xml", DRAWABLE)
     # L'import de ActivityExempleBinding doit se résoudre pour tous les modules.
     write(res / "layout/activity_exemple.xml", FRAGMENT_LAYOUT)
     write(PROJECT / "app/build.gradle.kts", BUILD.format(**VERSIONS))
@@ -328,9 +377,12 @@ plugins {{
                     kept += 1
 
             for index, code in enumerate(kotlin):
+                body = code
+                if (lesson["id"], index) in STATEMENT_SNIPPETS:
+                    body = HOST.format(code=code)
                 write(
                     folder / f"Bloc{index}.kt",
-                    f"package {package}\n{imports_for(code)}\n{code}\n",
+                    f"package {package}\n{imports_for(code)}\n{body}\n",
                 )
                 kept += 1
 
@@ -340,7 +392,11 @@ plugins {{
 
             for exercise in lesson["exercises"]:
                 solution = exercise["solution"]
-                if exercise.get("language") != "kotlin" or "fun main" in solution:
+                if (
+                    exercise.get("language") != "kotlin"
+                    or "fun main" in solution
+                    or GRADLE_DSL.search(solution)
+                ):
                     continue
                 name = exercise["id"].replace("-", "_")
                 joined = solution + "\n".join(kotlin)

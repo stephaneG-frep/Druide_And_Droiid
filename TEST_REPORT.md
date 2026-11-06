@@ -1,5 +1,42 @@
 # Rapport de tests
 
+## Phase 5, fin de phase — 2026-11-06
+
+Phase terminée : douze modules, 121 leçons, 511 questions de quiz, 242 exercices corrigés et 121 questions d'évaluation.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux | 5 tests sur 5 réussis |
+| Intégration sur Honor | Non lancée sur ce code : elle désinstalle l'application. Dernier passage à 5 sur 5 sur `main`, au tour 4 |
+| Exemples Kotlin, Java et Dart compilés, exécutés et comparés | 127 sur 127 |
+| Blocs C++ analysés par le NDK (syntaxe seulement) | 2 sur 2 |
+| Extraits Android des onze modules concernés, compilés d'un seul passage | 106 sur 106 |
+| Extraits Flutter des modules 7 et 12 | 18 sur 18, aucun problème, APK de preuve compilé |
+| Workflows GitHub Actions du cours | 3 fragments YAML valides, étiquettes d'actions existantes |
+| `keytool -genkeypair` | Testé, fichier de clés créé et relu |
+| Liens de ressources | 90 sur 90 répondent |
+| Exercices sans corrigé, texte de remplissage | Aucun |
+| Thèmes du programme | Tous présents dans leur module, contrôle par mots puis relecture des 12 écarts de vocabulaire |
+| Mise à jour sur Honor sans désinstallation | Empreinte de la base identique avant et après (`2f37174fda135b194272`), application au premier plan, aucun plantage |
+
+Le premier passage complet a échoué sur dix extraits des modules 1 à 4. Ce n'étaient pas des erreurs de cours, mais des fragments : blocs Gradle, instructions hors d'une classe, imports et fonctions d'exemple absents de l'outil. L'outil a été complété, et ces extraits sont désormais compilés.
+
+Vérifié sur des rendus de test : deux leçons du module 11 et deux du module 12.
+
+Sources contrôlées : developer.android.com pour la signature, le niveau d'API cible, R8, les Baseline Profiles, les mises à jour intégrées, la stabilité Compose, la modularisation et l'architecture ; support.google.com pour Play Console, les parcours et l'exigence de testeurs ; firebase.google.com pour Crashlytics ; f-droid.org pour l'inclusion.
+
+### Non vérifié
+
+- **Lecture sur le téléphone** : la mise à jour est installée et lancée, mais personne n'a encore confirmé que les modules 11 et 12 s'ouvrent sur le Honor.
+- **Workflows GitHub Actions** : le YAML est valide, mais aucun n'a tourné sur GitHub.
+- **Compilation signée** : `bundleRelease` avec `keystore.properties` et la signature par la CI n'ont pas été exécutés.
+- **Play Console, Crashlytics, Macrobenchmark, mises à jour intégrées, Fastlane** : présentés d'après la documentation. Le code de Crashlytics et de Macrobenchmark compile, mais aucun n'a tourné.
+- **Envoi des fichiers de correspondance par le plugin Crashlytics, exigence d'une politique de confidentialité, seuils d'Android vitals, délais d'examen** : la page lue ne les détaille pas, ces points viennent de mes connaissances.
+- **Projets Grimoire et Quêtes** : le cahier des charges est écrit et ses extraits sont vérifiés, mais je n'ai pas réalisé ces applications de bout en bout.
+- **Évaluation finale** : le module 12 se termine par une grille et un questionnaire. L'application ne vérifie pas le projet réel : la validation reste à relier à la phase 9.
+
 ## Phase 5, tour 5 — 2026-11-06
 
 La phase n'est pas terminée : modules 1 à 10 sur douze.

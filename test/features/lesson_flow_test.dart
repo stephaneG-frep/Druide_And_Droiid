@@ -383,7 +383,11 @@ void main() {
     });
 
     testWidgets('un module sans contenu l\'indique', (tester) async {
-      final container = await pumpApp(tester, size: tall);
+      final container = await pumpApp(
+        tester,
+        size: tall,
+        bundle: _SingleModuleBundle(),
+      );
 
       await goTo(tester, container, modulePath('publication'));
 
