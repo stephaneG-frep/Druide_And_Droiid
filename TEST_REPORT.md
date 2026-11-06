@@ -8,7 +8,7 @@ La phase n'est pas terminée : modules 1 à 6 sur douze.
 | --- | --- |
 | `flutter analyze` | Aucun problème |
 | `flutter test` | 192 tests sur 192 réussis |
-| Intégration sur Linux | **4 tests sur 5** : voir ci-dessous |
+| Intégration sur Linux | 5 tests sur 5 réussis, trousseau déverrouillé : voir ci-dessous |
 | Intégration sur Honor | **Non lancée** : voir ci-dessous |
 | Exemples Kotlin et Java compilés, exécutés et comparés | 83 sur 83 |
 | Extraits Android compilés dans un projet Gradle | 53 sur 53 |
@@ -21,15 +21,15 @@ Vérifié sur des rendus de test : quatre leçons des modules 5 et 6.
 
 Sources contrôlées : developer.android.com pour l'état, la navigation, le cycle de vie, ViewModel, les fenêtres adaptatives, Room, DataStore, la sécurité réseau, le hors-ligne et Credential Manager ; le dépôt GitHub de Retrofit ; les dépôts Maven pour les versions.
 
-### Échec du test d'intégration Linux
+### Test d'intégration Linux avec un trousseau verrouillé
 
-Le test du coffre échoue avec `PlatformException(KeyringLocked)`. Le trousseau GNOME était verrouillé sur cette session, après un redémarrage de la machine. Le code du coffre n'a pas changé, mais le test n'a pas été rejoué avec un trousseau déverrouillé.
+Le test du coffre a d'abord échoué avec `PlatformException(KeyringLocked)` : le trousseau GNOME était verrouillé après un redémarrage de la machine. Une fois le trousseau déverrouillé par l'utilisateur, les 5 tests sont passés le 2026-11-06.
 
-Ce résultat montre aussi un manque : l'application ne présente pas encore ce cas à l'utilisateur. C'est à traiter en phase 6.
+Ce résultat montre un manque : l'application ne présente pas encore ce cas à l'utilisateur. C'est à traiter en phase 6.
 
 ### Tests d'intégration non lancés sur le Honor
 
-Ces tests désinstallent l'application, et la base du téléphone contient désormais la progression réelle de l'utilisateur. Ils n'ont donc pas été lancés. L'APK a été installé par-dessus, et le contenu de la base est identique avant et après l'installation. L'application n'a pas été parcourue sur le téléphone, qui était verrouillé.
+Ces tests désinstallent l'application, et la base du téléphone contient désormais la progression réelle de l'utilisateur. Ils n'ont donc pas été lancés. L'utilisateur a accepté une sauvegarde suivie d'une restauration, mais le téléphone n'était plus branché : le test reste à faire. L'APK a été installé par-dessus, et le contenu de la base est identique avant et après l'installation. L'application n'a pas été parcourue sur le téléphone, qui était verrouillé.
 
 ### Non vérifié
 
