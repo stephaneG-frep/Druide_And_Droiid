@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 6 (Professeur IA) écrite, à valider sur un vrai fournisseur.** Les douze modules sont rédigés. L'Android Lab n'existe pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 6 (Professeur IA) terminée, validée avec Ollama et Anthropic.** Les douze modules sont rédigés. L'Android Lab n'existe pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 

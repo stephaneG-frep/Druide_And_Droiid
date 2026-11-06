@@ -2,7 +2,7 @@
 
 ## Phase 6 — 2026-11-06
 
-Le code est écrit et testé, mais **aucun fournisseur réel n'a été appelé** : la phase reste à valider.
+Phase terminée : Ollama et Anthropic ont répondu pour de vrai. OpenAI et Gemini n'ont pas été essayés.
 
 | Vérification | Résultat |
 | --- | --- |
@@ -14,6 +14,12 @@ Le code est écrit et testé, mais **aucun fournisseur réel n'a été appelé**
 | Migration de la version 3 à la version 4 | Testée sur une base de fichier, sans perte |
 | Mise à jour sur Honor | Base sauvegardée, migrée en version 4, données identiques (45 XP, 1 leçon, 1 quiz, 3 réponses), lancement sans plantage |
 | Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+| Client Ollama face à un vrai serveur (0.40.15, `gemma3:1b`) | 5 tests sur 5 : liste des modèles, réponse par morceaux, usage, réponse coupée, modèle absent, arrêt |
+| Honor et Linux, Ollama et Anthropic, dans l'écran | Fonctionnent, selon l'essai fait par l'utilisateur |
+
+Le test réel se lance à la demande : `OLLAMA_MODEL=gemma3:1b flutter test test/features/maitre/ollama_live_test.dart`.
+
+L'essai sur Anthropic a été fait par l'utilisateur, avec sa clé, sur ses deux appareils. Aucune clé n'est passée par cette session, et ce rapport ne détaille ni le modèle ni le coût.
 
 Deux défauts réels ont été trouvés par ces tests et corrigés :
 
@@ -24,10 +30,10 @@ Les serveurs de test reproduisent les protocoles lus dans la documentation : API
 
 ### Non vérifié
 
-- **Fournisseurs réels** : Anthropic, OpenAI, Gemini et Ollama n'ont jamais répondu à cette application. Un écart entre la documentation et le service reste possible. Aucun crédit n'a été consommé.
-- **Qualité pédagogique** : les consignes des douze modes n'ont été lues par aucun modèle.
+- **OpenAI et Gemini** : leur code n'a jamais rencontré le service réel. Un écart avec la documentation reste possible.
+- **Essai utilisateur** : il confirme que les deux fournisseurs répondent sur les deux appareils. Les autres chemins, comme les erreurs réelles d'Anthropic, le refus et le coût affiché, n'ont pas été observés un par un.
+- **Qualité pédagogique** : `gemma3:1b` répond en français, mais de façon approximative. Les douze modes n'ont pas été évalués un par un.
 - **En-tête `x-goog-api-key` et liste des modèles Gemini** : la page lue ne les détaille pas, ils viennent de mes connaissances.
-- **Chat sur le Honor** : l'écran n'a pas été utilisé sur le téléphone. Sans Ollama ni clé, seul l'état sans fournisseur peut s'y afficher.
 - **Filet Claude** : le mécanisme automatique de repli après un refus n'est pas activé, car il n'a pas pu être testé. Un refus s'affiche simplement à l'utilisateur.
 - **Android sur réseau local** : une adresse HTTP autre que `127.0.0.1` ou `10.0.2.2` est bloquée par le système.
 - **Lecteur d'écran** : le chat n'a pas été parcouru avec TalkBack.

@@ -1,6 +1,6 @@
 # Journal des modifications
 
-## Phase 6, à valider — 2026-11-06
+## Phase 6 — 2026-11-06
 
 - Fournisseurs interchangeables : Anthropic Claude, OpenAI, Google Gemini, Ollama et API compatible avec OpenAI.
 - Chat avec réponses progressives, arrêt, nouvel essai et historique enregistré.
@@ -11,6 +11,7 @@
 - Coût et jetons affichés lorsque le service les annonce.
 - Base en version 4 : conversations et messages.
 - Message clair quand le trousseau Linux est verrouillé.
+- Essai facultatif contre un vrai serveur Ollama : `test/features/maitre/ollama_live_test.dart`.
 - Trafic Android limité à HTTPS, sauf vers la machine locale.
 
 ## Phase 5 — 2026-11-06

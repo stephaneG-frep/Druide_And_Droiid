@@ -86,6 +86,6 @@ Vos choix sont conservés au redémarrage.
 
 Avant le premier envoi vers un service externe, l'application vous demande votre accord. Ces services peuvent facturer chaque réponse sur votre compte : fixez un plafond de dépenses chez eux. Les tarifs facultatifs des réglages servent seulement à afficher une estimation.
 
-Avec Ollama sur Linux, gardez l'adresse proposée. Sur un téléphone relié en USB, lancez `adb reverse tcp:11434 tcp:11434`. Sur l'émulateur, utilisez `http://10.0.2.2:11434`.
+Avec Ollama sur Linux, gardez l'adresse proposée. Sur un téléphone relié en USB, lancez `adb reverse tcp:11434 tcp:11434`, à refaire après avoir débranché le câble. Sur l'émulateur, utilisez `http://10.0.2.2:11434`.
 
 Les réponses sont générées par une IA et peuvent contenir des erreurs. Relisez tout code avant de l'utiliser : l'application ne l'exécute jamais.
