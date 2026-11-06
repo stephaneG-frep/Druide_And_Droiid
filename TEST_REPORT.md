@@ -1,5 +1,38 @@
 # Rapport de tests
 
+## Phase 5, tour 5 — 2026-11-06
+
+La phase n'est pas terminée : modules 1 à 10 sur douze.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 192 tests sur 192 réussis |
+| Intégration sur Linux | 5 tests sur 5 réussis |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application, et ce tour ne change que du contenu |
+| Exemples Kotlin, Java et Dart compilés, exécutés et comparés | 109 sur 109 |
+| Blocs C++ analysés par le NDK (syntaxe seulement) | 2 sur 2 |
+| Extraits Android des modules 9 et 10 compilés | 21 sur 21 |
+| Bibliothèques citées (ML Kit, LiteRT) | Versions présentes sur les dépôts Maven |
+| Police de code | Tous les caractères des modules 9 et 10 sont présents |
+| Mise à jour sur Honor sans désinstallation | Empreinte de la base identique avant et après (`fcdad39c312487c9b38b`), lancement sans plantage |
+
+Commandes d'analyse lancées sur l'APK de debug de ce projet : `aapt2 dump permissions`, `aapt2 dump badging`, `apksigner verify --print-certs`, `apkanalyzer manifest print`.
+
+Le chiffrement AES-GCM est réellement exécuté dans un exemple : le texte revient intact, deux IV diffèrent, et une donnée modifiée est rejetée.
+
+Sources contrôlées : mas.owasp.org, developer.android.com pour le Keystore, les bonnes pratiques, les risques, l'IA, `SpeechRecognizer` et `TextToSpeech` ; les dépôts GitHub de MobSF et JADX ; docs.ollama.com ; developers.google.com pour ML Kit GenAI et LiteRT ; la référence embarquée de l'API Claude pour la forme de la requête.
+
+### Non vérifié
+
+- **API payantes** : aucun appel réel n'a été fait, conformément à la règle du projet. La lecture d'une réponse Claude s'appuie sur un exemple écrit à la main.
+- **Ollama** : il n'est pas installé sur la machine. Les commandes et `/api/chat` viennent de la documentation, et le code Android n'est que compilé.
+- **MobSF, JADX, Frida, mitmproxy, Burp** : présentés d'après la documentation, sans exécution. Docker est présent, mais l'image de MobSF n'a pas été téléchargée.
+- **Keystore, voix, images, WorkManager** : le code compile, mais il n'a pas été exécuté sur un appareil.
+- **ML Kit GenAI et LiteRT** : aucun modèle n'a été lancé. La disponibilité de Gemini Nano sur le Honor n'est pas connue.
+- **Article 323-1 du Code pénal, RGPD** : cités de mes connaissances, sans page lue pendant ce tour. Ce n'est pas un avis juridique.
+- **Niveaux de vérification du MASVS** : les pages lues ne les décrivent pas, le cours n'en parle donc pas.
+
 ## Phase 5, tour 4 — 2026-11-06
 
 La phase n'est pas terminée : modules 1 à 8 sur douze.
