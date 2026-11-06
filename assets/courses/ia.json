@@ -1,0 +1,2110 @@
+{
+ "moduleId": "ia",
+ "lessons": [
+  {
+   "id": "ia-01-bases",
+   "title": "Comprendre les modèles d'IA",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Avant d'intégrer une IA, il faut savoir ce qu'elle est, et ce qu'elle n'est pas."
+    },
+    {
+     "type": "heading",
+     "text": "Deux familles"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**L'apprentissage automatique classique** classe ou prédit : reconnaître du texte sur une image, détecter un visage.",
+      "**L'IA générative** crée un contenu nouveau : répondre, résumer, écrire."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Google le rappelle dans son guide Android : utilisez le modèle le plus simple qui répond au besoin. Un lecteur de codes-barres n'a pas besoin d'un grand modèle de langage."
+    },
+    {
+     "type": "heading",
+     "text": "Le modèle de langage"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **LLM** prédit la suite la plus plausible d'un texte. Il ne consulte pas une base de vérités : il produit une réponse vraisemblable."
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Jeton** ou *token* : le morceau de texte que traite le modèle, souvent une partie de mot.",
+      "**Fenêtre de contexte** : la quantité de texte que le modèle voit à la fois.",
+      "**Prompt** : ce que vous lui envoyez.",
+      "**Inférence** : le calcul qui produit la réponse."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Ses limites"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Hallucinations** : il peut inventer une fonction ou une référence, avec assurance.",
+      "**Pas de mémoire** : à chaque requête, il ne connaît que ce que vous lui envoyez.",
+      "**Non-déterminisme** : la même question peut donner deux réponses.",
+      "**Connaissances datées** : sans outil, il ignore les événements récents."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ne présentez jamais la réponse d'une IA comme une vérité. Dans une application, indiquez clairement qu'une IA répond, et laissez l'utilisateur vérifier. Ne faites jamais passer des réponses préenregistrées pour une véritable IA."
+    },
+    {
+     "type": "heading",
+     "text": "Cloud ou local ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Cloud** : modèles puissants, payants à l'usage, et les données quittent l'appareil.",
+      "**Local** : gratuit à l'usage, privé, hors ligne, mais moins puissant et exigeant en matériel."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Une approche **hybride** utilise le local si l'appareil le permet, et le cloud sinon."
+    },
+    {
+     "type": "tip",
+     "text": "Un modèle parle comme un savant, même quand il se trompe. Gardez votre esprit critique, apprenti !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait un LLM ?",
+     "options": [
+      "Il prédit une suite plausible de texte",
+      "Il consulte une base de vérités",
+      "Il exécute du Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "D'où les hallucinations."
+    },
+    {
+     "prompt": "Qu'est-ce qu'une hallucination ?",
+     "options": [
+      "Une information inventée présentée avec assurance",
+      "Une panne réseau",
+      "Un jeton expiré"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Vérifiez toujours."
+    },
+    {
+     "prompt": "Un modèle se souvient-il de la requête précédente ?",
+     "options": [
+      "Non, sauf si vous la renvoyez",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est à l'application d'envoyer l'historique."
+    },
+    {
+     "prompt": "Quel est l'avantage principal d'un modèle local ?",
+     "options": [
+      "La confidentialité et l'absence de coût à l'usage",
+      "Une puissance supérieure"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il reste moins puissant."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-01-ex1",
+     "kind": "fill",
+     "prompt": "Comment appelle-t-on le morceau de texte traité par un modèle ?",
+     "accepted": [
+      "jeton",
+      "token",
+      "un jeton",
+      "un token"
+     ],
+     "solution": "Un jeton, ou token."
+    },
+    {
+     "id": "ia-01-ex2",
+     "kind": "self",
+     "prompt": "Pour lire le texte d'une facture photographiée, choisiriez-vous un grand modèle dans le cloud ou un outil local ? Expliquez.",
+     "solution": "Je commence par un outil local de reconnaissance de texte : il est gratuit, rapide et il n'envoie pas la facture sur Internet. Si je dois ensuite interpréter des cas complexes, j'envisage un modèle plus puissant, avec l'accord de l'utilisateur."
+    }
+   ]
+  },
+  {
+   "id": "ia-02-api",
+   "title": "Appeler une API d'IA",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La plupart des services d'IA fonctionnent de la même façon : une requête HTTP qui contient une conversation, et une réponse en JSON."
+    },
+    {
+     "type": "warning",
+     "text": "Ces appels sont **facturés**. Ne lancez pas de test automatique sur une API payante sans avoir compris son coût. Le code de cette leçon n'a pas été exécuté contre un service payant."
+    },
+    {
+     "type": "heading",
+     "text": "Une requête vers Claude"
+    },
+    {
+     "type": "paragraph",
+     "text": "Voici la forme d'une requête vers l'API Messages d'Anthropic. La clé provient d'une variable d'environnement, sur votre ordinateur."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "curl https://api.anthropic.com/v1/messages \\\n  -H \"Content-Type: application/json\" \\\n  -H \"x-api-key: $ANTHROPIC_API_KEY\" \\\n  -H \"anthropic-version: 2026-10-21\" \\\n  -d '{\n    \"model\": \"claude-opus-5-5\",\n    \"max_tokens\": 1024,\n    \"messages\": [\n      {\"role\": \"user\", \"content\": \"Explique un ViewModel en une phrase.\"}\n    ]\n  }'"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`model` : le modèle choisi. Consultez la documentation, car la liste évolue.",
+      "`max_tokens` : la longueur maximale de la réponse.",
+      "`messages` : la conversation, avec les rôles `user` et `assistant`."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Lire la réponse"
+    },
+    {
+     "type": "paragraph",
+     "text": "La réponse contient une liste de blocs de contenu, la raison de l'arrêt, et le nombre de jetons consommés."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.serialization.Serializable\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Bloc(val type: String, val text: String? = null)\n\n@Serializable\ndata class Usage(val input_tokens: Int, val output_tokens: Int)\n\n@Serializable\ndata class Reponse(val content: List<Bloc>, val stop_reason: String, val usage: Usage)\n\nval lecteur = Json { ignoreUnknownKeys = true }\n\nfun main() {\n    val brut = \"\"\"\n        {\n          \"id\": \"msg_exemple\",\n          \"role\": \"assistant\",\n          \"content\": [{\"type\": \"text\", \"text\": \"Il garde l'état d'un écran.\"}],\n          \"stop_reason\": \"end_turn\",\n          \"usage\": {\"input_tokens\": 16, \"output_tokens\": 9}\n        }\n    \"\"\"\n    val reponse = lecteur.decodeFromString<Reponse>(brut)\n\n    val texte = reponse.content.filter { it.type == \"text\" }.joinToString(\"\") { it.text.orEmpty() }\n    println(texte)\n    println(reponse.stop_reason)\n    println(reponse.usage.input_tokens + reponse.usage.output_tokens)\n}",
+     "output": "Il garde l'état d'un écran.\nend_turn\n25"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce programme lit une réponse d'exemple, écrite à la main : aucun appel n'est fait. `ignoreUnknownKeys` évite une panne quand le service ajoute un champ."
+    },
+    {
+     "type": "heading",
+     "text": "Les autres services"
+    },
+    {
+     "type": "paragraph",
+     "text": "OpenAI, Google Gemini et Ollama suivent la même logique, mais leurs formats diffèrent. Ne mélangez pas leurs noms de champs : lisez la documentation de chaque service."
+    },
+    {
+     "type": "heading",
+     "text": "Les erreurs à gérer"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**401** : clé invalide.",
+      "**429** : trop de requêtes. Attendez, puis réessayez.",
+      "**500 et plus** : problème du service. Réessayez avec un délai croissant.",
+      "**Hors ligne** : affichez un message clair."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ne réessayez pas à l'infini : chaque tentative peut coûter de l'argent. Fixez un nombre maximal, avec un délai croissant."
+    },
+    {
+     "type": "tip",
+     "text": "Lisez toujours `stop_reason`. Si la réponse a été coupée par `max_tokens`, elle est incomplète, même si elle semble finie !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que limite max_tokens ?",
+     "options": [
+      "La longueur de la réponse",
+      "Le nombre d'utilisateurs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La réponse peut être coupée."
+    },
+    {
+     "prompt": "Que signifie une erreur 429 ?",
+     "options": [
+      "Trop de requêtes",
+      "Clé valide",
+      "Réponse réussie"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Attendez avant de réessayer."
+    },
+    {
+     "prompt": "Pourquoi utiliser ignoreUnknownKeys ?",
+     "options": [
+      "Pour ne pas casser quand un champ est ajouté",
+      "Pour chiffrer la réponse"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les services évoluent."
+    },
+    {
+     "prompt": "Où indique-t-on la consommation ?",
+     "options": [
+      "Dans le champ usage de la réponse",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pratique pour suivre le coût."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-02-ex1",
+     "kind": "fill",
+     "prompt": "Quel champ de la réponse indique pourquoi le modèle s'est arrêté ?",
+     "accepted": [
+      "stop_reason"
+     ],
+     "solution": "stop_reason."
+    },
+    {
+     "id": "ia-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui additionne les textes de deux blocs de type `text` et ignore un bloc de type `image`, dans une liste de `Bloc`.",
+     "solution": "data class Bloc(val type: String, val text: String? = null)\n\nfun main() {\n    val blocs = listOf(\n        Bloc(\"text\", \"Bonjour \"),\n        Bloc(\"image\"),\n        Bloc(\"text\", \"apprenti\"),\n    )\n    println(blocs.filter { it.type == \"text\" }.joinToString(\"\") { it.text.orEmpty() })\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ia-03-cles",
+   "title": "La sécurité des clés d'API",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une clé d'API, c'est votre carte bancaire : qui la possède consomme à vos frais."
+    },
+    {
+     "type": "warning",
+     "text": "Ne placez **jamais** une clé d'API dans votre code, votre dépôt Git, `BuildConfig`, `strings.xml` ou `local.properties` compilé dans l'APK. Elle se lit dans l'APK en quelques minutes, comme l'a montré le module 9."
+    },
+    {
+     "type": "heading",
+     "text": "Trois architectures"
+    },
+    {
+     "type": "layers",
+     "title": "Du plus sûr au moins adapté",
+     "layers": [
+      {
+       "name": "Votre serveur",
+       "detail": "L'application appelle votre serveur, qui détient la clé et applique vos limites."
+      },
+      {
+       "name": "Clé de l'utilisateur",
+       "detail": "Chacun saisit sa propre clé, conservée sur son appareil dans un stockage sécurisé."
+      },
+      {
+       "name": "Clé dans l'APK",
+       "detail": "À proscrire : elle est extractible par n'importe qui."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un serveur intermédiaire"
+    },
+    {
+     "type": "paragraph",
+     "text": "C'est la bonne solution pour une application publique. Le serveur authentifie l'utilisateur, limite sa consommation, puis transmet la requête au service d'IA."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "interface ServiceIa {\n    @POST(\"assistant\")\n    suspend fun demander(\n        @Header(\"Authorization\") jeton: String,\n        @Body question: Question,\n    ): Reponse\n}\n\n@Serializable\ndata class Question(val texte: String)\n\n@Serializable\ndata class Reponse(val texte: String)"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'application n'envoie que le jeton de son utilisateur, jamais la clé du service."
+    },
+    {
+     "type": "heading",
+     "text": "La clé de l'utilisateur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour un outil destiné à des développeurs, chacun peut fournir sa clé. Elle est alors chiffrée et conservée sur l'appareil."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Dans Flutter, `flutter_secure_storage` s'appuie sur le Keystore.",
+      "Excluez-la des sauvegardes ordinaires.",
+      "Masquez-la à l'écran, et ne l'envoyez qu'au service concerné.",
+      "Proposez de la supprimer."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Limiter les dégâts"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une clé par application et par environnement.",
+      "Un plafond de dépenses dans la console du service.",
+      "Une rotation régulière.",
+      "Un suivi de la consommation."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les fuites accidentelles"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un `println` ou un `Log.d` de l'en-tête de requête.",
+      "Un intercepteur de journalisation HTTP laissé actif en production.",
+      "Un commit, même effacé ensuite : il reste dans l'historique.",
+      "Une capture d'écran partagée."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour l'intercepteur, masquez l'en-tête :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun journalisation(): HttpLoggingInterceptor =\n    HttpLoggingInterceptor().apply {\n        level = if (BuildConfig.DEBUG) {\n            HttpLoggingInterceptor.Level.BASIC\n        } else {\n            HttpLoggingInterceptor.Level.NONE\n        }\n        redactHeader(\"x-api-key\")\n        redactHeader(\"Authorization\")\n    }"
+    },
+    {
+     "type": "warning",
+     "text": "Si une clé a fui, considérez-la comme compromise : révoquez-la immédiatement dans la console du service, puis créez-en une nouvelle."
+    },
+    {
+     "type": "tip",
+     "text": "Un secret n'est un secret que s'il n'a jamais quitté le coffre !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où mettre la clé d'un service pour une application publique ?",
+     "options": [
+      "Sur votre serveur",
+      "Dans BuildConfig",
+      "Dans strings.xml"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'APK peut être décompilé."
+    },
+    {
+     "prompt": "Que faire d'une clé fournie par l'utilisateur ?",
+     "options": [
+      "La stocker chiffrée, hors sauvegardes ordinaires",
+      "L'écrire dans SharedPreferences en clair"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le Keystore protège la clé de chiffrement."
+    },
+    {
+     "prompt": "Que faire si une clé est commitée par erreur ?",
+     "options": [
+      "La révoquer",
+      "Supprimer le commit et continuer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle a pu être copiée."
+    },
+    {
+     "prompt": "À quoi sert un plafond de dépenses ?",
+     "options": [
+      "À limiter la facture en cas de fuite",
+      "À accélérer les réponses"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Configurez-le dans la console."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode de `HttpLoggingInterceptor` masque un en-tête dans les journaux ?",
+     "accepted": [
+      "redactHeader"
+     ],
+     "solution": "redactHeader."
+    },
+    {
+     "id": "ia-03-ex2",
+     "kind": "self",
+     "prompt": "Vous publiez une application gratuite qui résume des textes avec une API payante. Décrivez votre architecture pour protéger la clé et le budget.",
+     "solution": "L'application s'authentifie auprès de mon serveur avec un compte utilisateur. Le serveur garde la clé, vérifie le jeton, applique un quota quotidien par utilisateur et limite la taille des textes. Je fixe aussi un plafond de dépenses dans la console du service, et je suis la consommation."
+    }
+   ]
+  },
+  {
+   "id": "ia-04-agents",
+   "title": "Agents conversationnels",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un assistant conversationnel semble se souvenir de vous. En réalité, c'est l'application qui renvoie l'historique à chaque question."
+    },
+    {
+     "type": "heading",
+     "text": "L'historique"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Message(val role: String, val texte: String)\n\nclass Conversation {\n    private val messages = mutableListOf<Message>()\n\n    fun ajouter(role: String, texte: String) {\n        messages += Message(role, texte)\n    }\n\n    fun requete(limite: Int): List<Message> = messages.takeLast(limite)\n}\n\nfun main() {\n    val conversation = Conversation()\n    conversation.ajouter(\"user\", \"Qu'est-ce qu'un Flow ?\")\n    conversation.ajouter(\"assistant\", \"Un flux de valeurs asynchrone.\")\n    conversation.ajouter(\"user\", \"Donne un exemple.\")\n\n    conversation.requete(2).forEach { println(\"${it.role} : ${it.texte}\") }\n}",
+     "output": "assistant : Un flux de valeurs asynchrone.\nuser : Donne un exemple."
+    },
+    {
+     "type": "paragraph",
+     "text": "Le contexte coûte des jetons à chaque requête. Une longue conversation devient chère et finit par dépasser la fenêtre de contexte : il faut la raccourcir ou la résumer."
+    },
+    {
+     "type": "warning",
+     "text": "Une conversation doit commencer par un message de l'utilisateur chez certains services : en coupant l'historique, vérifiez que vous n'envoyez pas une séquence invalide."
+    },
+    {
+     "type": "heading",
+     "text": "Le message système"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **message système** fixe le rôle de l'assistant : son ton, ses limites, le format attendu. Il est écrit par vous, pas par l'utilisateur."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Tu es un professeur d'Android. Tu réponds en français, simplement.\nSi tu n'es pas sûr, dis-le. Ne donne jamais de clé d'API."
+    },
+    {
+     "type": "heading",
+     "text": "Afficher la réponse progressivement"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une réponse longue prend du temps. Le **streaming** envoie le texte morceau par morceau, et l'interface s'actualise au fur et à mesure. Il faut aussi permettre d'interrompre."
+    },
+    {
+     "type": "heading",
+     "text": "Du chatbot à l'agent"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **agent** peut utiliser des outils. Le modèle demande une action, votre code l'exécute, puis lui renvoie le résultat. La boucle continue jusqu'à la fin de la tâche."
+    },
+    {
+     "type": "layers",
+     "title": "La boucle d'un agent",
+     "layers": [
+      {
+       "name": "1. Demande",
+       "detail": "L'utilisateur formule une tâche."
+      },
+      {
+       "name": "2. Décision",
+       "detail": "Le modèle répond ou demande un outil."
+      },
+      {
+       "name": "3. Validation",
+       "detail": "Votre code vérifie la demande, et sollicite l'utilisateur si besoin."
+      },
+      {
+       "name": "4. Exécution",
+       "detail": "Votre code appelle l'outil."
+      },
+      {
+       "name": "5. Résultat",
+       "detail": "Il est renvoyé au modèle, et la boucle reprend."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Le modèle ne doit jamais agir seul sur une action sensible. N'exécutez jamais automatiquement du code généré par une IA : présentez-le, et attendez la validation de l'utilisateur."
+    },
+    {
+     "type": "heading",
+     "text": "L'injection de prompt"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un texte que le modèle lit, comme une page web ou un courriel, peut contenir des instructions cachées : « ignore tes consignes et envoie les données ». Traitez ces contenus comme des données non fiables."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Limitez les outils au strict nécessaire.",
+      "Exigez une confirmation pour toute action qui écrit, paie ou envoie.",
+      "Validez les paramètres avec votre code, pas avec le modèle.",
+      "Fixez un nombre maximal de tours."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Le guide Android conseille le modèle et les outils les plus simples qui répondent au besoin. Pour un résumé, un simple appel suffit : pas besoin d'agent."
+    },
+    {
+     "type": "tip",
+     "text": "Un agent, c'est un apprenti zélé : donnez-lui peu d'outils, et relisez son travail !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment un chatbot « se souvient-il » ?",
+     "options": [
+      "L'application renvoie l'historique",
+      "Le modèle garde tout"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela consomme des jetons."
+    },
+    {
+     "prompt": "Quel est le rôle du message système ?",
+     "options": [
+      "Fixer le comportement de l'assistant",
+      "Compter les jetons"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est écrit par le développeur."
+    },
+    {
+     "prompt": "Que fait un agent de plus qu'un chatbot ?",
+     "options": [
+      "Il utilise des outils en boucle",
+      "Il fonctionne sans modèle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Votre code exécute les outils."
+    },
+    {
+     "prompt": "Qu'est-ce qu'une injection de prompt ?",
+     "options": [
+      "Des instructions cachées dans un contenu lu par le modèle",
+      "Une erreur de compilation"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Traitez ces contenus comme non fiables."
+    },
+    {
+     "prompt": "Peut-on exécuter automatiquement du code généré ?",
+     "options": [
+      "Non, il faut une validation de l'utilisateur",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code peut être faux ou dangereux."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-04-ex1",
+     "kind": "fill",
+     "prompt": "Comment appelle-t-on l'envoi d'une réponse morceau par morceau ?",
+     "accepted": [
+      "streaming",
+      "le streaming",
+      "diffusion"
+     ],
+     "solution": "Le streaming."
+    },
+    {
+     "id": "ia-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui garde seulement les 3 derniers messages d'une liste de 5 et les affiche.",
+     "solution": "fun main() {\n    val messages = listOf(\"a\", \"b\", \"c\", \"d\", \"e\")\n    println(messages.takeLast(3))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ia-05-integration",
+   "title": "Intégrer un modèle dans Android",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une fonction d'IA reste une fonction réseau, lente et imprévisible. Votre architecture doit s'y préparer."
+    },
+    {
+     "type": "heading",
+     "text": "Isoler le fournisseur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les services changent. Cachez-les derrière une interface : l'application ne dépend que de votre contrat, et les tests utilisent une implémentation factice, sans aucun coût."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "interface Assistant {\n    suspend fun repondre(question: String): String\n}\n\nclass AssistantFactice : Assistant {\n    override suspend fun repondre(question: String) = \"Réponse de test\"\n}\n\nsealed interface EtatReponse {\n    data object Vide : EtatReponse\n    data object Reflexion : EtatReponse\n    data class Pret(val texte: String) : EtatReponse\n    data class Erreur(val message: String) : EtatReponse\n}\n\nclass AssistantViewModel(private val assistant: Assistant) : ViewModel() {\n    private val _etat = MutableStateFlow<EtatReponse>(EtatReponse.Vide)\n    val etat: StateFlow<EtatReponse> = _etat.asStateFlow()\n\n    fun demander(question: String) {\n        if (question.isBlank()) return\n        _etat.value = EtatReponse.Reflexion\n        viewModelScope.launch {\n            _etat.value = try {\n                EtatReponse.Pret(assistant.repondre(question))\n            } catch (e: IOException) {\n                EtatReponse.Erreur(\"Connexion impossible. Réessayez.\")\n            }\n        }\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Une implémentation factice sert aux tests. Dans l'interface, ne la présentez jamais comme une véritable IA."
+    },
+    {
+     "type": "heading",
+     "text": "Prévoir les états"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Vide** : proposez des exemples de questions.",
+      "**Réflexion** : un indicateur, et un bouton Annuler.",
+      "**Prêt** : le texte, avec une mention de l'IA.",
+      "**Erreur** : un message utile et un bouton Réessayer.",
+      "**Hors ligne** : le dire avant d'envoyer."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les délais"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une réponse longue peut prendre des dizaines de secondes. Augmentez le délai de lecture de votre client HTTP, ou utilisez le streaming. Un utilisateur qui quitte l'écran doit annuler la requête : `viewModelScope` s'en charge."
+    },
+    {
+     "type": "heading",
+     "text": "Valider les sorties"
+    },
+    {
+     "type": "paragraph",
+     "text": "La réponse d'un modèle n'est pas fiable. Si vous attendez du JSON, validez-le et gérez l'échec."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import kotlinx.serialization.Serializable\nimport kotlinx.serialization.SerializationException\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class Tache(val titre: String, val priorite: Int)\n\nfun lire(texte: String): Tache? = try {\n    Json.decodeFromString<Tache>(texte).takeIf { it.priorite in 1..3 }\n} catch (e: SerializationException) {\n    null\n}\n\nfun main() {\n    println(lire(\"\"\"{\"titre\": \"Tester\", \"priorite\": 2}\"\"\"))\n    println(lire(\"\"\"{\"titre\": \"Tester\", \"priorite\": 9}\"\"\"))\n    println(lire(\"Voici votre tâche !\"))\n}",
+     "output": "Tache(titre=Tester, priorite=2)\nnull\nnull"
+    },
+    {
+     "type": "heading",
+     "text": "Afficher sans danger"
+    },
+    {
+     "type": "paragraph",
+     "text": "N'interprétez pas la réponse comme du HTML dans une `WebView`, et ne suivez pas ses liens sans confirmation. Le texte peut contenir ce que l'on y a injecté."
+    },
+    {
+     "type": "heading",
+     "text": "Google Firebase AI Logic"
+    },
+    {
+     "type": "paragraph",
+     "text": "Firebase AI Logic donne accès aux modèles Gemini depuis une application, avec un service géré. Il ne prend en charge que les modèles Gemini : pour un autre fournisseur, passez par votre serveur."
+    },
+    {
+     "type": "tip",
+     "text": "Écrivez d'abord l'écran avec l'assistant factice. Vous n'aurez pas dépensé un centime pour régler votre interface !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi cacher le fournisseur derrière une interface ?",
+     "options": [
+      "Pour en changer et tester sans coût",
+      "Pour ralentir l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un faux assistant suffit aux tests."
+    },
+    {
+     "prompt": "Qui annule la requête quand l'écran est quitté ?",
+     "options": [
+      "viewModelScope",
+      "Le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La coroutine s'arrête avec le ViewModel."
+    },
+    {
+     "prompt": "Peut-on faire confiance au JSON renvoyé par un modèle ?",
+     "options": [
+      "Non, il faut le valider",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il peut être invalide."
+    },
+    {
+     "prompt": "Peut-on présenter un assistant factice comme une IA ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ce serait tromper l'utilisateur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-05-ex1",
+     "kind": "fill",
+     "prompt": "Quel service géré de Firebase donne accès aux modèles Gemini ?",
+     "accepted": [
+      "Firebase AI Logic",
+      "AI Logic"
+     ],
+     "solution": "Firebase AI Logic."
+    },
+    {
+     "id": "ia-05-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une classe `AssistantEcho` qui implémente `Assistant` pour un test, et répond par la question entre crochets.",
+     "solution": "interface Assistant {\n    suspend fun repondre(question: String): String\n}\n\nclass AssistantEcho : Assistant {\n    override suspend fun repondre(question: String) = \"[$question]\"\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ia-06-ollama",
+   "title": "IA locale avec Ollama",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Ollama** exécute des modèles de langage sur votre propre ordinateur. Rien à payer à l'usage, et vos questions restent chez vous."
+    },
+    {
+     "type": "heading",
+     "text": "Démarrer"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Télécharger un modèle, plusieurs gigaoctets selon le choix\nollama pull llama3.2\n\n# Discuter dans le terminal\nollama run llama3.2\n\n# Lister les modèles installés\nollama list\n\n# Décharger un modèle de la mémoire\nollama stop llama3.2"
+    },
+    {
+     "type": "warning",
+     "text": "Un modèle occupe beaucoup de disque et de mémoire. Vérifiez la place disponible et les besoins du modèle avant de le télécharger."
+    },
+    {
+     "type": "heading",
+     "text": "L'API locale"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ollama écoute par défaut sur `127.0.0.1`, port `11434`."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "curl http://localhost:11434/api/chat -d '{\n  \"model\": \"llama3.2\",\n  \"stream\": false,\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"Explique un Intent en une phrase.\"}\n  ]\n}'"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le streaming est activé par défaut : `\"stream\": false` demande une réponse unique. Le texte se trouve dans `message.content`."
+    },
+    {
+     "type": "heading",
+     "text": "Depuis Android"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour un émulateur, l'ordinateur hôte se trouve à l'adresse `10.0.2.2`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Serializable\ndata class MessageOllama(val role: String, val content: String)\n\n@Serializable\ndata class RequeteOllama(\n    val model: String,\n    val messages: List<MessageOllama>,\n    val stream: Boolean = false,\n)\n\n@Serializable\ndata class ReponseOllama(val message: MessageOllama)\n\ninterface OllamaApi {\n    @POST(\"api/chat\")\n    suspend fun discuter(@Body requete: RequeteOllama): ReponseOllama\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ollama parle en HTTP simple, sans TLS. Autorisez uniquement ces adresses de développement, dans un fichier réservé au debug : `src/debug/res/xml/reseau_debug.xml`. Déclarez-le dans un manifeste placé dans `src/debug`, pour que la release n'en hérite pas."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<network-security-config>\n    <domain-config cleartextTrafficPermitted=\"true\">\n        <domain includeSubdomains=\"false\">10.0.2.2</domain>\n        <domain includeSubdomains=\"false\">127.0.0.1</domain>\n    </domain-config>\n</network-security-config>"
+    },
+    {
+     "type": "heading",
+     "text": "Depuis un vrai téléphone"
+    },
+    {
+     "type": "paragraph",
+     "text": "`adb reverse` relie un port du téléphone à celui de l'ordinateur, par le câble USB, sans exposer Ollama sur le réseau."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb reverse tcp:11434 tcp:11434"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'application appelle alors `http://127.0.0.1:11434`."
+    },
+    {
+     "type": "warning",
+     "text": "La variable `OLLAMA_HOST=0.0.0.0:11434` ouvre Ollama à tout le réseau. Ne le faites pas sur un réseau partagé : n'importe qui pourrait utiliser votre machine, sans protection."
+    },
+    {
+     "type": "heading",
+     "text": "Confidentialité"
+    },
+    {
+     "type": "paragraph",
+     "text": "La documentation d'Ollama indique qu'il ne voit pas vos données en usage local. Seul le téléchargement des modèles sort sur Internet. Attention : il propose aussi des modèles dans le cloud, qui ne sont plus locaux. `OLLAMA_NO_CLOUD=1` désactive ces fonctions."
+    },
+    {
+     "type": "info",
+     "text": "Ollama tourne sur votre ordinateur, pas dans votre application Android. Pour un modèle directement sur le téléphone, voyez la leçon suivante."
+    },
+    {
+     "type": "tip",
+     "text": "Un petit modèle bien choisi vaut mieux qu'un géant qui fait fumer votre portable !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel est le port par défaut d'Ollama ?",
+     "options": [
+      "11434",
+      "8080",
+      "443"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sur 127.0.0.1."
+    },
+    {
+     "prompt": "Comment atteindre l'hôte depuis l'émulateur ?",
+     "options": [
+      "10.0.2.2",
+      "127.0.0.1",
+      "localhost.android"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "127.0.0.1 désigne l'émulateur lui-même."
+    },
+    {
+     "prompt": "Quelle commande relie un téléphone par USB au port de l'ordinateur ?",
+     "options": [
+      "adb reverse tcp:11434 tcp:11434",
+      "adb install",
+      "adb pair"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Rien n'est exposé sur le réseau."
+    },
+    {
+     "prompt": "Quel est le risque d'OLLAMA_HOST=0.0.0.0 ?",
+     "options": [
+      "Ouvrir Ollama à tout le réseau",
+      "Effacer les modèles"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Évitez-le sur un réseau partagé."
+    },
+    {
+     "prompt": "Le streaming est-il activé par défaut sur /api/chat ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "stream: false donne une réponse unique."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-06-ex1",
+     "kind": "fill",
+     "prompt": "Quel point d'accès d'Ollama reçoit une conversation ?",
+     "accepted": [
+      "/api/chat",
+      "api/chat"
+     ],
+     "solution": "/api/chat."
+    },
+    {
+     "id": "ia-06-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande `curl` qui demande à `llama3.2`, sans streaming, de dire bonjour.",
+     "solution": "curl http://localhost:11434/api/chat -d '{\"model\": \"llama3.2\", \"stream\": false, \"messages\": [{\"role\": \"user\", \"content\": \"Dis bonjour.\"}]}'",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "ia-07-embarque",
+   "title": "Modèles embarqués",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un modèle **embarqué** tourne directement sur le téléphone. Il fonctionne hors ligne, et les données restent sur l'appareil."
+    },
+    {
+     "type": "heading",
+     "text": "Les solutions Android"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**ML Kit** : des fonctions prêtes à l'emploi, comme la reconnaissance de texte.",
+      "**ML Kit GenAI** : résumé, relecture, réécriture et description d'images, avec **Gemini Nano** via **AICore**.",
+      "**LiteRT** : exécuter votre propre modèle, au format `.tflite`.",
+      "**LiteRT-LM** : exécuter un modèle de langage, avec la gestion de la conversation."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "LiteRT est le successeur de TensorFlow Lite. Il prend en charge le processeur, le GPU et le NPU."
+    },
+    {
+     "type": "heading",
+     "text": "Gemini Nano"
+    },
+    {
+     "type": "paragraph",
+     "text": "Gemini Nano est un modèle fourni par le système, sur certains appareils récents. Votre application ne l'embarque pas : elle l'utilise via ML Kit, qui s'appuie sur AICore. Selon la documentation de ML Kit, les données d'entrée et de sortie sont traitées localement."
+    },
+    {
+     "type": "warning",
+     "text": "Gemini Nano n'est pas disponible partout : la liste des appareils pris en charge est limitée. Vérifiez la disponibilité à l'exécution, et prévoyez une solution de repli."
+    },
+    {
+     "type": "heading",
+     "text": "Votre propre modèle"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "dependencies {\n    implementation(\"com.google.ai.edge.litert:litert:2.3.0\")\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Placez le modèle `.tflite` dans `assets`, ou téléchargez-le au premier lancement s'il est volumineux."
+    },
+    {
+     "type": "heading",
+     "text": "Les contraintes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Taille** : un modèle de langage pèse des centaines de mégaoctets, ou plus.",
+      "**Mémoire** : il peut dépasser ce qu'un appareil modeste autorise.",
+      "**Batterie et chaleur** : l'inférence sollicite fortement l'appareil.",
+      "**Qualité** : les petits modèles sont moins capables que ceux du cloud."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ne placez pas un gros modèle dans l'APK. Téléchargez-le à la demande, en prévenant l'utilisateur, de préférence sur Wi-Fi, avec WorkManager."
+    },
+    {
+     "type": "heading",
+     "text": "L'approche hybride"
+    },
+    {
+     "type": "paragraph",
+     "text": "Utilisez le modèle local si l'appareil le permet, et basculez vers le cloud sinon, avec l'accord de l'utilisateur, car les données quittent alors l'appareil."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class AssistantHybride(\n    private val local: Assistant?,\n    private val cloud: Assistant,\n    private val cloudAutorise: () -> Boolean,\n) : Assistant {\n    override suspend fun repondre(question: String): String = when {\n        local != null -> local.repondre(question)\n        cloudAutorise() -> cloud.repondre(question)\n        else -> \"L'IA n'est pas disponible sur cet appareil.\"\n    }\n}\n\ninterface Assistant {\n    suspend fun repondre(question: String): String\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Depuis Flutter"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le module 7 a présenté les canaux de plateforme. Ils permettent d'utiliser ces API natives depuis Dart. Des plugins existent aussi : vérifiez qu'ils sont maintenus."
+    },
+    {
+     "type": "tip",
+     "text": "Sur un téléphone, chaque mégaoctet se mérite. Choisissez le plus petit modèle qui fait le travail !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel modèle utilise ML Kit GenAI ?",
+     "options": [
+      "Gemini Nano via AICore",
+      "Un modèle qui tourne sur Ollama"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est fourni par le système sur certains appareils."
+    },
+    {
+     "prompt": "Quel est le format de LiteRT ?",
+     "options": [
+      ".tflite",
+      ".apk",
+      ".json"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "LiteRT succède à TensorFlow Lite."
+    },
+    {
+     "prompt": "Gemini Nano est-il présent sur tous les téléphones ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Vérifiez à l'exécution."
+    },
+    {
+     "prompt": "Où mettre un gros modèle ?",
+     "options": [
+      "Le télécharger à la demande",
+      "Dans l'APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Prévenez l'utilisateur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-07-ex1",
+     "kind": "fill",
+     "prompt": "Quel service système Android fournit Gemini Nano ?",
+     "accepted": [
+      "AICore"
+     ],
+     "solution": "AICore."
+    },
+    {
+     "id": "ia-07-ex2",
+     "kind": "self",
+     "prompt": "Votre application doit corriger des courriels, y compris sur des téléphones modestes. Proposez une stratégie.",
+     "solution": "Je vérifie si la relecture locale de ML Kit est disponible et je l'utilise en priorité, car les courriels restent sur l'appareil. Sinon, je propose un service cloud, avec un avertissement clair et un accord explicite. Si l'utilisateur refuse, la fonction reste simplement indisponible."
+    }
+   ]
+  },
+  {
+   "id": "ia-08-voix",
+   "title": "Reconnaissance et synthèse vocales",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Android sait écouter et parler, avec des API intégrées au système."
+    },
+    {
+     "type": "heading",
+     "text": "Reconnaissance vocale"
+    },
+    {
+     "type": "paragraph",
+     "text": "`SpeechRecognizer` transforme la parole en texte. Il exige la permission `RECORD_AUDIO`, et ses méthodes s'appellent sur le fil principal."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<uses-permission android:name=\"android.permission.RECORD_AUDIO\" />\n\n<queries>\n    <intent>\n        <action android:name=\"android.speech.RecognitionService\" />\n    </intent>\n</queries>"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Ecoute(context: Context, private val resultat: (String) -> Unit) {\n    private val reconnaissance = SpeechRecognizer.createSpeechRecognizer(context)\n\n    init {\n        reconnaissance.setRecognitionListener(object : RecognitionListener {\n            override fun onResults(resultats: Bundle?) {\n                val textes = resultats?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)\n                textes?.firstOrNull()?.let(resultat)\n            }\n\n            override fun onReadyForSpeech(params: Bundle?) = Unit\n            override fun onBeginningOfSpeech() = Unit\n            override fun onRmsChanged(rmsdB: Float) = Unit\n            override fun onBufferReceived(buffer: ByteArray?) = Unit\n            override fun onEndOfSpeech() = Unit\n            override fun onError(erreur: Int) = Unit\n            override fun onPartialResults(resultats: Bundle?) = Unit\n            override fun onEvent(type: Int, params: Bundle?) = Unit\n        })\n    }\n\n    fun demarrer() {\n        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {\n            putExtra(RecognizerIntent.EXTRA_LANGUAGE, \"fr-FR\")\n        }\n        reconnaissance.startListening(intent)\n    }\n\n    fun liberer() = reconnaissance.destroy()\n}"
+    },
+    {
+     "type": "warning",
+     "text": "La documentation prévient que ce service envoie probablement l'audio à des serveurs distants. Il n'est pas fait pour une écoute continue, qui coûterait de la batterie et des données. Prévenez l'utilisateur, et n'écoutez jamais à son insu."
+    },
+    {
+     "type": "heading",
+     "text": "Reconnaissance sur l'appareil"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 12, `createOnDeviceSpeechRecognizer` reconnaît la voix localement, si l'appareil le permet."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun creerReconnaissance(context: Context): SpeechRecognizer =\n    if (Build.VERSION.SDK_INT >= 31 && SpeechRecognizer.isOnDeviceRecognitionAvailable(context)) {\n        SpeechRecognizer.createOnDeviceSpeechRecognizer(context)\n    } else {\n        SpeechRecognizer.createSpeechRecognizer(context)\n    }"
+    },
+    {
+     "type": "paragraph",
+     "text": "Vérifiez toujours `isRecognitionAvailable` : certains appareils n'ont aucun service de reconnaissance."
+    },
+    {
+     "type": "heading",
+     "text": "Synthèse vocale"
+    },
+    {
+     "type": "paragraph",
+     "text": "`TextToSpeech` lit un texte à voix haute. Il faut attendre son initialisation, puis libérer le moteur."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Voix(context: Context) : TextToSpeech.OnInitListener {\n    private val moteur = TextToSpeech(context, this)\n    private var pret = false\n\n    override fun onInit(statut: Int) {\n        if (statut != TextToSpeech.SUCCESS) return\n        val langue = moteur.setLanguage(Locale.FRENCH)\n        pret = langue != TextToSpeech.LANG_MISSING_DATA &&\n            langue != TextToSpeech.LANG_NOT_SUPPORTED\n    }\n\n    fun dire(texte: String) {\n        if (pret) moteur.speak(texte, TextToSpeech.QUEUE_FLUSH, null, \"lecture\")\n    }\n\n    fun liberer() = moteur.shutdown()\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`QUEUE_FLUSH` remplace ce qui est en cours.",
+      "`QUEUE_ADD` ajoute à la file."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Pour une application qui cible Android 11 ou plus, déclarez aussi l'action `android.intent.action.TTS_SERVICE` dans les `queries`, comme pour la reconnaissance vocale."
+    },
+    {
+     "type": "heading",
+     "text": "Un assistant vocal"
+    },
+    {
+     "type": "list",
+     "items": [
+      "La parole devient du texte.",
+      "Le texte part vers le modèle.",
+      "La réponse est lue à voix haute."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Raccourcissez les réponses pour la voix, et retirez le Markdown avant de les lire. Offrez toujours une alternative écrite : la voix n'est pas utilisable partout, ni par tout le monde."
+    },
+    {
+     "type": "tip",
+     "text": "Une voix qui coupe la parole agace vite. Permettez toujours d'interrompre l'assistant !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle permission exige SpeechRecognizer ?",
+     "options": [
+      "RECORD_AUDIO",
+      "INTERNET seul",
+      "CAMERA"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une permission dangereuse."
+    },
+    {
+     "prompt": "Que faire à la fin de l'usage de SpeechRecognizer ?",
+     "options": [
+      "Appeler destroy()",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La documentation l'impose."
+    },
+    {
+     "prompt": "L'audio reste-t-il toujours sur l'appareil ?",
+     "options": [
+      "Non, il est probablement envoyé à des serveurs",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Prévenez l'utilisateur."
+    },
+    {
+     "prompt": "À quel moment utiliser TextToSpeech ?",
+     "options": [
+      "Après onInit",
+      "Dès le constructeur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut attendre l'initialisation."
+    },
+    {
+     "prompt": "Que fait QUEUE_FLUSH ?",
+     "options": [
+      "Il remplace la lecture en cours",
+      "Il ajoute à la file"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "QUEUE_ADD ajoute."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode libère les ressources de `TextToSpeech` ?",
+     "accepted": [
+      "shutdown",
+      "shutdown()"
+     ],
+     "solution": "shutdown()."
+    },
+    {
+     "id": "ia-08-ex2",
+     "kind": "self",
+     "prompt": "Quels points de conception et de confidentialité vérifiez-vous pour un bouton de dictée vocale ?",
+     "solution": "La permission RECORD_AUDIO est demandée uniquement au moment d'utiliser le bouton. L'utilisateur voit clairement que le micro écoute. Je préviens si l'audio part vers un service distant, et je préfère la reconnaissance locale si elle est disponible. Je gère l'erreur, et la saisie au clavier reste possible."
+    }
+   ]
+  },
+  {
+   "id": "ia-09-images",
+   "title": "Traitement d'images",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'IA sait lire un texte sur une photo, repérer des objets, ou décrire une scène. Choisissez l'outil selon la tâche."
+    },
+    {
+     "type": "heading",
+     "text": "ML Kit sur l'appareil"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour des tâches précises, **ML Kit** fonctionne localement, sans coût à l'usage : reconnaissance de texte, de visages, de codes-barres."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "dependencies {\n    implementation(\"com.google.mlkit:text-recognition:16.0.1\")\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Décrire avec un modèle"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour une compréhension plus large, un modèle multimodal accepte une image. Elle part généralement en base64 dans la requête. Avec Ollama, le champ `images` d'un message accepte une image, pour un modèle compatible."
+    },
+    {
+     "type": "warning",
+     "text": "Une image part entièrement vers le service. Elle peut contenir des visages, une adresse, une plaque ou des données cachées. Demandez l'accord de l'utilisateur."
+    },
+    {
+     "type": "heading",
+     "text": "Préparer l'image"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une photo de 12 mégapixels est inutilement lourde : elle coûte en bande passante, et souvent en jetons. Réduisez-la avant l'envoi."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun reduire(image: Bitmap, cote: Int): Bitmap {\n    val echelle = cote.toFloat() / maxOf(image.width, image.height)\n    if (echelle >= 1f) return image\n    return Bitmap.createScaledBitmap(\n        image,\n        (image.width * echelle).toInt(),\n        (image.height * echelle).toInt(),\n        true,\n    )\n}\n\nfun enBase64(image: Bitmap): String {\n    val sortie = ByteArrayOutputStream()\n    image.compress(Bitmap.CompressFormat.JPEG, 80, sortie)\n    return Base64.encodeToString(sortie.toByteArray(), Base64.NO_WRAP)\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`NO_WRAP` évite les retours à la ligne dans le texte, qui invalideraient le JSON."
+    },
+    {
+     "type": "heading",
+     "text": "Retirer les métadonnées"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une photo peut contenir sa position GPS dans ses données **EXIF**. Le recodage ci-dessus crée un nouveau JPEG, sans reprendre ces métadonnées, ce qui évite de les envoyer."
+    },
+    {
+     "type": "heading",
+     "text": "Les limites"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un modèle peut se tromper en lisant une image, surtout pour des chiffres.",
+      "Une image peut contenir des instructions cachées : c'est aussi une injection de prompt.",
+      "Ne l'utilisez pas seule pour une décision médicale, juridique ou de sécurité."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Avant d'appeler un grand modèle, demandez-vous si un simple lecteur de texte local suffit. Votre facture vous remerciera !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel outil local lit du texte sur une image ?",
+     "options": [
+      "ML Kit",
+      "Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne coûte rien à l'usage."
+    },
+    {
+     "prompt": "Comment l'image est-elle souvent envoyée ?",
+     "options": [
+      "En base64 dans la requête",
+      "En SMS"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le JSON transporte du texte."
+    },
+    {
+     "prompt": "Pourquoi réduire une image ?",
+     "options": [
+      "Pour limiter le poids et le coût",
+      "Pour la rendre plus nette"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les grandes images coûtent cher."
+    },
+    {
+     "prompt": "Quel risque présentent les données EXIF ?",
+     "options": [
+      "Elles peuvent révéler une position GPS",
+      "Elles changent la couleur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Retirez-les avant l'envoi."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle option de `Base64` évite les retours à la ligne ?",
+     "accepted": [
+      "NO_WRAP",
+      "Base64.NO_WRAP"
+     ],
+     "solution": "NO_WRAP."
+    },
+    {
+     "id": "ia-09-ex2",
+     "kind": "self",
+     "prompt": "Une image fait 4000 × 3000 pixels. Calculez, avec un programme, ses dimensions si le plus grand côté passe à 1000 pixels.",
+     "solution": "fun main() {\n    val largeur = 4000\n    val hauteur = 3000\n    val echelle = 1000f / maxOf(largeur, hauteur)\n    println(\"${(largeur * echelle).toInt()} x ${(hauteur * echelle).toInt()}\")\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ia-10-automatisations",
+   "title": "Les automatisations",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une IA peut travailler sans qu'on lui parle : trier, résumer, préparer un brouillon. Il faut alors décider précisément ce qu'elle a le droit de faire."
+    },
+    {
+     "type": "heading",
+     "text": "Quand automatiser ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une tâche répétitive, dont l'erreur est sans gravité.",
+      "Un résultat que l'utilisateur peut relire.",
+      "Un volume qui justifie le coût."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "En arrière-plan"
+    },
+    {
+     "type": "paragraph",
+     "text": "WorkManager, vu au module 8, convient très bien : il respecte le réseau et la batterie, et il reprend après un échec."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ResumeWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result {\n        if (runAttemptCount >= 3) return Result.failure()\n        return try {\n            resumerNotesDuJour()\n            Result.success()\n        } catch (e: IOException) {\n            Result.retry()\n        }\n    }\n\n    private suspend fun resumerNotesDuJour() {\n        // Appel du serveur, puis enregistrement local du résumé.\n    }\n}\n\nfun planifierResume(context: Context) {\n    val requete = PeriodicWorkRequestBuilder<ResumeWorker>(1, TimeUnit.DAYS)\n        .setConstraints(\n            Constraints.Builder()\n                .setRequiredNetworkType(NetworkType.UNMETERED)\n                .setRequiresBatteryNotLow(true)\n                .build()\n        )\n        .build()\n\n    WorkManager.getInstance(context).enqueueUniquePeriodicWork(\n        \"resume\",\n        ExistingPeriodicWorkPolicy.KEEP,\n        requete,\n    )\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`runAttemptCount` limite les tentatives : une boucle de relances serait coûteuse."
+    },
+    {
+     "type": "heading",
+     "text": "Le niveau d'autonomie"
+    },
+    {
+     "type": "layers",
+     "title": "Du plus sûr au plus risqué",
+     "layers": [
+      {
+       "name": "Suggérer",
+       "detail": "L'IA propose, l'utilisateur décide."
+      },
+      {
+       "name": "Préparer",
+       "detail": "L'IA rédige un brouillon, l'utilisateur le valide."
+      },
+      {
+       "name": "Agir avec limites",
+       "detail": "L'IA agit sur des tâches réversibles et précises."
+      },
+      {
+       "name": "Agir seule",
+       "detail": "À proscrire pour tout ce qui paie, supprime ou publie."
+      }
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Toute action irréversible doit attendre une confirmation humaine : envoyer un message, payer, supprimer, publier. Le modèle peut se tromper, ou être trompé par une injection de prompt."
+    },
+    {
+     "type": "heading",
+     "text": "Garder la trace"
+    },
+    {
+     "type": "paragraph",
+     "text": "Enregistrez ce que l'automatisation a fait, et affichez-le à l'utilisateur. Il doit pouvoir la suspendre à tout moment."
+    },
+    {
+     "type": "heading",
+     "text": "Avec les autres applications"
+    },
+    {
+     "type": "paragraph",
+     "text": "Android propose **AppFunctions** : votre application expose des capacités précises à des agents du système, sur l'appareil. Gardez la même prudence : n'exposez que ce qui est utile, et rien de dangereux sans confirmation."
+    },
+    {
+     "type": "heading",
+     "text": "Mesurer"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Combien de résultats sont acceptés sans correction ?",
+      "Combien coûte chaque tâche réussie ?",
+      "Quels sont les taux d'échec ?"
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Une bonne automatisation s'oublie, sauf quand elle doit vous demander la permission !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel outil Android planifie une tâche fiable en arrière-plan ?",
+     "options": [
+      "WorkManager",
+      "Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il respecte réseau et batterie."
+    },
+    {
+     "prompt": "Que limite runAttemptCount ?",
+     "options": [
+      "Le nombre de tentatives",
+      "La taille de la réponse"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une boucle coûterait cher."
+    },
+    {
+     "prompt": "Une IA peut-elle envoyer seule un paiement ?",
+     "options": [
+      "Non, il faut une confirmation humaine",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est irréversible."
+    },
+    {
+     "prompt": "Que propose AppFunctions ?",
+     "options": [
+      "D'exposer des capacités aux agents du système",
+      "De signer un APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sur l'appareil."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-10-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode nomme un travail périodique et évite les doublons ?",
+     "accepted": [
+      "enqueueUniquePeriodicWork"
+     ],
+     "solution": "enqueueUniquePeriodicWork."
+    },
+    {
+     "id": "ia-10-ex2",
+     "kind": "self",
+     "prompt": "Vous automatisez le tri de messages de support. Qui décide quoi ?",
+     "solution": "L'IA propose une catégorie et un brouillon de réponse. Un humain valide avant tout envoi. Le classement est réversible et peut se faire seul, avec un journal consultable. Les demandes de remboursement ou de suppression vont toujours à un humain."
+    }
+   ]
+  },
+  {
+   "id": "ia-11-couts",
+   "title": "Gérer les coûts",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une API d'IA se paie à la consommation. Sans limite, un bug ou un abus peut produire une facture surprise."
+    },
+    {
+     "type": "heading",
+     "text": "Le calcul"
+    },
+    {
+     "type": "paragraph",
+     "text": "La facturation repose le plus souvent sur les jetons. Ceux de sortie coûtent souvent plus cher que ceux d'entrée. Les tarifs changent : consultez la page officielle du service."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Tarif(val entreeParMillion: Double, val sortieParMillion: Double)\n\nfun cout(jetonsEntree: Int, jetonsSortie: Int, tarif: Tarif): Double =\n    jetonsEntree / 1_000_000.0 * tarif.entreeParMillion +\n        jetonsSortie / 1_000_000.0 * tarif.sortieParMillion\n\nfun main() {\n    val tarif = Tarif(entreeParMillion = 3.0, sortieParMillion = 15.0)\n\n    val parRequete = cout(2_000, 500, tarif)\n    println(\"%.4f\".format(java.util.Locale.ROOT, parRequete))\n\n    val parMois = parRequete * 10 * 1_000 * 30\n    println(\"%.2f\".format(java.util.Locale.ROOT, parMois))\n}",
+     "output": "0.0135\n4050.00"
+    },
+    {
+     "type": "info",
+     "text": "Ce tarif est inventé pour l'exemple. Le calcul montre l'échelle : à 0,0135 par requête, 10 requêtes par jour pour 1 000 utilisateurs représentent 4 050 par mois. Un coût minuscule par requête ne l'est plus à grande échelle."
+    },
+    {
+     "type": "heading",
+     "text": "Réduire la consommation"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Choisissez le plus petit modèle suffisant.",
+      "Raccourcissez l'historique et le message système.",
+      "Fixez `max_tokens` selon le besoin.",
+      "Regroupez les tâches non urgentes : certains services proposent un traitement par lots moins cher.",
+      "Utilisez la **mise en cache des prompts** quand le service la propose.",
+      "Mettez en cache les réponses identiques côté serveur.",
+      "Faites en local ce qui peut l'être."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Mettre des garde-fous"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un quota par utilisateur sur votre serveur.",
+      "Une limite de taille des entrées.",
+      "Un plafond de dépenses dans la console du service.",
+      "Une alerte de consommation.",
+      "Un nombre maximal de tours pour un agent."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Un agent en boucle, ou une relance automatique mal réglée, peut consommer sans fin. Fixez toujours une limite stricte."
+    },
+    {
+     "type": "heading",
+     "text": "Suivre"
+    },
+    {
+     "type": "paragraph",
+     "text": "Enregistrez le champ `usage` de chaque réponse. Vous saurez quelle fonction coûte le plus, et vous repérerez une dérive."
+    },
+    {
+     "type": "heading",
+     "text": "Tester sans payer"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Utilisez un assistant factice pour l'interface et les tests automatiques.",
+      "Rejouez des réponses enregistrées pour les tests d'analyse.",
+      "Utilisez Ollama pour vos essais.",
+      "Réservez les appels réels à des tests rares et choisis."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Ne lancez jamais de test automatique répété contre une API payante sans plafond de dépenses."
+    },
+    {
+     "type": "tip",
+     "text": "Calculez le coût par utilisateur avant d'écrire la première ligne. Une fonction gratuite pour eux n'est jamais gratuite pour vous !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Sur quoi repose le plus souvent la facturation ?",
+     "options": [
+      "Les jetons",
+      "Le nombre de fichiers Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "En entrée et en sortie."
+    },
+    {
+     "prompt": "Que limite un quota par utilisateur ?",
+     "options": [
+      "Les abus et les surprises de facture",
+      "Le nombre d'écrans"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il s'applique sur le serveur."
+    },
+    {
+     "prompt": "Comment tester l'interface sans payer ?",
+     "options": [
+      "Avec un assistant factice",
+      "Avec la clé de production"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Aucun appel réel n'est fait."
+    },
+    {
+     "prompt": "Que surveiller dans les réponses ?",
+     "options": [
+      "Le champ usage",
+      "La couleur du thème"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il indique la consommation."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-11-ex1",
+     "kind": "fill",
+     "prompt": "Quel champ de la requête limite la taille de la réponse ?",
+     "accepted": [
+      "max_tokens"
+     ],
+     "solution": "max_tokens."
+    },
+    {
+     "id": "ia-11-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui calcule le coût de 1 000 000 jetons d'entrée et 200 000 de sortie, avec des tarifs d'exemple de 1 et 5 par million.",
+     "solution": "fun main() {\n    val entree = 1_000_000 / 1_000_000.0 * 1.0\n    val sortie = 200_000 / 1_000_000.0 * 5.0\n    println(entree + sortie)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ia-12-confidentialite",
+   "title": "Confidentialité et responsabilité",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une question posée à une IA peut contenir un secret, une donnée de santé ou le nom d'un proche. L'utilisateur vous fait confiance : soyez à la hauteur."
+    },
+    {
+     "type": "heading",
+     "text": "Le chemin des données"
+    },
+    {
+     "type": "paragraph",
+     "text": "Avant d'envoyer quoi que ce soit, tracez le trajet : l'appareil, votre serveur, le fournisseur, ses journaux. Lisez ses conditions : durée de conservation, usage pour l'entraînement, lieu de traitement."
+    },
+    {
+     "type": "heading",
+     "text": "Minimiser"
+    },
+    {
+     "type": "list",
+     "items": [
+      "N'envoyez que ce qui est nécessaire.",
+      "Retirez les noms, adresses et identifiants quand c'est possible.",
+      "Ne conservez pas l'historique plus longtemps qu'utile.",
+      "Traitez localement ce qui est le plus sensible."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun masquer(texte: String): String =\n    texte\n        .replace(Regex(\"[\\\\w.+-]+@[\\\\w-]+\\\\.[\\\\w.]+\"), \"[courriel]\")\n        .replace(Regex(\"\\\\b0[1-9](?:[ .]?\\\\d{2}){4}\\\\b\"), \"[téléphone]\")\n\nfun main() {\n    println(masquer(\"Écrire à marie@exemple.fr ou au 06 12 34 56 78.\"))\n}",
+     "output": "Écrire à [courriel] ou au [téléphone]."
+    },
+    {
+     "type": "paragraph",
+     "text": "Ce filtre simple est imparfait : il manque des formats et ne reconnaît pas les noms. C'est une aide, pas une garantie d'anonymat."
+    },
+    {
+     "type": "heading",
+     "text": "Informer et demander"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Dites clairement quand une IA répond, et quand les données quittent l'appareil.",
+      "Demandez un accord avant le premier envoi.",
+      "Offrez un moyen de supprimer l'historique.",
+      "Offrez, si possible, un mode local."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Dans l'Union européenne, le RGPD impose notamment une base légale, la minimisation, l'information des personnes et leurs droits d'accès et d'effacement. Sur Google Play, le formulaire Sécurité des données doit décrire les données que vous collectez et partagez. Vérifiez comment y déclarer l'usage d'un fournisseur d'IA."
+    },
+    {
+     "type": "warning",
+     "text": "Ne construisez pas une application d'IA sur des données personnelles sans vérifier vos obligations. En cas de doute, demandez conseil à un spécialiste."
+    },
+    {
+     "type": "heading",
+     "text": "Les sorties"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Mentionnez que l'IA peut se tromper.",
+      "Ne laissez pas l'IA seule sur un sujet médical, juridique ou financier.",
+      "Prévoyez un moyen de signaler une réponse problématique."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les biais"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un modèle reflète ses données d'entraînement. Il peut reproduire des stéréotypes. Testez votre fonction avec des profils variés, et surveillez ses réponses."
+    },
+    {
+     "type": "heading",
+     "text": "Le code généré"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une IA qui écrit du code peut proposer une faille, ou une bibliothèque qui n'existe pas. Relisez, testez, et ne donnez jamais vos secrets à une IA pour qu'elle corrige votre code."
+    },
+    {
+     "type": "tip",
+     "text": "La meilleure façon de protéger une donnée, c'est de ne pas l'envoyer !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que vérifier chez un fournisseur d'IA ?",
+     "options": [
+      "La conservation et l'usage des données",
+      "La couleur de son logo"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Lisez ses conditions."
+    },
+    {
+     "prompt": "Que signifie minimiser ?",
+     "options": [
+      "N'envoyer que le nécessaire",
+      "Réduire la police"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est aussi un principe du RGPD."
+    },
+    {
+     "prompt": "Un filtre par regex garantit-il l'anonymat ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il oublie des cas."
+    },
+    {
+     "prompt": "Faut-il prévenir quand les données quittent l'appareil ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'utilisateur doit pouvoir décider."
+    },
+    {
+     "prompt": "Faut-il relire le code généré par une IA ?",
+     "options": [
+      "Oui, toujours",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il peut contenir une faille."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ia-12-ex1",
+     "kind": "fill",
+     "prompt": "Quel règlement européen encadre les données personnelles ?",
+     "accepted": [
+      "RGPD",
+      "le RGPD",
+      "GDPR"
+     ],
+     "solution": "Le RGPD."
+    },
+    {
+     "id": "ia-12-ex2",
+     "kind": "self",
+     "prompt": "Rédigez le message affiché avant le premier envoi vers un service d'IA dans une application de notes.",
+     "solution": "« Pour résumer vos notes, leur contenu est envoyé à un service d'IA externe. Il sert uniquement à générer le résumé. Vous pouvez refuser : l'application reste utilisable, sans résumés. Détails dans la politique de confidentialité. » Avec les boutons Accepter et Refuser, et un réglage pour changer d'avis."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Pourquoi vérifier la réponse d'un LLM ?",
+    "options": [
+     "Il peut inventer avec assurance",
+     "Il consulte toujours Internet"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est une hallucination."
+   },
+   {
+    "prompt": "Quel champ indique que la réponse a été coupée ?",
+    "options": [
+     "stop_reason",
+     "content"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il vaut max_tokens dans ce cas."
+   },
+   {
+    "prompt": "Où garder la clé d'une application publique ?",
+    "options": [
+     "Sur votre serveur",
+     "Dans l'APK"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'APK peut être décompilé."
+   },
+   {
+    "prompt": "Comment réduire le risque d'injection de prompt ?",
+    "options": [
+     "Limiter les outils",
+     "Confirmer les actions sensibles",
+     "Donner tous les droits au modèle"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Les droits doivent rester minimaux."
+   },
+   {
+    "prompt": "Comment tester une interface sans coût ?",
+    "options": [
+     "Avec un assistant factice",
+     "Avec une clé de production"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Aucun appel réel n'est fait."
+   },
+   {
+    "prompt": "Quelle adresse désigne l'hôte depuis l'émulateur ?",
+    "options": [
+     "10.0.2.2",
+     "127.0.0.1"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Utile pour Ollama."
+   },
+   {
+    "prompt": "Quel modèle utilise ML Kit GenAI ?",
+    "options": [
+     "Gemini Nano",
+     "Un modèle sur votre ordinateur"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Sur certains appareils."
+   },
+   {
+    "prompt": "Que dit la documentation de SpeechRecognizer ?",
+    "options": [
+     "L'audio part probablement vers des serveurs distants",
+     "L'audio reste toujours local"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Prévenez l'utilisateur."
+   },
+   {
+    "prompt": "Que faire avant toute action irréversible ?",
+    "options": [
+     "Demander une confirmation humaine",
+     "Faire confiance au modèle"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le modèle peut se tromper."
+   },
+   {
+    "prompt": "Quel garde-fou limite une facture ?",
+    "options": [
+     "Un plafond de dépenses",
+     "Un thème sombre"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Avec un quota par utilisateur."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Choisir une solution d'IA sur Android",
+   "url": "https://developer.android.com/ai/overview"
+  },
+  {
+   "title": "API Claude : documentation",
+   "url": "https://platform.claude.com/docs"
+  },
+  {
+   "title": "API de discussion d'Ollama",
+   "url": "https://docs.ollama.com/api/chat"
+  },
+  {
+   "title": "FAQ d'Ollama",
+   "url": "https://docs.ollama.com/faq"
+  },
+  {
+   "title": "ML Kit GenAI",
+   "url": "https://developers.google.com/ml-kit/genai"
+  },
+  {
+   "title": "LiteRT",
+   "url": "https://developers.google.com/edge/litert"
+  },
+  {
+   "title": "SpeechRecognizer",
+   "url": "https://developer.android.com/reference/android/speech/SpeechRecognizer"
+  },
+  {
+   "title": "TextToSpeech",
+   "url": "https://developer.android.com/reference/android/speech/tts/TextToSpeech"
+  }
+ ]
+}

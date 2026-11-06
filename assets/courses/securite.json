@@ -1,0 +1,2007 @@
+{
+ "moduleId": "securite",
+ "lessons": [
+  {
+   "id": "sec-01-cadre",
+   "title": "Éthique et OWASP MASVS",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Ce module apprend à protéger des applications. Pour cela, il faut comprendre comment elles sont attaquées. Commençons donc par fixer le cadre."
+    },
+    {
+     "type": "warning",
+     "text": "Tout ce module se pratique uniquement sur **vos propres applications**, sur des applications de démonstration conçues pour cela, ou dans un laboratoire autorisé par écrit. Tester l'application ou le serveur de quelqu'un d'autre sans autorisation est illégal, même sans intention de nuire. En France, le Code pénal sanctionne l'accès frauduleux à un système informatique, à partir de son article 323-1."
+    },
+    {
+     "type": "heading",
+     "text": "Les règles du jeu"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Obtenez une autorisation écrite avant tout test sur un système qui n'est pas le vôtre.",
+      "Restez dans le périmètre autorisé.",
+      "Ne touchez pas aux données d'autres personnes.",
+      "Signalez une faille à son propriétaire, sans la publier ni l'exploiter."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Les applications volontairement vulnérables, comme celles que propose le projet OWASP MAS pour s'entraîner, existent pour cela. Installez-les sur un émulateur dédié."
+    },
+    {
+     "type": "heading",
+     "text": "OWASP MASVS"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **MASVS**, Mobile Application Security Verification Standard, est la référence du secteur. Il décrit ce qu'une application mobile sûre doit garantir, en huit groupes :"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`MASVS-STORAGE` : le stockage des données.",
+      "`MASVS-CRYPTO` : la cryptographie.",
+      "`MASVS-AUTH` : l'authentification et les autorisations.",
+      "`MASVS-NETWORK` : les communications réseau.",
+      "`MASVS-PLATFORM` : les interactions avec le système.",
+      "`MASVS-CODE` : la qualité du code.",
+      "`MASVS-RESILIENCE` : la résistance à l'analyse et à la modification.",
+      "`MASVS-PRIVACY` : la vie privée."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Trois documents liés"
+    },
+    {
+     "type": "layers",
+     "title": "Le projet OWASP MAS",
+     "layers": [
+      {
+       "name": "MASVS",
+       "detail": "Le standard : ce qu'il faut garantir."
+      },
+      {
+       "name": "MASWE",
+       "detail": "Le catalogue des faiblesses classées par groupe."
+      },
+      {
+       "name": "MASTG",
+       "detail": "Le guide de test : comment le vérifier, avec des tests et des exemples."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "La documentation Android classe d'ailleurs ses propres fiches de risques selon ces groupes : c'est une bonne porte d'entrée."
+    },
+    {
+     "type": "heading",
+     "text": "Penser comme un défenseur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Avant d'écrire du code, posez quatre questions : que protège-t-on ? Contre qui ? Par où passe-t-on ? Que se passe-t-il si cette protection tombe ? C'est le début d'un **modèle de menaces**."
+    },
+    {
+     "type": "tip",
+     "text": "Un bon sorcier connaît les sortilèges interdits pour s'en protéger, pas pour les lancer sur ses voisins !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Sur quoi peut-on pratiquer ces techniques ?",
+     "options": [
+      "Ses propres applications et un laboratoire autorisé",
+      "Toute application publique",
+      "Le serveur d'un concurrent"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sans autorisation, c'est illégal."
+    },
+    {
+     "prompt": "Que décrit le MASVS ?",
+     "options": [
+      "Ce qu'une application mobile sûre doit garantir",
+      "Un outil de compilation",
+      "Une bibliothèque Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le MASTG explique ensuite comment le tester."
+    },
+    {
+     "prompt": "Quel groupe couvre le stockage ?",
+     "options": [
+      "MASVS-STORAGE",
+      "MASVS-AUTH",
+      "MASVS-CODE"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il traite des données enregistrées."
+    },
+    {
+     "prompt": "Que faire si vous découvrez une faille chez un tiers ?",
+     "options": [
+      "La signaler à son propriétaire",
+      "La publier",
+      "L'exploiter pour la prouver"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est une divulgation responsable."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-01-ex1",
+     "kind": "fill",
+     "prompt": "Quel document de l'OWASP explique comment tester une application mobile ?",
+     "accepted": [
+      "MASTG"
+     ],
+     "solution": "Le MASTG."
+    },
+    {
+     "id": "sec-01-ex2",
+     "kind": "self",
+     "prompt": "Rédigez un court modèle de menaces pour une application de notes personnelles avec synchronisation.",
+     "solution": "Je protège le contenu des notes et le compte de l'utilisateur. Les menaces : une personne qui a le téléphone en main, une autre application, une écoute du réseau, un accès au serveur. Les points d'entrée : le stockage local, le réseau, les composants exportés, l'API. Si une protection tombe, je limite les dégâts : jetons à durée courte, révocation côté serveur, aucune donnée en clair dans les journaux."
+    }
+   ]
+  },
+  {
+   "id": "sec-02-sandbox",
+   "title": "Sandbox et permissions",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La sécurité d'Android repose sur une idée simple : chaque application vit dans son propre bac à sable."
+    },
+    {
+     "type": "heading",
+     "text": "La sandbox"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque application reçoit un identifiant Linux, ou **UID**, qui lui est propre. Ses fichiers privés ne sont accessibles qu'à cet UID. **SELinux** renforce cette séparation en limitant ce que chaque processus peut faire, même s'il est compromis."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# La première colonne indique l'utilisateur, par exemple u0_a212\nadb shell ps -A | grep com.exemple.notes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une application ne lit pas les fichiers privés d'une autre.",
+      "Une application ne peut pas s'injecter dans le processus d'une autre.",
+      "Pour échanger, elles passent par des mécanismes contrôlés, comme les intents et les fournisseurs de contenu."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les niveaux de permission"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Normale** : accordée à l'installation, sans demander, comme `INTERNET`.",
+      "**Dangereuse** : accordée par l'utilisateur à l'exécution, comme `CAMERA`.",
+      "**Signature** : réservée aux applications signées avec la même clé."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Demander le minimum"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque permission augmente ce qu'un attaquant peut obtenir s'il compromet l'application. Avant d'en ajouter une, cherchez si une autre application peut faire le travail."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ContactActivity : ComponentActivity() {\n    fun ajouterContact() {\n        val intent = Intent(Intent.ACTION_INSERT).apply {\n            type = ContactsContract.Contacts.CONTENT_TYPE\n        }\n        startActivity(intent)\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ici, l'application de contacts gère l'ajout : la nôtre n'a besoin d'aucune permission sur les contacts."
+    },
+    {
+     "type": "heading",
+     "text": "Partager entre vos applications"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour que deux de vos applications communiquent, utilisez une permission de niveau `signature` : elle ne demande rien à l'utilisateur et n'accepte que votre clé."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<permission\n    android:name=\"com.exemple.notes.permission.LIRE\"\n    android:protectionLevel=\"signature\" />"
+    },
+    {
+     "type": "heading",
+     "text": "Accès temporaire à un fichier"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour montrer un document à une autre application, ne donnez pas accès à vos fichiers. Partagez une URI `content://` avec `FLAG_GRANT_READ_URI_PERMISSION`. `FileProvider` s'en charge."
+    },
+    {
+     "type": "warning",
+     "text": "Vérifiez régulièrement les permissions de votre APK : une bibliothèque peut en ajouter sans que vous le sachiez, par fusion des manifestes."
+    },
+    {
+     "type": "tip",
+     "text": "La permission la plus sûre est celle que vous n'avez pas demandée !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment Android sépare-t-il les applications ?",
+     "options": [
+      "Par un UID propre à chacune et SELinux",
+      "Par des mots de passe",
+      "Il ne les sépare pas"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est la sandbox."
+    },
+    {
+     "prompt": "Quel niveau de permission exige une action de l'utilisateur à l'exécution ?",
+     "options": [
+      "Dangereuse",
+      "Normale",
+      "Signature"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "CAMERA en est un exemple."
+    },
+    {
+     "prompt": "Que garantit une permission signature ?",
+     "options": [
+      "Seules les applications signées avec la même clé l'obtiennent",
+      "Le chiffrement du disque",
+      "L'absence de bugs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle convient à vos propres applications."
+    },
+    {
+     "prompt": "Comment ajouter un contact sans permission ?",
+     "options": [
+      "Déléguer par un intent à l'application de contacts",
+      "Lire la base directement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cette application dispose déjà de la permission."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-02-ex1",
+     "kind": "fill",
+     "prompt": "Quel drapeau d'intent donne un accès temporaire en lecture à une URI ?",
+     "accepted": [
+      "FLAG_GRANT_READ_URI_PERMISSION",
+      "Intent.FLAG_GRANT_READ_URI_PERMISSION"
+     ],
+     "solution": "FLAG_GRANT_READ_URI_PERMISSION."
+    },
+    {
+     "id": "sec-02-ex2",
+     "kind": "self",
+     "prompt": "Votre application photo demande `READ_CONTACTS` « au cas où ». Que répondez-vous à l'équipe ?",
+     "solution": "Je demande de la retirer : elle n'est pas nécessaire, elle inquiète l'utilisateur, et elle élargit les dégâts possibles en cas de faille. Si la fonction de partage a besoin d'un contact, on délègue par un intent, ce qui évite la permission."
+    }
+   ]
+  },
+  {
+   "id": "sec-03-keystore",
+   "title": "Le Keystore Android",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une clé de chiffrement enregistrée dans un fichier protège mal : qui lit le fichier lit la clé. Le **Keystore Android** résout ce problème."
+    },
+    {
+     "type": "heading",
+     "text": "Le principe"
+    },
+    {
+     "type": "list",
+     "items": [
+      "La matière de la clé n'entre jamais dans le processus de l'application.",
+      "L'application demande une opération au système, sans jamais voir la clé.",
+      "La clé peut être liée au matériel sécurisé de l'appareil : l'environnement d'exécution de confiance, ou TEE."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Conséquence : un attaquant qui compromet l'application peut peut-être **utiliser** la clé sur l'appareil, mais il ne peut pas l'**extraire**."
+    },
+    {
+     "type": "heading",
+     "text": "Créer une clé AES"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "private const val ALIAS = \"cle_notes\"\n\nfun cleSecrete(): SecretKey {\n    val magasin = KeyStore.getInstance(\"AndroidKeyStore\").apply { load(null) }\n    (magasin.getKey(ALIAS, null) as? SecretKey)?.let { return it }\n\n    val generateur = KeyGenerator.getInstance(\n        KeyProperties.KEY_ALGORITHM_AES,\n        \"AndroidKeyStore\",\n    )\n    generateur.init(\n        KeyGenParameterSpec.Builder(\n            ALIAS,\n            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,\n        )\n            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)\n            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)\n            .setKeySize(256)\n            .build()\n    )\n    return generateur.generateKey()\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'alias nomme la clé. Ses usages autorisés sont fixés à la création et ne peuvent plus changer."
+    },
+    {
+     "type": "heading",
+     "text": "Chiffrer et déchiffrer"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Chiffre(val iv: ByteArray, val donnees: ByteArray)\n\nfun chiffrer(texte: String, cle: SecretKey): Chiffre {\n    val cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\n    cipher.init(Cipher.ENCRYPT_MODE, cle)\n    return Chiffre(cipher.iv, cipher.doFinal(texte.toByteArray()))\n}\n\nfun dechiffrer(chiffre: Chiffre, cle: SecretKey): String {\n    val cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\n    cipher.init(Cipher.DECRYPT_MODE, cle, GCMParameterSpec(128, chiffre.iv))\n    return String(cipher.doFinal(chiffre.donnees))\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le système choisit l'**IV** à chaque chiffrement. Il n'est pas secret : conservez-le à côté du texte chiffré, il sera nécessaire au déchiffrement."
+    },
+    {
+     "type": "warning",
+     "text": "Évitez ces opérations sur le fil principal : la documentation Android rappelle qu'elles peuvent être lentes. Utilisez une coroutine."
+    },
+    {
+     "type": "heading",
+     "text": "Exiger l'utilisateur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une clé peut exiger une authentification récente, avec `setUserAuthenticationParameters`, puis `BiometricPrompt`. Une clé réservée à la biométrie est invalidée par défaut quand une nouvelle empreinte est enregistrée : prévoyez ce cas."
+    },
+    {
+     "type": "heading",
+     "text": "StrongBox"
+    },
+    {
+     "type": "paragraph",
+     "text": "Certains appareils possèdent une puce sécurisée dédiée, **StrongBox**. Elle offre une meilleure isolation, mais elle est plus lente et moins capable. La documentation précise que la plupart des applications n'en ont pas besoin."
+    },
+    {
+     "type": "heading",
+     "text": "Les limites"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une clé disparaît à la désinstallation : les données chiffrées deviennent illisibles.",
+      "Elle n'est pas transférée dans une sauvegarde : prévoyez de retrouver les données autrement.",
+      "Sur un appareil compromis, l'attaquant peut encore utiliser la clé sur place."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Le Keystore garde la clé de la tour, mais il ne garde pas le gardien. Sécurisez aussi l'accès à l'application !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que garantit le Keystore ?",
+     "options": [
+      "La matière de la clé n'entre pas dans le processus de l'application",
+      "La clé est envoyée au serveur",
+      "La clé est lisible dans un fichier"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'opération se fait hors de l'application."
+    },
+    {
+     "prompt": "Un attaquant dans le processus de l'application peut-il extraire la clé ?",
+     "options": [
+      "Non, mais il peut l'utiliser sur l'appareil",
+      "Oui, facilement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'extraction est empêchée, pas l'usage."
+    },
+    {
+     "prompt": "Faut-il garder l'IV secret ?",
+     "options": [
+      "Non, il se conserve avec le texte chiffré",
+      "Oui, comme la clé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il doit surtout être unique."
+    },
+    {
+     "prompt": "Que devient une clé du Keystore à la désinstallation ?",
+     "options": [
+      "Elle disparaît",
+      "Elle reste sur Google Drive"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les données chiffrées deviennent illisibles."
+    },
+    {
+     "prompt": "Toute application a-t-elle besoin de StrongBox ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est utile pour les besoins les plus élevés."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-03-ex1",
+     "kind": "fill",
+     "prompt": "Quel nom de fournisseur passe-t-on à `KeyStore.getInstance` ?",
+     "accepted": [
+      "AndroidKeyStore"
+     ],
+     "solution": "AndroidKeyStore."
+    },
+    {
+     "id": "sec-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez une fonction `aCle(alias: String): Boolean` qui indique si le Keystore contient déjà cet alias.",
+     "solution": "fun aCle(alias: String): Boolean {\n    val magasin = KeyStore.getInstance(\"AndroidKeyStore\").apply { load(null) }\n    return magasin.containsAlias(alias)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "sec-04-chiffrement",
+   "title": "Le chiffrement",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La cryptographie pardonne peu : un détail mal choisi peut annuler toute la protection. La règle d'or : n'inventez rien, utilisez des algorithmes reconnus."
+    },
+    {
+     "type": "heading",
+     "text": "Trois outils différents"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Chiffrement** : réversible avec la clé. Pour protéger un contenu.",
+      "**Hachage** : irréversible. Pour vérifier une intégrité.",
+      "**Signature** : prouve l'origine d'une donnée."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "AES-GCM"
+    },
+    {
+     "type": "paragraph",
+     "text": "AES-GCM chiffre et vérifie en même temps que le message n'a pas été modifié. Ce programme tourne sur n'importe quelle machine virtuelle Java :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import javax.crypto.AEADBadTagException\nimport javax.crypto.Cipher\nimport javax.crypto.KeyGenerator\nimport javax.crypto.SecretKey\nimport javax.crypto.spec.GCMParameterSpec\n\nfun chiffrer(texte: String, cle: SecretKey): Pair<ByteArray, ByteArray> {\n    val cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\n    cipher.init(Cipher.ENCRYPT_MODE, cle)\n    return cipher.iv to cipher.doFinal(texte.toByteArray())\n}\n\nfun dechiffrer(iv: ByteArray, donnees: ByteArray, cle: SecretKey): String {\n    val cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\n    cipher.init(Cipher.DECRYPT_MODE, cle, GCMParameterSpec(128, iv))\n    return String(cipher.doFinal(donnees))\n}\n\nfun main() {\n    val cle = KeyGenerator.getInstance(\"AES\").apply { init(256) }.generateKey()\n\n    val (iv, donnees) = chiffrer(\"Le grimoire\", cle)\n    println(dechiffrer(iv, donnees, cle))\n\n    val (autreIv, _) = chiffrer(\"Le grimoire\", cle)\n    println(\"Même IV ? ${iv.contentEquals(autreIv)}\")\n\n    donnees[0] = (donnees[0].toInt() xor 1).toByte()\n    try {\n        dechiffrer(iv, donnees, cle)\n    } catch (e: AEADBadTagException) {\n        println(\"Modification détectée\")\n    }\n}",
+     "output": "Le grimoire\nMême IV ? false\nModification détectée"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un seul bit changé, et le déchiffrement échoue : c'est l'**authentification** apportée par GCM."
+    },
+    {
+     "type": "warning",
+     "text": "Avec une même clé, n'utilisez **jamais deux fois le même IV** en GCM : cela casse la protection. Laissez le système le générer, comme ici."
+    },
+    {
+     "type": "heading",
+     "text": "Ce qu'il faut éviter"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le mode **ECB** : deux blocs identiques donnent le même résultat chiffré.",
+      "**MD5** et **SHA-1** : cassés pour les usages de sécurité.",
+      "**DES** et **RC4** : obsolètes.",
+      "`java.util.Random` pour un secret : prévisible. Utilisez `SecureRandom`.",
+      "Une clé écrite dans le code : elle se lit dans l'APK."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Hacher"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une empreinte SHA-256 détecte une modification, par exemple sur un fichier téléchargé."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.security.MessageDigest\n\nfun empreinte(texte: String): String =\n    MessageDigest.getInstance(\"SHA-256\")\n        .digest(texte.toByteArray())\n        .joinToString(\"\") { \"%02x\".format(it) }\n\nfun main() {\n    println(empreinte(\"Druide\"))\n    println(empreinte(\"Druide\").length)\n    println(empreinte(\"Druide\") == empreinte(\"druide\"))\n}",
+     "output": "bd303286db2c1e6e6d61957bad134ff9c2a7e397566371bd354f8cbc1542fa84\n64\nfalse"
+    },
+    {
+     "type": "heading",
+     "text": "Et les mots de passe ?"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur un serveur, on ne stocke jamais un mot de passe, même haché avec SHA-256 : c'est trop rapide à attaquer. On utilise un algorithme lent et salé, comme **Argon2** ou **bcrypt**. Sur l'appareil, on n'en stocke pas du tout : on garde un jeton."
+    },
+    {
+     "type": "tip",
+     "text": "En cryptographie, le code « maison » est toujours la mauvaise potion. Prenez la recette des maîtres !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel outil est irréversible ?",
+     "options": [
+      "Le hachage",
+      "Le chiffrement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il sert à vérifier."
+    },
+    {
+     "prompt": "Que détecte AES-GCM en plus de chiffrer ?",
+     "options": [
+      "La modification des données",
+      "Les fuites de mémoire",
+      "Les ANR"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le déchiffrement échoue."
+    },
+    {
+     "prompt": "Que faut-il éviter avec une même clé en GCM ?",
+     "options": [
+      "Réutiliser un IV",
+      "Générer un IV aléatoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La protection serait cassée."
+    },
+    {
+     "prompt": "Quel générateur convient pour un secret ?",
+     "options": [
+      "SecureRandom",
+      "java.util.Random"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'autre est prévisible."
+    },
+    {
+     "prompt": "Comment stocker un mot de passe sur un serveur ?",
+     "options": [
+      "Avec Argon2 ou bcrypt",
+      "En SHA-256",
+      "En clair"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut un algorithme lent et salé."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-04-ex1",
+     "kind": "fill",
+     "prompt": "Quel mode de chiffrement AES, à éviter, donne le même résultat pour deux blocs identiques ?",
+     "accepted": [
+      "ECB"
+     ],
+     "solution": "ECB."
+    },
+    {
+     "id": "sec-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un programme qui affiche la longueur en octets d'un IV généré par `SecureRandom` pour AES-GCM, de 12 octets.",
+     "solution": "import java.security.SecureRandom\n\nfun main() {\n    val iv = ByteArray(12)\n    SecureRandom().nextBytes(iv)\n    println(iv.size)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "sec-05-stockage",
+   "title": "Le stockage sécurisé",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Où mettre une donnée sensible ? La réponse dépend de ce qu'elle est, et de ce qu'il se passerait si elle fuyait."
+    },
+    {
+     "type": "heading",
+     "text": "Les emplacements"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Stockage interne** (`filesDir`, `cacheDir`) : privé à l'application, effacé à la désinstallation.",
+      "**Stockage externe** : à réserver aux fichiers non sensibles. D'autres applications peuvent y accéder selon les permissions et la version.",
+      "**Keystore** : pour les clés, pas pour de gros contenus."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun ecrirePrive(context: Context, nom: String, contenu: String) {\n    File(context.filesDir, nom).writeText(contenu)\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Une donnée sensible n'a rien à faire dans le stockage externe. La documentation Android classe ce cas parmi les risques courants."
+    },
+    {
+     "type": "heading",
+     "text": "Chiffrer en plus"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le stockage interne suffit contre les autres applications. Il ne protège pas contre un appareil rooté ou une sauvegarde mal réglée. Pour un jeton ou un contenu très sensible, chiffrez avec une clé du Keystore, comme à la leçon précédente."
+    },
+    {
+     "type": "warning",
+     "text": "`EncryptedSharedPreferences`, de la bibliothèque `androidx.security:security-crypto`, est **dépréciée**. Vous la verrez dans d'anciens tutoriels : ne la choisissez pas pour un nouveau projet. Chiffrez plutôt vous-même avec le Keystore."
+    },
+    {
+     "type": "paragraph",
+     "text": "Dans Flutter, `flutter_secure_storage` s'appuie sur le Keystore, comme vu au module 7."
+    },
+    {
+     "type": "heading",
+     "text": "Les fuites silencieuses"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Logcat** : ne journalisez ni jeton, ni mot de passe, ni donnée personnelle. Les journaux finissent dans des rapports de plantage.",
+      "**Presse-papiers** : d'autres applications peuvent le lire dans certaines conditions. Marquez un contenu comme sensible.",
+      "**Captures** : `FLAG_SECURE` empêche les captures d'un écran sensible.",
+      "**Sauvegardes** : excluez les fichiers sensibles."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class EcranBancaire : ComponentActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        window.setFlags(\n            WindowManager.LayoutParams.FLAG_SECURE,\n            WindowManager.LayoutParams.FLAG_SECURE,\n        )\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Maîtriser les sauvegardes"
+    },
+    {
+     "type": "paragraph",
+     "text": "La sauvegarde automatique d'Android copie les données de l'application. Depuis Android 12, le fichier `dataExtractionRules` règle ce qui part vers le cloud et vers un transfert d'appareil."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<data-extraction-rules>\n    <cloud-backup>\n        <exclude domain=\"sharedpref\" path=\"session.xml\" />\n    </cloud-backup>\n    <device-transfer>\n        <exclude domain=\"sharedpref\" path=\"session.xml\" />\n    </device-transfer>\n</data-extraction-rules>"
+    },
+    {
+     "type": "info",
+     "text": "Un fichier chiffré avec une clé du Keystore ne se restaure pas utilement : la clé ne suit pas la sauvegarde. Excluez-le, et prévoyez une nouvelle connexion après la restauration."
+    },
+    {
+     "type": "tip",
+     "text": "Avant d'enregistrer une donnée, demandez-vous : en ai-je vraiment besoin ? Rien à voler, rien à protéger !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où placer un fichier privé ?",
+     "options": [
+      "Dans le stockage interne",
+      "Dans le dossier Téléchargements",
+      "Dans Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est réservé à l'application."
+    },
+    {
+     "prompt": "Quel est le statut d'EncryptedSharedPreferences ?",
+     "options": [
+      "Dépréciée",
+      "Recommandée pour tout projet neuf"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Préférez le Keystore."
+    },
+    {
+     "prompt": "Que fait FLAG_SECURE ?",
+     "options": [
+      "Il empêche les captures d'un écran",
+      "Il chiffre la base",
+      "Il masque Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Utile pour un écran sensible."
+    },
+    {
+     "prompt": "Pourquoi exclure un fichier chiffré des sauvegardes ?",
+     "options": [
+      "La clé du Keystore ne le suit pas",
+      "Il est trop gros",
+      "Il est toujours illisible"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il serait inutilisable après restauration."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-05-ex1",
+     "kind": "fill",
+     "prompt": "Quel drapeau de fenêtre empêche la capture d'un écran ?",
+     "accepted": [
+      "FLAG_SECURE"
+     ],
+     "solution": "FLAG_SECURE."
+    },
+    {
+     "id": "sec-05-ex2",
+     "kind": "self",
+     "prompt": "Un collègue veut journaliser le jeton d'accès « juste en debug ». Que proposez-vous ?",
+     "solution": "Je refuse de journaliser le jeton, même en debug, car ces lignes finissent parfois en production ou dans des rapports. Je propose de journaliser seulement un état, comme « jeton présent, expire dans 10 minutes », et d'utiliser le débogueur pour une inspection ponctuelle."
+    }
+   ]
+  },
+  {
+   "id": "sec-06-vulnerabilites",
+   "title": "Les vulnérabilités courantes",
+   "minutes": 14,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La plupart des failles Android viennent de quelques erreurs récurrentes. Apprenons à les reconnaître dans notre propre code."
+    },
+    {
+     "type": "heading",
+     "text": "Les composants exportés"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un composant avec `android:exported=\"true\"` peut être lancé par **n'importe quelle application**. L'attribut est obligatoire dès qu'il y a un `intent-filter`, depuis Android 12. N'exportez que ce qui doit l'être."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<activity\n    android:name=\".ReglagesActivity\"\n    android:exported=\"false\" />"
+    },
+    {
+     "type": "warning",
+     "text": "Tout ce qui arrive par un intent vient potentiellement d'une application hostile. Traitez ces données comme une saisie non fiable."
+    },
+    {
+     "type": "heading",
+     "text": "Les intents"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Détournement** : un intent implicite peut être capté par une autre application. Pour un échange interne, utilisez un intent explicite.",
+      "**Redirection** : ne relancez jamais un intent reçu sans le valider.",
+      "**PendingIntent** : préférez `FLAG_IMMUTABLE`, et un intent interne explicite."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun rappel(context: Context): PendingIntent {\n    val intent = Intent(context, RappelReceiver::class.java)\n    return PendingIntent.getBroadcast(\n        context,\n        0,\n        intent,\n        PendingIntent.FLAG_IMMUTABLE,\n    )\n}\n\nclass RappelReceiver : BroadcastReceiver() {\n    override fun onReceive(context: Context, intent: Intent) = Unit\n}"
+    },
+    {
+     "type": "heading",
+     "text": "L'injection SQL"
+    },
+    {
+     "type": "paragraph",
+     "text": "Coller une saisie dans une requête permet à un attaquant d'en changer le sens. Une requête paramétrée sépare le code et les données. Room le fait pour vous avec `:nom`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun requete(nom: String): String {\n    val dangereux = \"SELECT * FROM notes WHERE titre = '$nom'\"\n    return dangereux\n}\n\nfun main() {\n    println(requete(\"Courses\"))\n    println(requete(\"' OR '1'='1\"))\n}",
+     "output": "SELECT * FROM notes WHERE titre = 'Courses'\nSELECT * FROM notes WHERE titre = '' OR '1'='1'"
+    },
+    {
+     "type": "paragraph",
+     "text": "La deuxième requête renvoie toutes les notes : la condition est toujours vraie. Cet exemple ne fait qu'afficher le texte, sans rien exécuter."
+    },
+    {
+     "type": "heading",
+     "text": "La traversée de chemin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un nom de fichier reçu de l'extérieur, comme `../../shared_prefs/session.xml`, peut sortir du dossier prévu. Résolvez le chemin réel, puis vérifiez qu'il reste dans le dossier."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "import java.io.File\n\nfun cheminSur(dossier: File, nom: String): File? {\n    val cible = File(dossier, nom).canonicalFile\n    return if (cible.path.startsWith(dossier.canonicalPath + File.separator)) cible else null\n}\n\nfun main() {\n    val dossier = File(\"/data/app/fichiers\")\n    println(cheminSur(dossier, \"photo.png\") != null)\n    println(cheminSur(dossier, \"../../secret.txt\") != null)\n}",
+     "output": "true\nfalse"
+    },
+    {
+     "type": "heading",
+     "text": "WebView"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ne chargez que des contenus que vous contrôlez, avec une liste d'adresses autorisées.",
+      "N'activez JavaScript que si c'est nécessaire.",
+      "N'utilisez `addJavascriptInterface` que pour du contenu totalement maîtrisé : la page appelle alors votre code.",
+      "Refusez l'accès aux fichiers locaux."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun configurer(vue: WebView) {\n    vue.settings.javaScriptEnabled = false\n    vue.settings.allowFileAccess = false\n    vue.settings.allowContentAccess = false\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les liens profonds"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un lien ouvert depuis l'extérieur est une entrée comme une autre. Vérifiez ses paramètres, et ne laissez pas un lien déclencher une action sensible sans confirmation. Les **App Links** vérifiés lient un domaine à votre application."
+    },
+    {
+     "type": "heading",
+     "text": "Autres risques à connaître"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Tapjacking** : une fenêtre transparente incite à toucher votre bouton. `filterTouchesWhenObscured` protège un bouton sensible.",
+      "**Zip Slip** : une archive dont les noms contiennent `../`. Même remède que la traversée de chemin.",
+      "**android:debuggable** : à laisser à `false` en release.",
+      "**Désérialisation non sûre** : ne faites pas confiance à un objet reçu de l'extérieur."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Toute entrée est suspecte tant qu'elle n'a pas montré patte blanche : intent, lien, fichier ou réponse réseau !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qui peut lancer un composant exporté ?",
+     "options": [
+      "N'importe quelle application",
+      "Seulement Google",
+      "Seulement l'utilisateur root"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "N'exportez que le nécessaire."
+    },
+    {
+     "prompt": "Quelle option protège un PendingIntent ?",
+     "options": [
+      "FLAG_IMMUTABLE",
+      "FLAG_SECURE"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne pourra pas être modifié."
+    },
+    {
+     "prompt": "Comment éviter l'injection SQL ?",
+     "options": [
+      "Avec des requêtes paramétrées",
+      "En ajoutant des espaces",
+      "En chiffrant la requête"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Room les utilise avec :nom."
+    },
+    {
+     "prompt": "Comment se protéger d'une traversée de chemin ?",
+     "options": [
+      "Résoudre le chemin réel et vérifier qu'il reste dans le dossier",
+      "Interdire les fichiers PNG"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "canonicalFile fait la résolution."
+    },
+    {
+     "prompt": "Que risque addJavascriptInterface avec une page non maîtrisée ?",
+     "options": [
+      "La page peut appeler votre code",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Réservez-le à du contenu de confiance."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-06-ex1",
+     "kind": "fill",
+     "prompt": "Quel attribut du manifeste détermine si un composant est accessible aux autres applications ?",
+     "accepted": [
+      "android:exported",
+      "exported"
+     ],
+     "solution": "android:exported."
+    },
+    {
+     "id": "sec-06-ex2",
+     "kind": "self",
+     "prompt": "Sur votre application de démonstration, une activité `PaiementActivity` exportée lit le montant dans son intent. Décrivez le risque et deux corrections.",
+     "solution": "Une autre application peut lancer l'écran avec le montant de son choix. Je retire l'export si l'écran n'a pas à être lancé de l'extérieur. Je ne fais jamais confiance à l'intent pour une donnée sensible : le montant vient du serveur, et l'utilisateur confirme avant le paiement."
+    }
+   ]
+  },
+  {
+   "id": "sec-07-api",
+   "title": "Protéger le réseau et les API",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application parle à un serveur. Il faut protéger le trajet, et surtout ne pas se fier au client."
+    },
+    {
+     "type": "heading",
+     "text": "Le trajet"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Utilisez HTTPS partout.",
+      "Refusez le trafic en clair par la configuration de sécurité réseau.",
+      "Ne remplacez jamais la vérification du certificat."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Un `X509TrustManager` qui accepte tout, ou un `HostnameVerifier` qui renvoie toujours vrai, annule TLS. Ces « solutions » trouvées en ligne pour faire taire une erreur ouvrent la porte à une écoute du réseau."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<network-security-config>\n    <base-config cleartextTrafficPermitted=\"false\" />\n    <debug-overrides>\n        <trust-anchors>\n            <certificates src=\"user\" />\n        </trust-anchors>\n    </debug-overrides>\n</network-security-config>"
+    },
+    {
+     "type": "paragraph",
+     "text": "`debug-overrides` ne s'applique qu'aux versions débogables : vous pouvez inspecter votre trafic en debug sans affaiblir la release."
+    },
+    {
+     "type": "heading",
+     "text": "Le client n'est jamais fiable"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un APK se décompile, se modifie et se rejoue. La règle centrale : **toute décision de sécurité se prend sur le serveur**."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le serveur vérifie les droits à chaque requête.",
+      "Le serveur valide toutes les données reçues.",
+      "Le prix, le rôle ou le solde ne viennent jamais du client."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les secrets"
+    },
+    {
+     "type": "warning",
+     "text": "Une clé d'API dans le code, dans `BuildConfig` ou dans `strings.xml` se retrouve en clair dans l'APK. L'obfuscation retarde l'attaquant, sans le bloquer. Un secret qui doit rester secret reste sur le serveur."
+    },
+    {
+     "type": "paragraph",
+     "text": "L'application appelle votre serveur, avec le jeton de l'utilisateur. Votre serveur détient la clé et appelle le service tiers. Le module 10 applique ce schéma aux API d'IA."
+    },
+    {
+     "type": "heading",
+     "text": "Les jetons"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un jeton d'accès de courte durée.",
+      "Un jeton de rafraîchissement, révocable, protégé par le Keystore.",
+      "Une révocation côté serveur en cas de vol."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Limiter les abus"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Limitation de débit** : un nombre maximal de requêtes par utilisateur.",
+      "**Journalisation côté serveur** : pour repérer un comportement anormal.",
+      "**Play Integrity** : une API de Google qui aide le serveur à évaluer si la requête vient de votre application, sur un appareil authentique."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Play Integrity donne un signal à évaluer sur le serveur. Ce n'est pas une garantie absolue, et elle ne remplace pas la vérification des droits."
+    },
+    {
+     "type": "heading",
+     "text": "L'épinglage de certificat"
+    },
+    {
+     "type": "paragraph",
+     "text": "Épingler consiste à n'accepter que certains certificats. C'est une protection forte, mais risquée : un certificat changé sans mise à jour coupe l'application. Réservez-le aux cas qui le justifient, avec une broche de secours."
+    },
+    {
+     "type": "tip",
+     "text": "Imaginez que l'attaquant a votre APK sur son bureau, car c'est le cas. Que reste-t-il de votre sécurité ? C'est votre vraie sécurité."
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où prendre les décisions de sécurité ?",
+     "options": [
+      "Sur le serveur",
+      "Dans l'APK",
+      "Dans le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le client peut être modifié."
+    },
+    {
+     "prompt": "Une clé dans BuildConfig est-elle protégée ?",
+     "options": [
+      "Non, elle se lit dans l'APK",
+      "Oui, c'est chiffré"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Gardez-la sur le serveur."
+    },
+    {
+     "prompt": "Que fait un TrustManager qui accepte tout ?",
+     "options": [
+      "Il annule la protection de TLS",
+      "Il accélère TLS"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "N'en utilisez jamais."
+    },
+    {
+     "prompt": "Que vérifie Play Integrity ?",
+     "options": [
+      "Un signal sur l'authenticité de l'application et de l'appareil",
+      "Le mot de passe de l'utilisateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le serveur doit l'évaluer."
+    },
+    {
+     "prompt": "Quel est le risque de l'épinglage de certificat ?",
+     "options": [
+      "Couper l'application lors d'un changement de certificat",
+      "Ralentir Gradle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Prévoyez une broche de secours."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle balise permet d'assouplir la configuration réseau uniquement en debug ?",
+     "accepted": [
+      "debug-overrides",
+      "<debug-overrides>"
+     ],
+     "solution": "debug-overrides."
+    },
+    {
+     "id": "sec-07-ex2",
+     "kind": "self",
+     "prompt": "Votre application envoie `{\"prix\": 10}` au serveur au moment d'acheter. Quel est le problème, et comment le corriger ?",
+     "solution": "Un utilisateur peut modifier la requête et payer le prix de son choix. Le client doit seulement envoyer l'identifiant du produit. Le serveur retrouve le prix dans sa base, vérifie l'utilisateur, puis valide le paiement."
+    }
+   ]
+  },
+  {
+   "id": "sec-08-statique",
+   "title": "Analyse statique et analyse d'APK",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'analyse **statique** examine une application sans l'exécuter. Faites-la sur vos propres APK : vous verrez ce qu'un attaquant voit."
+    },
+    {
+     "type": "warning",
+     "text": "Analysez uniquement vos applications et des applications de démonstration. La licence d'une application tierce peut interdire son analyse, et la loi encadre cette pratique."
+    },
+    {
+     "type": "heading",
+     "text": "Un APK est une archive"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "unzip -l app-release.apk | head -20"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`AndroidManifest.xml` : le manifeste, sous forme binaire.",
+      "`classes.dex` : le code compilé.",
+      "`resources.arsc` et `res/` : les ressources.",
+      "`lib/` : les bibliothèques natives.",
+      "`META-INF/` : d'anciennes informations de signature."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les outils du SDK"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sans rien installer de plus, les outils de compilation du SDK donnent déjà beaucoup d'informations :"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Permissions déclarées\naapt2 dump permissions app-release.apk\n\n# Résumé : paquet, versions, architectures, debuggable\naapt2 dump badging app-release.apk\n\n# Vérifier la signature\napksigner verify --print-certs app-release.apk\n\n# Lire le manifeste\napkanalyzer manifest print app-release.apk"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ces quatre commandes ont été lancées sur l'APK de debug de cette application. La ligne `application-debuggable` apparaît bien dans `badging` : elle ne doit jamais figurer sur une version publiée."
+    },
+    {
+     "type": "heading",
+     "text": "JADX"
+    },
+    {
+     "type": "paragraph",
+     "text": "**JADX** décompile le code Dalvik en Java lisible. Il accepte notamment les fichiers APK et AAB. `jadx-gui` offre une interface graphique."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "jadx -d sortie app-debug.apk"
+    },
+    {
+     "type": "info",
+     "text": "JADX ne décompile pas toujours 100 % du code, comme il le précise lui-même. Il reste très efficace pour comprendre une application."
+    },
+    {
+     "type": "heading",
+     "text": "Que chercher ?"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Des clés, des mots de passe et des adresses de serveurs internes.",
+      "Les composants exportés.",
+      "Des mots-clés comme `password`, `token`, `http://`.",
+      "Des `Log.d` oubliés.",
+      "Des fonctions de test restées en production."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Chercher des secrets dans le code décompilé\ngrep -rniE \"api[_-]?key|secret|password\" sortie/sources | head"
+    },
+    {
+     "type": "heading",
+     "text": "L'analyse dans Android Studio"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Lint** repère de nombreux problèmes de sécurité directement dans le code : `exported` manquant, trafic en clair, `WebView` risquée. Lancez-le à chaque modification."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "./gradlew lintDebug"
+    },
+    {
+     "type": "heading",
+     "text": "Dans votre propre dépôt"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un secret déjà commité reste dans l'historique Git, même après suppression du fichier. Considérez-le comme compromis : révoquez-le, puis générez-en un autre. Un outil de recherche de secrets dans l'intégration continue évite ces accidents."
+    },
+    {
+     "type": "tip",
+     "text": "Décompilez votre propre application une fois. Vous n'écrirez plus jamais une clé en dur !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qu'est-ce que l'analyse statique ?",
+     "options": [
+      "L'examen d'une application sans l'exécuter",
+      "Un test sur téléphone",
+      "Une mesure de la batterie"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'analyse dynamique l'exécute."
+    },
+    {
+     "prompt": "Quelle commande vérifie la signature d'un APK ?",
+     "options": [
+      "apksigner verify",
+      "aapt2 optimize",
+      "adb logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "--print-certs affiche les certificats."
+    },
+    {
+     "prompt": "Que fait JADX ?",
+     "options": [
+      "Il décompile le code Dalvik en Java",
+      "Il signe un APK",
+      "Il compile Flutter"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "jadx-gui en est la version graphique."
+    },
+    {
+     "prompt": "Que faire d'un secret commité par erreur ?",
+     "options": [
+      "Le révoquer et en créer un nouveau",
+      "Supprimer le fichier et continuer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il reste dans l'historique Git."
+    },
+    {
+     "prompt": "Que signale application-debuggable dans badging ?",
+     "options": [
+      "Une application débogable, à bannir en publication",
+      "Une signature valide"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "run-as fonctionnerait alors."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle tâche Gradle lance Lint sur la variante de debug ?",
+     "accepted": [
+      "lintDebug",
+      "./gradlew lintDebug"
+     ],
+     "solution": "lintDebug."
+    },
+    {
+     "id": "sec-08-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les commandes qui décompilent votre `demo.apk` dans le dossier `analyse`, puis qui cherchent `http://` dans les sources.",
+     "solution": "jadx -d analyse demo.apk\ngrep -rn \"http://\" analyse/sources",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "sec-09-dynamique",
+   "title": "MobSF et analyse dynamique",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "L'analyse **dynamique** observe l'application pendant qu'elle fonctionne. Elle révèle ce que le code seul ne montre pas : ce qui part vraiment sur le réseau, ou ce qui atterrit sur le disque."
+    },
+    {
+     "type": "warning",
+     "text": "Ces techniques se pratiquent sur un **émulateur dédié** ou un téléphone de test, avec vos applications de démonstration. N'utilisez jamais un appareil qui contient vos données personnelles."
+    },
+    {
+     "type": "heading",
+     "text": "MobSF"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Mobile Security Framework** est une plateforme libre d'analyse. Son analyseur statique lit notamment les APK, AAB et le code source. Son analyseur dynamique exécute l'application et inspecte son comportement."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "docker pull opensecurity/mobile-security-framework-mobsf:latest\ndocker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'interface s'ouvre sur `http://localhost:8000`. Déposez votre APK : MobSF produit un rapport qui classe les problèmes trouvés."
+    },
+    {
+     "type": "warning",
+     "text": "Les identifiants par défaut, `mobsf` et `mobsf`, sont publics. Ne laissez pas ce service accessible sur un réseau. Ici, l'option `-p 8000:8000` publie le port sur toutes les interfaces : utilisez `-p 127.0.0.1:8000:8000` pour le limiter à votre machine."
+    },
+    {
+     "type": "info",
+     "text": "Un rapport automatique contient des faux positifs, et il manque des failles logiques. Il oriente votre analyse, il ne la remplace pas."
+    },
+    {
+     "type": "heading",
+     "text": "Observer sans outil spécial"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Les journaux de votre application\nadb logcat --pid=$(adb shell pidof com.exemple.notes)\n\n# Ses fichiers privés, sur une version de debug\nadb exec-out run-as com.exemple.notes ls -R\n\n# Une préférence enregistrée\nadb exec-out run-as com.exemple.notes cat shared_prefs/session.xml"
+    },
+    {
+     "type": "paragraph",
+     "text": "Cherchez : un jeton en clair, une donnée personnelle dans les journaux, un cache qui survit à la déconnexion."
+    },
+    {
+     "type": "heading",
+     "text": "Inspecter le trafic"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **proxy** comme mitmproxy ou Burp s'intercale entre votre application et le serveur. Dans Android Studio, l'inspecteur réseau montre déjà les requêtes d'une version de debug, sans rien configurer."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le trafic part-il en HTTPS ?",
+      "Contient-il plus de données que nécessaire ?",
+      "Le serveur accepte-t-il une requête modifiée ?"
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour que le proxy lise le trafic TLS de votre version de debug, installez son certificat sur l'émulateur, et autorisez-le avec `debug-overrides`."
+    },
+    {
+     "type": "heading",
+     "text": "L'instrumentation"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Frida** injecte du code dans une application en cours d'exécution, pour observer ou modifier ses fonctions. Les chercheurs s'en servent pour tester des protections côté client."
+    },
+    {
+     "type": "paragraph",
+     "text": "Retenez la leçon défensive : tout contrôle fait dans l'application peut être contourné par cette méthode. Une protection réelle reste sur le serveur."
+    },
+    {
+     "type": "tip",
+     "text": "Le code raconte ce que l'application devrait faire. L'analyse dynamique raconte ce qu'elle fait vraiment !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Qu'observe l'analyse dynamique ?",
+     "options": [
+      "L'application en cours d'exécution",
+      "Uniquement le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle complète l'analyse statique."
+    },
+    {
+     "prompt": "Comment limiter MobSF à votre machine ?",
+     "options": [
+      "-p 127.0.0.1:8000:8000",
+      "-p 8000:8000"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'autre forme publie le port sur toutes les interfaces."
+    },
+    {
+     "prompt": "Un rapport MobSF suffit-il ?",
+     "options": [
+      "Non, il faut l'interpréter",
+      "Oui, il est toujours exact"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il contient des faux positifs."
+    },
+    {
+     "prompt": "Sur quel appareil pratiquer ?",
+     "options": [
+      "Un émulateur dédié ou un téléphone de test",
+      "Son téléphone personnel"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ne risquez pas vos données."
+    },
+    {
+     "prompt": "Quelle leçon défensive tirer de Frida ?",
+     "options": [
+      "Un contrôle côté client peut être contourné",
+      "Il faut tout écrire en C++"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les protections réelles sont sur le serveur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-09-ex1",
+     "kind": "fill",
+     "prompt": "Quel est le port par défaut de l'interface MobSF ?",
+     "accepted": [
+      "8000"
+     ],
+     "solution": "8000."
+    },
+    {
+     "id": "sec-09-ex2",
+     "kind": "self",
+     "prompt": "Vous testez votre application de démonstration après une déconnexion. Que vérifiez-vous, et comment ?",
+     "solution": "Je vérifie que le jeton a disparu de l'appareil, avec run-as sur la version de debug, en listant les préférences et les fichiers privés. Je vérifie aussi avec un proxy que l'ancien jeton est refusé par le serveur, car il doit être révoqué. Enfin, je regarde que Logcat ne contient aucune trace du jeton."
+    }
+   ]
+  },
+  {
+   "id": "sec-10-tests",
+   "title": "Les tests de sécurité",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "La sécurité se vérifie, comme le reste. Beaucoup de contrôles s'automatisent et tournent à chaque modification."
+    },
+    {
+     "type": "heading",
+     "text": "Tester les règles de sécurité"
+    },
+    {
+     "type": "paragraph",
+     "text": "Écrivez des tests pour les fonctions de validation. Une faille corrigée doit devenir un test, pour ne jamais revenir."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun adresseAutorisee(url: String): Boolean {\n    val autorisees = setOf(\"exemple.com\", \"www.exemple.com\")\n    val hote = Regex(\"^https://([^/:?#]+)\").find(url)?.groupValues?.get(1)\n    return hote != null && hote in autorisees\n}\n\nfun main() {\n    println(adresseAutorisee(\"https://exemple.com/page\"))\n    println(adresseAutorisee(\"http://exemple.com/page\"))\n    println(adresseAutorisee(\"https://exemple.com.piege.net/\"))\n    println(adresseAutorisee(\"https://piege.net/exemple.com\"))\n}",
+     "output": "true\nfalse\nfalse\nfalse"
+    },
+    {
+     "type": "paragraph",
+     "text": "Remarquez les pièges : une simple recherche de `exemple.com` dans le texte aurait laissé passer les deux derniers cas."
+    },
+    {
+     "type": "heading",
+     "text": "Tester les cas hostiles"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une entrée vide, très longue, ou avec des caractères spéciaux.",
+      "Un chemin contenant `../`.",
+      "Une requête sans jeton, ou avec le jeton d'un autre utilisateur.",
+      "Une réponse réseau mal formée."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Tester le manifeste"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# La version publiée ne doit pas être débogable\naapt2 dump badging app-release.apk | grep debuggable"
+    },
+    {
+     "type": "paragraph",
+     "text": "Cette commande ne doit rien afficher. Elle s'ajoute facilement à une intégration continue."
+    },
+    {
+     "type": "heading",
+     "text": "Surveiller les dépendances"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une bibliothèque vulnérable devient votre vulnérabilité. Maintenez vos dépendances à jour, et utilisez un outil d'alerte, comme **Dependabot** sur GitHub. **Play Console** vous signale aussi certaines bibliothèques à risque."
+    },
+    {
+     "type": "heading",
+     "text": "Une liste de contrôle"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Aucun secret dans le dépôt ni dans l'APK.",
+      "`debuggable` à faux en release.",
+      "Les composants exportés sont justifiés.",
+      "Pas de trafic en clair.",
+      "Aucune donnée sensible dans Logcat.",
+      "Les fichiers sensibles sont exclus des sauvegardes.",
+      "Les dépendances sont à jour.",
+      "Le serveur vérifie les droits à chaque requête."
+     ]
+    },
+    {
+     "type": "info",
+     "text": "Le MASTG fournit des tests détaillés pour chaque groupe du MASVS. C'est la suite logique de cette liste."
+    },
+    {
+     "type": "tip",
+     "text": "Un test de sécurité est une promesse que la même faille ne reviendra pas !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que faire d'une faille corrigée ?",
+     "options": [
+      "Écrire un test pour éviter son retour",
+      "L'oublier"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un test de non-régression."
+    },
+    {
+     "prompt": "Pourquoi éviter une simple recherche du domaine dans l'adresse ?",
+     "options": [
+      "exemple.com.piege.net la contient aussi",
+      "C'est trop lent"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut comparer l'hôte exact."
+    },
+    {
+     "prompt": "Que doit afficher grep debuggable sur une release ?",
+     "options": [
+      "Rien",
+      "application-debuggable"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une release n'est pas débogable."
+    },
+    {
+     "prompt": "Quel cas tester pour une API ?",
+     "options": [
+      "Le jeton d'un autre utilisateur",
+      "Uniquement le cas normal"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chacun ne doit voir que ses données."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-10-ex1",
+     "kind": "fill",
+     "prompt": "Quel service de GitHub alerte sur les dépendances vulnérables ?",
+     "accepted": [
+      "Dependabot"
+     ],
+     "solution": "Dependabot."
+    },
+    {
+     "id": "sec-10-ex2",
+     "kind": "self",
+     "prompt": "Complétez `adresseAutorisee` pour accepter aussi `api.exemple.com`, et écrivez un programme qui le prouve.",
+     "solution": "fun adresseAutorisee(url: String): Boolean {\n    val autorisees = setOf(\"exemple.com\", \"www.exemple.com\", \"api.exemple.com\")\n    val hote = Regex(\"^https://([^/:?#]+)\").find(url)?.groupValues?.get(1)\n    return hote != null && hote in autorisees\n}\n\nfun main() {\n    println(adresseAutorisee(\"https://api.exemple.com/v1\"))\n    println(adresseAutorisee(\"https://api.piege.net/v1\"))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "sec-11-durcissement",
+   "title": "Sécuriser une application",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Rassemblons tout. Sécuriser une application, c'est empiler des protections, en sachant ce que chacune apporte vraiment."
+    },
+    {
+     "type": "heading",
+     "text": "La défense en profondeur"
+    },
+    {
+     "type": "layers",
+     "title": "Les couches de protection",
+     "layers": [
+      {
+       "name": "Serveur",
+       "detail": "Droits, validation, limitation de débit, journalisation."
+      },
+      {
+       "name": "Réseau",
+       "detail": "HTTPS, configuration de sécurité réseau."
+      },
+      {
+       "name": "Stockage",
+       "detail": "Stockage interne, Keystore, sauvegardes maîtrisées."
+      },
+      {
+       "name": "Code",
+       "detail": "Validation des entrées, composants fermés, R8."
+      },
+      {
+       "name": "Utilisateur",
+       "detail": "Authentification, biométrie, messages clairs."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "R8 n'est pas une protection"
+    },
+    {
+     "type": "paragraph",
+     "text": "R8 réduit le code et renomme les classes, ce qui complique la lecture. Mais il ne chiffre rien, et les chaînes de caractères restent lisibles. Il décourage, sans protéger un secret."
+    },
+    {
+     "type": "heading",
+     "text": "Les appareils rootés"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur un appareil rooté, la sandbox ne tient plus. Une application peut essayer de le détecter, mais ces contrôles se contournent, car ils tournent sur l'appareil lui-même. Ils ne valent que comme signal complémentaire."
+    },
+    {
+     "type": "heading",
+     "text": "La configuration de publication"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    buildTypes {\n        release {\n            isDebuggable = false\n            isMinifyEnabled = true\n            isShrinkResources = true\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Protéger votre signature"
+    },
+    {
+     "type": "paragraph",
+     "text": "La clé de signature identifie votre application : qui la possède peut publier des mises à jour en votre nom."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Ne la commitez jamais.",
+      "Sauvegardez-la dans un lieu sûr.",
+      "Utilisez **Play App Signing**, pour que Google garde la clé de distribution."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Mettre à jour"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ciblez une version récente d'Android pour bénéficier des protections du système, et mettez à jour vos dépendances. Une application abandonnée devient vulnérable toute seule."
+    },
+    {
+     "type": "heading",
+     "text": "Répondre à un incident"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Révoquez les secrets concernés.",
+      "Corrigez, puis publiez rapidement.",
+      "Prévenez les utilisateurs touchés.",
+      "Respectez vos obligations légales. Dans l'Union européenne, le RGPD encadre la notification des violations de données.",
+      "Ajoutez un test, puis analysez la cause."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "La sécurité n'est pas un sort lancé une fois pour toutes. C'est une garde qu'on prend chaque jour !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "R8 protège-t-il un secret dans le code ?",
+     "options": [
+      "Non, les chaînes restent lisibles",
+      "Oui, il le chiffre"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il complique seulement la lecture."
+    },
+    {
+     "prompt": "Que vaut une détection du root ?",
+     "options": [
+      "Un signal complémentaire, contournable",
+      "Une garantie absolue"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle tourne sur l'appareil lui-même."
+    },
+    {
+     "prompt": "Qu'apporte Play App Signing ?",
+     "options": [
+      "Google conserve la clé de distribution",
+      "Le code devient open source"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela limite le risque de perte."
+    },
+    {
+     "prompt": "Quelle est la première action si un secret fuit ?",
+     "options": [
+      "Le révoquer",
+      "Attendre la prochaine version"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il doit cesser de fonctionner."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "sec-11-ex1",
+     "kind": "fill",
+     "prompt": "Quelle option Gradle active R8 sur une version de release ?",
+     "accepted": [
+      "isMinifyEnabled",
+      "isMinifyEnabled = true"
+     ],
+     "solution": "isMinifyEnabled = true."
+    },
+    {
+     "id": "sec-11-ex2",
+     "kind": "self",
+     "prompt": "Faites une revue de sécurité rapide de votre propre projet de démonstration, avec les points de la leçon sur les tests. Listez trois points à corriger, et leur priorité.",
+     "solution": "Exemple : 1. Priorité haute : une clé d'API dans BuildConfig, à révoquer et à déplacer sur un serveur. 2. Priorité haute : une activité exportée sans raison, à fermer. 3. Priorité moyenne : un jeton visible dans Logcat, à retirer. Pour chaque point, j'ajoute ensuite un test ou un contrôle automatique."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Sur quels systèmes peut-on faire des tests offensifs ?",
+    "options": [
+     "Les siens, ou avec une autorisation écrite",
+     "Tout système public"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le reste est illégal."
+   },
+   {
+    "prompt": "Que sépare la sandbox ?",
+    "options": [
+     "Les données et processus de chaque application",
+     "Les onglets d'une application"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Par UID et SELinux."
+   },
+   {
+    "prompt": "Une clé du Keystore peut-elle être extraite par une application compromise ?",
+    "options": [
+     "Non, mais elle peut être utilisée",
+     "Oui, très simplement"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "La matière de la clé reste hors du processus."
+   },
+   {
+    "prompt": "Quels éléments sont à éviter en cryptographie ?",
+    "options": [
+     "Le mode ECB",
+     "MD5 pour la sécurité",
+     "AES-GCM avec un IV unique"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "AES-GCM avec IV unique est recommandé."
+   },
+   {
+    "prompt": "Où ranger un jeton d'accès ?",
+    "options": [
+     "Dans le stockage interne, chiffré avec le Keystore",
+     "Dans Logcat",
+     "Sur le stockage externe"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le Keystore protège la clé."
+   },
+   {
+    "prompt": "Comment éviter l'injection SQL ?",
+    "options": [
+     "Avec une requête paramétrée",
+     "En collant la saisie dans la requête"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Room le fait avec :nom."
+   },
+   {
+    "prompt": "Où garder une clé d'API secrète ?",
+    "options": [
+     "Sur un serveur",
+     "Dans BuildConfig"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'APK se lit."
+   },
+   {
+    "prompt": "Quel outil décompile un APK ?",
+    "options": [
+     "JADX",
+     "Logcat"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il produit du Java lisible."
+   },
+   {
+    "prompt": "Qu'est-ce que MobSF ?",
+    "options": [
+     "Une plateforme d'analyse d'applications mobiles",
+     "Un émulateur Android"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Elle combine analyse statique et dynamique."
+   },
+   {
+    "prompt": "R8 garantit-il la confidentialité d'un secret ?",
+    "options": [
+     "Non",
+     "Oui"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il renomme, sans chiffrer."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "OWASP MASVS",
+   "url": "https://mas.owasp.org/MASVS/"
+  },
+  {
+   "title": "OWASP MASTG",
+   "url": "https://mas.owasp.org/MASTG/"
+  },
+  {
+   "title": "Bonnes pratiques de sécurité Android",
+   "url": "https://developer.android.com/privacy-and-security/security-best-practices"
+  },
+  {
+   "title": "Risques de sécurité Android",
+   "url": "https://developer.android.com/privacy-and-security/risks"
+  },
+  {
+   "title": "Keystore Android",
+   "url": "https://developer.android.com/privacy-and-security/keystore"
+  },
+  {
+   "title": "Configuration de sécurité réseau",
+   "url": "https://developer.android.com/privacy-and-security/security-config"
+  },
+  {
+   "title": "MobSF sur GitHub",
+   "url": "https://github.com/MobSF/Mobile-Security-Framework-MobSF"
+  },
+  {
+   "title": "JADX sur GitHub",
+   "url": "https://github.com/skylot/jadx"
+  }
+ ]
+}

@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## Phase 5, en cours — 2026-11-06, tour 5
+
+- Module 9 Sécurité Android rédigé : onze leçons et évaluation. Les exercices offensifs sont limités aux applications de démonstration et aux environnements autorisés.
+- Module 10 Intelligence artificielle rédigé : douze leçons et évaluation.
+- `tool/check_android_snippets.py` couvre les API de sécurité, de voix et d'images.
+
 ## Phase 5, en cours — 2026-11-06
 
 - Module 7 Flutter pour Android rédigé : neuf leçons et évaluation.

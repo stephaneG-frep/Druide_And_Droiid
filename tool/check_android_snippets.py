@@ -42,16 +42,30 @@ VERSIONS = {
 IMPORTS = """
 import android.app.ActivityManager
 import android.app.Application
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks2
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.os.StrictMode
+import android.provider.ContactsContract
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.webkit.WebView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -119,8 +133,16 @@ import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.execSQL
 import androidx.window.core.layout.WindowSizeClass
 import androidx.work.*
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
+import java.security.KeyStore
+import java.util.Locale
 import java.util.concurrent.TimeUnit
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -133,12 +155,14 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Route
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import preuve.BuildConfig
@@ -202,6 +226,7 @@ dependencies {{
     implementation("com.squareup.retrofit2:retrofit:{retrofit}")
     implementation("com.squareup.retrofit2:converter-kotlinx-serialization:{retrofit}")
     implementation("com.squareup.okhttp3:okhttp:{okhttp}")
+    implementation("com.squareup.okhttp3:logging-interceptor:{okhttp}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:{serialization}")
 }}
 """
