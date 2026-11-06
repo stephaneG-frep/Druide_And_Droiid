@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Phase 5, en cours — 2026-11-06
+
+- Module 7 Flutter pour Android rédigé : neuf leçons et évaluation.
+- Module 8 Android avancé rédigé : onze leçons et évaluation, avec des avertissements sur les commandes qui modifient ou effacent des données.
+- Coloration du C++ dans les blocs de code.
+- Le contrôle des exemples exécute aussi Dart et vérifie la syntaxe du C++ avec le NDK.
+- Nouvel outil `tool/check_flutter_snippets.py`, qui analyse les extraits Flutter et compile le code Kotlin hôte.
+
 ## Phase 5, en cours — 2026-11-05
 
 - Module 5 Interfaces Android rédigé : dix leçons et évaluation.

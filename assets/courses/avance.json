@@ -1,0 +1,2007 @@
+{
+ "moduleId": "avance",
+ "lessons": [
+  {
+   "id": "adv-01-adb",
+   "title": "ADB et le débogage USB",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**ADB**, Android Debug Bridge, est votre ligne directe avec un appareil. Bien le connaître fait gagner des heures."
+    },
+    {
+     "type": "heading",
+     "text": "Trois pièces"
+    },
+    {
+     "type": "layers",
+     "title": "L'architecture d'ADB",
+     "layers": [
+      {
+       "name": "Client",
+       "detail": "La commande adb que vous tapez sur l'ordinateur."
+      },
+      {
+       "name": "Serveur",
+       "detail": "Un processus sur l'ordinateur, qui gère les connexions."
+      },
+      {
+       "name": "Démon adbd",
+       "detail": "Un processus sur l'appareil, qui exécute les commandes."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les commandes de base"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister les appareils, avec leur modèle\nadb devices -l\n\n# Viser un appareil précis quand plusieurs sont branchés\nadb -s NUMERO_DE_SERIE shell getprop ro.build.version.sdk\n\n# Installer, ou mettre à jour en gardant les données\nadb install -r app-debug.apk\n\n# Échanger des fichiers\nadb push notes.txt /sdcard/Download/\nadb pull /sdcard/Download/notes.txt\n\n# Capturer l'écran\nadb exec-out screencap -p > capture.png\n\n# Relancer le serveur en cas de souci\nadb kill-server\nadb start-server"
+    },
+    {
+     "type": "warning",
+     "text": "Le débogage USB donne un accès étendu à l'appareil. N'acceptez la clé RSA que sur un ordinateur de confiance, et désactivez cette option si vous ne développez pas. Depuis les options pour les développeurs, vous pouvez révoquer toutes les autorisations ADB."
+    },
+    {
+     "type": "heading",
+     "text": "Accéder aux données d'une application de debug"
+    },
+    {
+     "type": "paragraph",
+     "text": "`run-as` exécute une commande avec l'identité d'une application **débogable**. C'est très utile pour inspecter sa base de données. Une application de release le refuse."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lister les fichiers privés\nadb exec-out run-as com.exemple.notes ls -la files/\n\n# Copier une base sur l'ordinateur\nadb exec-out run-as com.exemple.notes cat databases/notes.db > notes.db"
+    },
+    {
+     "type": "heading",
+     "text": "Sans fil"
+    },
+    {
+     "type": "paragraph",
+     "text": "À partir d'Android 11, le **débogage sans fil** évite le câble. Dans les options pour les développeurs, activez-le, puis appairez l'appareil."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb pair 192.168.1.20:37099\nadb connect 192.168.1.20:41235"
+    },
+    {
+     "type": "info",
+     "text": "Les ports et le code d'appairage sont affichés sur le téléphone. L'ordinateur et le téléphone doivent être sur le même réseau."
+    },
+    {
+     "type": "heading",
+     "text": "Les commandes destructrices"
+    },
+    {
+     "type": "warning",
+     "text": "Ces commandes effacent des données, sans demander de confirmation sur l'ordinateur. Vérifiez deux fois le nom du paquet et l'appareil visé :\n`adb uninstall com.exemple.notes` supprime l'application et ses données.\n`adb shell pm clear com.exemple.notes` efface toutes ses données.\n`flutter test integration_test` sur un téléphone désinstalle l'application à la fin."
+    },
+    {
+     "type": "tip",
+     "text": "Plusieurs appareils branchés ? Sans `-s`, ADB refuse d'agir. Tant mieux : mieux vaut une erreur qu'effacer le mauvais téléphone !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Où s'exécute le démon adbd ?",
+     "options": [
+      "Sur l'appareil",
+      "Sur l'ordinateur",
+      "Sur un serveur de Google"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le serveur, lui, tourne sur l'ordinateur."
+    },
+    {
+     "prompt": "Quelle option vise un appareil précis ?",
+     "options": [
+      "-s",
+      "-r",
+      "-p"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle prend le numéro de série."
+    },
+    {
+     "prompt": "Que fait adb shell pm clear ?",
+     "options": [
+      "Il efface les données d'une application",
+      "Il nettoie le cache de Gradle",
+      "Il vide Logcat"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est immédiat et sans confirmation."
+    },
+    {
+     "prompt": "Avec quelles applications run-as fonctionne-t-il ?",
+     "options": [
+      "Les applications débogables",
+      "Toutes"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une application de release le refuse."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-01-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande ADB copie un fichier de l'appareil vers l'ordinateur ?",
+     "accepted": [
+      "adb pull",
+      "pull"
+     ],
+     "solution": "adb pull."
+    },
+    {
+     "id": "adv-01-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande qui capture l'écran du téléphone dans `ecran.png`, en visant l'appareil `ABC123`.",
+     "solution": "adb -s ABC123 exec-out screencap -p > ecran.png",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "adv-02-shell",
+   "title": "Le shell Android et les processus",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "`adb shell` ouvre un terminal sur l'appareil. Android repose sur Linux : vous retrouvez `ls`, `ps` ou `top`, plus des outils propres au système."
+    },
+    {
+     "type": "heading",
+     "text": "Explorer le système"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Informations sur l'appareil\nadb shell getprop ro.product.model\nadb shell getprop ro.build.version.sdk\nadb shell getprop ro.product.cpu.abilist\n\n# Processus et mémoire\nadb shell ps -A\nadb shell top -n 1"
+    },
+    {
+     "type": "heading",
+     "text": "Les gestionnaires"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`pm` : le gestionnaire de paquets.",
+      "`am` : le gestionnaire d'activités.",
+      "`dumpsys` : l'état des services du système.",
+      "`wm` : le gestionnaire de fenêtres.",
+      "`input` : simuler des gestes."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Paquets installés par l'utilisateur\nadb shell pm list packages -3\n\n# Emplacement d'une application\nadb shell pm path com.exemple.notes\n\n# Lancer une activité\nadb shell am start -W -n com.exemple.notes/.MainActivity\n\n# Arrêter une application\nadb shell am force-stop com.exemple.notes\n\n# Résolution de l'écran\nadb shell wm size"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'option `-W` de `am start` affiche le temps de démarrage, dans `TotalTime` : une mesure simple pour suivre vos progrès."
+    },
+    {
+     "type": "heading",
+     "text": "Tester les permissions"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb shell pm grant com.exemple.notes android.permission.CAMERA\nadb shell pm revoke com.exemple.notes android.permission.CAMERA"
+    },
+    {
+     "type": "paragraph",
+     "text": "Retirer une permission pendant que l'application tourne tue son processus : c'est un bon test de reprise."
+    },
+    {
+     "type": "heading",
+     "text": "Tester la mort du processus"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand une application passe en arrière-plan, le système peut la tuer. Vous pouvez reproduire ce cas :"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Mettez l'application en arrière-plan avec la touche Accueil, puis :\nadb shell am kill com.exemple.notes"
+    },
+    {
+     "type": "paragraph",
+     "text": "Revenez ensuite dans l'application : l'écran doit se rétablir sans perte. Beaucoup de bugs ne se voient qu'ainsi."
+    },
+    {
+     "type": "heading",
+     "text": "dumpsys"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb shell dumpsys battery\nadb shell dumpsys activity activities\nadb shell dumpsys meminfo com.exemple.notes\nadb shell dumpsys gfxinfo com.exemple.notes"
+    },
+    {
+     "type": "warning",
+     "text": "Le shell ADB peut désinstaller des applications système et modifier des réglages. Ne recopiez pas de commandes trouvées sur Internet sans les comprendre : certaines rendent l'appareil instable."
+    },
+    {
+     "type": "tip",
+     "text": "Oubliez `force-stop` pour tester la mort du processus : il annule aussi les alarmes et le travail planifié. Utilisez `am kill` !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel outil gère les paquets ?",
+     "options": [
+      "pm",
+      "am",
+      "wm"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "am gère les activités."
+    },
+    {
+     "prompt": "Quelle commande affiche l'état de la batterie ?",
+     "options": [
+      "adb shell dumpsys battery",
+      "adb battery",
+      "adb shell ps"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "dumpsys interroge les services du système."
+    },
+    {
+     "prompt": "Que mesure TotalTime avec am start -W ?",
+     "options": [
+      "Le temps de démarrage",
+      "La taille de l'APK",
+      "La mémoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une mesure simple à suivre."
+    },
+    {
+     "prompt": "Que se passe-t-il si on retire une permission à une application lancée ?",
+     "options": [
+      "Son processus est tué",
+      "Rien",
+      "Le téléphone redémarre"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un bon test de reprise."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle propriété donne la liste des ABI : `adb shell getprop ____` ?",
+     "accepted": [
+      "ro.product.cpu.abilist"
+     ],
+     "solution": "ro.product.cpu.abilist."
+    },
+    {
+     "id": "adv-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez les commandes qui lancent `com.exemple.notes/.MainActivity` en affichant son temps de démarrage, puis qui l'arrêtent.",
+     "solution": "adb shell am start -W -n com.exemple.notes/.MainActivity\nadb shell am force-stop com.exemple.notes",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "adv-03-crashs",
+   "title": "Logcat avancé et plantages",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un plantage en production se comprend avec des traces. Il faut savoir les obtenir et les lire."
+    },
+    {
+     "type": "heading",
+     "text": "Logcat en ligne de commande"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Lire et quitter\nadb logcat -d\n\n# Uniquement les erreurs\nadb logcat -d '*:E'\n\n# Le tampon réservé aux plantages\nadb logcat -b crash -d\n\n# Les journaux d'un seul processus\nadb logcat --pid=$(adb shell pidof com.exemple.notes)"
+    },
+    {
+     "type": "heading",
+     "text": "Plantage Java ou Kotlin"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une exception non attrapée produit `FATAL EXCEPTION` et une pile d'appels. Cherchez le dernier `Caused by`, puis votre premier fichier, comme vu au module 4."
+    },
+    {
+     "type": "heading",
+     "text": "Plantage natif"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une erreur en C ou C++ provoque un **signal**, comme `SIGSEGV`. Android affiche une trace et écrit un **tombstone**, sur l'appareil, dans `/data/tombstones/`."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0\nF DEBUG   : backtrace:\nF DEBUG   :   #00 pc 000000000001a2c4  /data/app/.../lib/arm64/libcalcul.so\nF DEBUG   :   #01 pc 0000000000018f10  /data/app/.../lib/arm64/libcalcul.so"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`SIGSEGV` : accès à une adresse invalide, souvent un pointeur nul.",
+      "`SIGABRT` : le programme s'est arrêté lui-même.",
+      "`fault addr 0x0` : déréférencement d'un pointeur nul."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "L'outil `ndk-stack` traduit ces adresses en fichiers et en lignes, à condition de lui fournir les bibliothèques non réduites."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb logcat -d | ndk-stack -sym app/build/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/arm64-v8a"
+    },
+    {
+     "type": "heading",
+     "text": "Déchiffrer une trace de release"
+    },
+    {
+     "type": "paragraph",
+     "text": "R8 renomme vos classes. Une pile de release montre donc `a.b.c`. Le fichier `mapping.txt`, produit à la compilation, permet de la décoder. Conservez-le pour chaque version publiée."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "retrace mapping.txt trace.txt"
+    },
+    {
+     "type": "warning",
+     "text": "Sans le fichier `mapping.txt` de la version concernée, une trace de production devient illisible. Archivez-le avec chaque publication, ou envoyez-le à votre outil de suivi."
+    },
+    {
+     "type": "heading",
+     "text": "Comprendre pourquoi l'application a quitté"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 11, `ApplicationExitInfo` indique la raison de la fin d'un processus : ANR, manque de mémoire, plantage."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun derniereSortie(context: Context): String? {\n    val gestionnaire = context.getSystemService(ActivityManager::class.java)\n    val sorties = gestionnaire.getHistoricalProcessExitReasons(null, 0, 1)\n    return sorties.firstOrNull()?.description\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Capturer un rapport complet"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb bugreport rapport.zip"
+    },
+    {
+     "type": "warning",
+     "text": "Un rapport de bogue contient des journaux système, et parfois des données personnelles. Relisez-le avant de le partager."
+    },
+    {
+     "type": "tip",
+     "text": "Avant de chercher longuement, relisez le message d'erreur en entier. Il dit souvent exactement ce qui ne va pas !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel tampon de Logcat contient les plantages ?",
+     "options": [
+      "crash",
+      "main",
+      "radio"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "adb logcat -b crash."
+    },
+    {
+     "prompt": "Que signale SIGSEGV ?",
+     "options": [
+      "Un accès mémoire invalide",
+      "Un manque de batterie",
+      "Un réseau coupé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Souvent un pointeur nul."
+    },
+    {
+     "prompt": "À quoi sert mapping.txt ?",
+     "options": [
+      "À décoder une trace réduite par R8",
+      "À lister les permissions",
+      "À signer l'APK"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Conservez-le pour chaque version."
+    },
+    {
+     "prompt": "Où se trouvent les tombstones ?",
+     "options": [
+      "Dans /data/tombstones/",
+      "Dans res/",
+      "Dans gradle/"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ils décrivent les plantages natifs."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-03-ex1",
+     "kind": "fill",
+     "prompt": "Quel outil décode les noms de classes réduits par R8 ?",
+     "accepted": [
+      "retrace"
+     ],
+     "solution": "retrace."
+    },
+    {
+     "id": "adv-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez la commande qui affiche uniquement les plantages déjà enregistrés, puis quitte.",
+     "solution": "adb logcat -b crash -d",
+     "language": "shell"
+    }
+   ]
+  },
+  {
+   "id": "adv-04-anr",
+   "title": "ANR et performances",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un **ANR**, pour Application Not Responding, survient quand le fil principal reste bloqué trop longtemps. L'utilisateur voit alors un dialogue proposant de fermer l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Les déclencheurs"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Un événement tactile sans réponse pendant **5 secondes**.",
+      "Un `BroadcastReceiver` qui ne termine pas à temps : 10 secondes si l'application a une activité au premier plan.",
+      "Un service qui tarde à démarrer.",
+      "Un service de premier plan qui n'appelle pas `startForeground` dans les 5 secondes."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les causes fréquentes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Des entrées-sorties sur le fil principal : disque ou réseau.",
+      "Un long calcul sur le fil principal.",
+      "Un appel bloquant vers un autre processus.",
+      "Une attente de verrou, ou un interblocage."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Détecter tôt avec StrictMode"
+    },
+    {
+     "type": "paragraph",
+     "text": "`StrictMode` signale les opérations interdites sur le fil principal pendant le développement."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class MonApplication : Application() {\n    override fun onCreate() {\n        super.onCreate()\n        if (BuildConfig.DEBUG) {\n            StrictMode.setThreadPolicy(\n                StrictMode.ThreadPolicy.Builder()\n                    .detectDiskReads()\n                    .detectDiskWrites()\n                    .detectNetwork()\n                    .penaltyLog()\n                    .build()\n            )\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Lire une trace d'ANR"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sur un appareil de test, activez **Afficher tous les ANR** dans les options pour les développeurs. Android écrit des traces dans `/data/anr/`, lisibles avec `adb root` sur un appareil qui le permet, ou par un rapport de bogue."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb bugreport rapport.zip"
+    },
+    {
+     "type": "paragraph",
+     "text": "Regardez d'abord le fil `main` : son état et sa pile indiquent ce qui le bloquait."
+    },
+    {
+     "type": "heading",
+     "text": "Le fil principal dans Compose"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un calcul dans un composable s'exécute à chaque recomposition. Déplacez-le dans le ViewModel, et faites les accès disque avec `Dispatchers.IO`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ListeViewModel(private val depot: ListeDepot) : ViewModel() {\n    private val _elements = MutableStateFlow<List<String>>(emptyList())\n    val elements: StateFlow<List<String>> = _elements.asStateFlow()\n\n    fun charger() {\n        viewModelScope.launch {\n            _elements.value = withContext(Dispatchers.Default) {\n                depot.lire().filter { it.isNotBlank() }.sorted()\n            }\n        }\n    }\n}\n\ninterface ListeDepot {\n    suspend fun lire(): List<String>\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Mesurer"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Temps de démarrage\nadb shell am start -W -n com.exemple.notes/.MainActivity\n\n# Statistiques d'images\nadb shell dumpsys gfxinfo com.exemple.notes"
+    },
+    {
+     "type": "paragraph",
+     "text": "À 60 images par seconde, chaque image dispose de 16 ms. La sortie de `gfxinfo` indique le nombre d'images lentes. **Android vitals**, dans la Play Console, donne les mêmes indicateurs chez vos vrais utilisateurs."
+    },
+    {
+     "type": "paragraph",
+     "text": "Les **Baseline Profiles** précompilent les parcours les plus fréquents, pour accélérer le démarrage et le défilement."
+    },
+    {
+     "type": "tip",
+     "text": "Une application fluide sur votre téléphone haut de gamme ne prouve rien. Testez sur l'appareil le plus modeste que vous visez !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Après quel délai sans réponse à un toucher survient un ANR ?",
+     "options": [
+      "5 secondes",
+      "1 seconde",
+      "60 secondes"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le fil principal est resté bloqué."
+    },
+    {
+     "prompt": "À quoi sert StrictMode ?",
+     "options": [
+      "À détecter les accès disque et réseau sur le fil principal",
+      "À chiffrer",
+      "À signer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "À réserver au développement."
+    },
+    {
+     "prompt": "Quel fil regarder en premier dans une trace d'ANR ?",
+     "options": [
+      "main",
+      "GC",
+      "Binder"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il indique ce qui bloquait."
+    },
+    {
+     "prompt": "Où voir les ANR de vos utilisateurs réels ?",
+     "options": [
+      "Android vitals",
+      "Logcat local",
+      "Le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Dans la Play Console."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-04-ex1",
+     "kind": "fill",
+     "prompt": "Quel service du système donne les statistiques d'images d'une application ?",
+     "accepted": [
+      "gfxinfo",
+      "dumpsys gfxinfo"
+     ],
+     "solution": "gfxinfo, avec adb shell dumpsys gfxinfo."
+    },
+    {
+     "id": "adv-04-ex2",
+     "kind": "self",
+     "prompt": "Le bouton Enregistrer gèle l'écran pendant 3 secondes. Décrivez votre diagnostic et votre correction.",
+     "solution": "J'active StrictMode et je regarde Logcat : l'écriture se fait sans doute sur le fil principal. Je déplace l'écriture dans une coroutine du ViewModel, avec Dispatchers.IO ou une fonction suspend de Room, et j'affiche un état d'enregistrement. Je vérifie ensuite que l'écran reste fluide."
+    }
+   ]
+  },
+  {
+   "id": "adv-05-workmanager",
+   "title": "Services et WorkManager",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Quelle technique choisir pour un travail en arrière-plan ? La réponse dépend du moment où il doit s'exécuter."
+    },
+    {
+     "type": "heading",
+     "text": "Choisir"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Coroutine dans un ViewModel** : tant que l'écran est ouvert.",
+      "**WorkManager** : un travail fiable et différé, même si l'application est fermée.",
+      "**Service de premier plan** : une tâche longue et visible, comme de la musique.",
+      "**AlarmManager** : une action à une heure précise, comme un réveil."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un travail unique"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class EnvoiWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result {\n        val fichier = inputData.getString(\"fichier\") ?: return Result.failure()\n        return try {\n            envoyer(fichier)\n            Result.success()\n        } catch (e: IOException) {\n            Result.retry()\n        }\n    }\n\n    private suspend fun envoyer(fichier: String) {\n        // Envoi du fichier vers le serveur.\n    }\n}\n\nfun planifierEnvoi(context: Context, fichier: String) {\n    val requete = OneTimeWorkRequestBuilder<EnvoiWorker>()\n        .setInputData(workDataOf(\"fichier\" to fichier))\n        .setConstraints(\n            Constraints.Builder()\n                .setRequiredNetworkType(NetworkType.UNMETERED)\n                .setRequiresBatteryNotLow(true)\n                .build()\n        )\n        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)\n        .build()\n\n    WorkManager.getInstance(context).enqueue(requete)\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Result.success()` : terminé.",
+      "`Result.retry()` : à relancer selon la politique d'attente.",
+      "`Result.failure()` : abandonné."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les contraintes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`NetworkType` : par exemple Wi-Fi ou réseau non facturé.",
+      "`BatteryNotLow` : batterie suffisante.",
+      "`RequiresCharging` : appareil en charge.",
+      "`DeviceIdle` : appareil au repos.",
+      "`StorageNotLow` : espace disponible."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un travail périodique"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun planifierNettoyage(context: Context) {\n    val requete = PeriodicWorkRequestBuilder<NettoyageWorker>(6, TimeUnit.HOURS).build()\n\n    WorkManager.getInstance(context).enqueueUniquePeriodicWork(\n        \"nettoyage\",\n        ExistingPeriodicWorkPolicy.KEEP,\n        requete,\n    )\n}\n\nclass NettoyageWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result = Result.success()\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'intervalle minimal est de **15 minutes**, et l'heure exacte n'est pas garantie : le système regroupe les travaux pour économiser la batterie."
+    },
+    {
+     "type": "warning",
+     "text": "Oublier `enqueueUniquePeriodicWork` empile un nouveau travail à chaque lancement de l'application. Donnez toujours un nom unique à un travail périodique."
+    },
+    {
+     "type": "heading",
+     "text": "Le travail accéléré"
+    },
+    {
+     "type": "paragraph",
+     "text": "`setExpedited` demande une exécution immédiate pour une tâche importante et courte, comme l'envoi d'un message. Il consomme un quota limité : prévoyez un repli avec `OutOfQuotaPolicy`."
+    },
+    {
+     "type": "heading",
+     "text": "Les services"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un service d'arrière-plan classique est fortement limité. Si vous avez besoin d'un service de premier plan, déclarez son type dans le manifeste. Le type `shortService` donne environ 3 minutes pour finir une tâche critique."
+    },
+    {
+     "type": "tip",
+     "text": "Besoin que ça s'exécute à coup sûr, même après un redémarrage ? WorkManager. Besoin d'une heure précise au dixième de seconde ? Ce n'est pas lui !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel intervalle minimal pour un travail périodique ?",
+     "options": [
+      "15 minutes",
+      "1 minute",
+      "1 heure"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'heure exacte n'est pas garantie."
+    },
+    {
+     "prompt": "Quel résultat demande une nouvelle tentative ?",
+     "options": [
+      "Result.retry()",
+      "Result.failure()"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Selon la politique d'attente."
+    },
+    {
+     "prompt": "Pourquoi utiliser enqueueUniquePeriodicWork ?",
+     "options": [
+      "Pour ne pas empiler le travail à chaque lancement",
+      "Pour accélérer Gradle",
+      "Pour chiffrer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le travail porte un nom unique."
+    },
+    {
+     "prompt": "Quel outil pour un réveil à heure précise ?",
+     "options": [
+      "AlarmManager",
+      "WorkManager"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "WorkManager ne garantit pas l'heure."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle politique par défaut WorkManager applique-t-il aux nouvelles tentatives ?",
+     "accepted": [
+      "EXPONENTIAL",
+      "exponentielle"
+     ],
+     "solution": "EXPONENTIAL, avec un délai de 30 secondes."
+    },
+    {
+     "id": "adv-05-ex2",
+     "kind": "self",
+     "prompt": "Créez des contraintes qui exigent que l'appareil soit en charge et sur un réseau non facturé.",
+     "solution": "val contraintesSauvegarde = Constraints.Builder()\n    .setRequiredNetworkType(NetworkType.UNMETERED)\n    .setRequiresCharging(true)\n    .build()",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "adv-06-energie",
+   "title": "Énergie et batterie",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application qui vide la batterie finit désinstallée. Android impose donc des règles strictes aux tâches en arrière-plan."
+    },
+    {
+     "type": "heading",
+     "text": "Doze"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand un appareil reste immobile, écran éteint et débranché, il entre en mode **Doze**. Le système suspend le réseau, ignore les wake locks et reporte les tâches. Il ouvre périodiquement une **fenêtre de maintenance**, de moins en moins souvent."
+    },
+    {
+     "type": "heading",
+     "text": "App Standby"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une application que l'utilisateur n'a pas touchée depuis un moment passe en attente, et son activité réseau est différée. Le système la classe dans des **compartiments**, selon son usage, ce qui limite ses tâches et ses alarmes."
+    },
+    {
+     "type": "heading",
+     "text": "Tester ces modes"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Forcer Doze\nadb shell dumpsys deviceidle force-idle\n\n# En sortir\nadb shell dumpsys deviceidle unforce\nadb shell dumpsys battery reset\n\n# Forcer App Standby\nadb shell dumpsys battery unplug\nadb shell am set-inactive com.exemple.notes true\n\n# En sortir\nadb shell am set-inactive com.exemple.notes false\nadb shell dumpsys battery reset"
+    },
+    {
+     "type": "warning",
+     "text": "Ces commandes changent l'état du téléphone. Terminez toujours par `adb shell dumpsys battery reset` et `dumpsys deviceidle unforce`, sinon il affichera un état de batterie incorrect."
+    },
+    {
+     "type": "heading",
+     "text": "Les réflexes d'économie"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Regroupez les requêtes réseau : la radio consomme beaucoup à chaque réveil.",
+      "Utilisez WorkManager plutôt qu'une boucle de vérification.",
+      "Préférez Firebase Cloud Messaging pour recevoir des messages, plutôt qu'une connexion permanente.",
+      "Arrêtez le GPS et les capteurs dès qu'ils ne servent plus.",
+      "Évitez les animations infinies en arrière-plan."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les wake locks"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **wake lock** empêche l'appareil de se mettre en veille. C'est l'une des premières causes de batterie vidée."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "fun travailBref(context: Context, travail: () -> Unit) {\n    val alimentation = context.getSystemService(PowerManager::class.java)\n    val verrou = alimentation.newWakeLock(\n        PowerManager.PARTIAL_WAKE_LOCK,\n        \"notes:travail\",\n    )\n    verrou.acquire(10_000L)\n    try {\n        travail()\n    } finally {\n        if (verrou.isHeld) verrou.release()\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Donnez toujours un délai maximal à `acquire`, et libérez le verrou dans un `finally`. Si possible, évitez-le complètement : WorkManager gère ce réveil pour vous."
+    },
+    {
+     "type": "heading",
+     "text": "Les exemptions"
+    },
+    {
+     "type": "paragraph",
+     "text": "L'utilisateur peut exempter une application de l'optimisation de batterie. Google Play interdit de le demander directement, sauf si la fonction principale de l'application en dépend."
+    },
+    {
+     "type": "paragraph",
+     "text": "Certains constructeurs ajoutent leurs propres restrictions : une tâche qui marche sur un Pixel peut être tuée sur un autre appareil. Testez sur plusieurs marques."
+    },
+    {
+     "type": "tip",
+     "text": "Quand l'application dort, elle ne doit rien faire. C'est la meilleure optimisation qui existe !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quand l'appareil entre-t-il en Doze ?",
+     "options": [
+      "Immobile, écran éteint et débranché",
+      "Pendant un appel",
+      "En charge"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le système ouvre ensuite des fenêtres de maintenance."
+    },
+    {
+     "prompt": "Que devient le réseau en Doze ?",
+     "options": [
+      "Il est suspendu",
+      "Il accélère",
+      "Il reste intact"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Hors fenêtre de maintenance."
+    },
+    {
+     "prompt": "Que faire après avoir forcé un état de batterie ?",
+     "options": [
+      "adb shell dumpsys battery reset",
+      "Rien",
+      "Désinstaller l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon l'état affiché reste faux."
+    },
+    {
+     "prompt": "Comment acquérir un wake lock prudemment ?",
+     "options": [
+      "Avec un délai maximal et une libération dans finally",
+      "Sans délai",
+      "Dans onCreate pour toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un verrou oublié vide la batterie."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande force le mode Doze : `adb shell dumpsys deviceidle ____` ?",
+     "accepted": [
+      "force-idle"
+     ],
+     "solution": "force-idle."
+    },
+    {
+     "id": "adv-06-ex2",
+     "kind": "self",
+     "prompt": "Les notifications de votre application de discussion arrivent en retard quand le téléphone dort. Pourquoi, et que faire ?",
+     "solution": "En mode Doze, le système suspend le réseau et diffère les tâches, donc une connexion gardée par l'application ne fonctionne plus. Il faut passer par Firebase Cloud Messaging avec des messages visibles destinés à l'utilisateur : ils réveillent brièvement l'application, et consomment moins qu'une connexion permanente."
+    }
+   ]
+  },
+  {
+   "id": "adv-07-memoire",
+   "title": "Analyser la mémoire",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le module 1 a présenté la mémoire d'Android. Passons à son analyse."
+    },
+    {
+     "type": "heading",
+     "text": "Lire la mémoire d'une application"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb shell dumpsys meminfo com.exemple.notes"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**PSS** : la mémoire de l'application, avec sa part de la mémoire partagée. C'est ce que le système regarde.",
+      "**Java Heap** : les objets Kotlin et Java.",
+      "**Native Heap** : les allocations natives. Une application Flutter ou avec des images peut en utiliser beaucoup.",
+      "**Graphics** : les textures et tampons."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Réagir à la pression mémoire"
+    },
+    {
+     "type": "paragraph",
+     "text": "`onTrimMemory` prévient l'application. Le niveau `TRIM_MEMORY_UI_HIDDEN` signale que son interface n'est plus visible : c'est le bon moment pour libérer les caches liés à l'écran."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class Vignettes : ComponentCallbacks2 {\n    private val cache = LinkedHashMap<String, ByteArray>()\n\n    override fun onTrimMemory(niveau: Int) {\n        if (niveau >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {\n            cache.clear()\n        }\n    }\n\n    override fun onConfigurationChanged(configuration: Configuration) = Unit\n\n    override fun onLowMemory() = cache.clear()\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour un cache en mémoire, `LruCache` retire automatiquement les éléments les moins utilisés quand la limite est atteinte."
+    },
+    {
+     "type": "heading",
+     "text": "Trouver une fuite"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Répétez une action : ouvrir et fermer un écran dix fois.",
+      "Observez la mémoire dans le Profiler.",
+      "Capturez un vidage de mémoire.",
+      "Cherchez les activités qui devraient avoir disparu."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "**LeakCanary** automatise cette recherche en debug : il signale les fuites et affiche la chaîne de références responsable."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "dependencies {\n    debugImplementation(\"com.squareup.leakcanary:leakcanary-android:2.14\")\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les causes classiques"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une activité gardée dans un objet statique.",
+      "Un écouteur enregistré mais jamais retiré.",
+      "Une coroutine ou un fil qui survit à son écran.",
+      "Une image chargée en pleine résolution, alors qu'elle s'affiche en vignette."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Une image de 12 mégapixels occupe environ 48 Mo en mémoire une fois décodée, quel que soit le poids de son fichier. Décodez-la à la taille d'affichage, ou laissez une bibliothèque comme Coil s'en charger."
+    },
+    {
+     "type": "info",
+     "text": "Android 17 impose des limites de mémoire par application, calculées selon la mémoire totale de l'appareil. Elles visent surtout les fuites et les cas extrêmes. Si votre application est touchée, `ApplicationExitInfo` indique la raison `REASON_OTHER`, avec `MemoryLimiter:AnonSwap` dans sa description."
+    },
+    {
+     "type": "tip",
+     "text": "Regardez la courbe de mémoire après dix ouvertures d'écran. Si elle ne redescend jamais, vous tenez votre fuite !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel indicateur le système regarde-t-il ?",
+     "options": [
+      "PSS",
+      "La taille de l'APK",
+      "Le nombre d'activités"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il tient compte de la mémoire partagée."
+    },
+    {
+     "prompt": "Que signale TRIM_MEMORY_UI_HIDDEN ?",
+     "options": [
+      "L'interface n'est plus visible",
+      "La batterie est faible",
+      "Le réseau est coupé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le moment de libérer les caches d'écran."
+    },
+    {
+     "prompt": "Que fait LeakCanary ?",
+     "options": [
+      "Il détecte les fuites de mémoire",
+      "Il signe l'APK",
+      "Il compile le code"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "À réserver au debug."
+    },
+    {
+     "prompt": "Qu'est-ce qui détermine la mémoire d'une image décodée ?",
+     "options": [
+      "Ses dimensions en pixels",
+      "Le poids de son fichier",
+      "Son nom"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Environ 4 octets par pixel."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande affiche la mémoire d'une application : `adb shell dumpsys ____ com.exemple.notes` ?",
+     "accepted": [
+      "meminfo"
+     ],
+     "solution": "meminfo."
+    },
+    {
+     "id": "adv-07-ex2",
+     "kind": "self",
+     "prompt": "Calculez la mémoire décodée d'une image de 4000 × 3000 pixels en ARGB_8888, et proposez une solution pour une vignette de 400 × 300.",
+     "solution": "fun main() {\n    val octets = 4000 * 3000 * 4\n    val vignette = 400 * 300 * 4\n    println(\"Image : ${octets / 1_000_000} Mo\")\n    println(\"Vignette : ${vignette / 1_000} ko\")\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "adv-08-abi",
+   "title": "ARM, ABI et bibliothèques natives",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le code Kotlin s'exécute partout. Le code natif, lui, est compilé pour un processeur précis. C'est l'origine de bien des erreurs d'installation."
+    },
+    {
+     "type": "heading",
+     "text": "Les ABI"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une **ABI** décrit le contrat entre un programme et le système : jeu d'instructions, conventions d'appel, format des fichiers."
+    },
+    {
+     "type": "list",
+     "items": [
+      "`arm64-v8a` : ARM 64 bits, la grande majorité des téléphones récents.",
+      "`armeabi-v7a` : ARM 32 bits, des appareils plus anciens.",
+      "`x86_64` : surtout les émulateurs et certains ordinateurs.",
+      "`x86` : d'anciens émulateurs."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "adb shell getprop ro.product.cpu.abilist"
+    },
+    {
+     "type": "paragraph",
+     "text": "Certains appareils récents n'exécutent plus que du 64 bits : cette commande n'y affiche que `arm64-v8a`. C'est le cas du téléphone qui a servi à tester ce cours."
+    },
+    {
+     "type": "heading",
+     "text": "Les bibliothèques dans l'APK"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les bibliothèques sont rangées par ABI, sous la forme `lib/<abi>/lib<nom>.so`. À l'installation, le système choisit le dossier le mieux adapté."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "unzip -l app-release.apk | grep '\\.so$'"
+    },
+    {
+     "type": "warning",
+     "text": "L'erreur `INSTALL_FAILED_NO_MATCHING_ABIS` signifie que l'APK ne contient pas de code natif pour cet appareil. Vérifiez vos `abiFilters`, et qu'une bibliothèque tierce fournit bien cette architecture."
+    },
+    {
+     "type": "paragraph",
+     "text": "Pour limiter les architectures :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    defaultConfig {\n        ndk {\n            abiFilters += listOf(\"arm64-v8a\", \"x86_64\")\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Attention : retirer `armeabi-v7a` exclut les appareils 32 bits. Pour la publication, l'AAB évite ce choix : Google Play ne livre à chaque appareil que ce dont il a besoin."
+    },
+    {
+     "type": "heading",
+     "text": "Les pages de 16 Ko"
+    },
+    {
+     "type": "paragraph",
+     "text": "Android a toujours utilisé des pages mémoire de 4 Ko. Depuis Android 15, des appareils peuvent utiliser **16 Ko**, ce qui améliore notamment le démarrage."
+    },
+    {
+     "type": "warning",
+     "text": "Sur Google Play, les applications qui ciblent Android 15 ou plus doivent prendre en charge 16 Ko sur les appareils 64 bits. À partir du **1er février 2027**, les mises à jour qui ne le font pas ne pourront plus être publiées."
+    },
+    {
+     "type": "list",
+     "items": [
+      "Une application sans code natif est déjà compatible.",
+      "Avec du code natif, utilisez AGP 8.5.1 ou plus et le NDK r28 ou plus, qui alignent à 16 Ko par défaut.",
+      "Mettez à jour les bibliothèques tierces, et retirez du code toute supposition sur une page de 4 Ko."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Vérifier l'alignement d'un APK\nzipalign -c -P 16 -v 4 app-release.apk\n\n# Vérifier la taille de page d'un appareil\nadb shell getconf PAGE_SIZE"
+    },
+    {
+     "type": "info",
+     "text": "Le contrôle `zipalign` a été lancé sur l'APK de debug de cette application : il réussit, et ses bibliothèques sont bien alignées."
+    },
+    {
+     "type": "tip",
+     "text": "Une bibliothèque tierce fermée, jamais mise à jour, peut bloquer toute votre publication. Vérifiez vos dépendances natives avant février 2027 !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle ABI équipe la plupart des téléphones récents ?",
+     "options": [
+      "arm64-v8a",
+      "x86",
+      "mips"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "ARM 64 bits."
+    },
+    {
+     "prompt": "Que signifie INSTALL_FAILED_NO_MATCHING_ABIS ?",
+     "options": [
+      "L'APK n'a pas de code natif pour cet appareil",
+      "La signature diffère",
+      "Le disque est plein"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Vérifiez vos abiFilters."
+    },
+    {
+     "prompt": "Où sont rangées les bibliothèques natives ?",
+     "options": [
+      "Dans lib/<abi>/",
+      "Dans res/values/",
+      "Dans assets/fonts/"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le système choisit le bon dossier."
+    },
+    {
+     "prompt": "Quelle échéance Google Play fixe-t-il pour les pages de 16 Ko ?",
+     "options": [
+      "Le 1er février 2027",
+      "Le 1er janvier 2030",
+      "Il n'y en a pas"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Pour les mises à jour d'applications ciblant Android 15 ou plus."
+    },
+    {
+     "prompt": "Une application sans code natif doit-elle être modifiée pour 16 Ko ?",
+     "options": [
+      "Non, elle est déjà compatible",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Mais il reste conseillé de la tester."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-08-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande affiche la taille de page d'un appareil : `adb shell ____` ?",
+     "accepted": [
+      "getconf PAGE_SIZE"
+     ],
+     "solution": "getconf PAGE_SIZE."
+    },
+    {
+     "id": "adv-08-ex2",
+     "kind": "self",
+     "prompt": "Un utilisateur obtient `INSTALL_FAILED_NO_MATCHING_ABIS` avec votre APK sur un émulateur x86_64. Expliquez, et proposez deux solutions.",
+     "solution": "L'APK ne contient sans doute que des bibliothèques ARM, et l'émulateur attend du x86_64. On peut ajouter x86_64 aux abiFilters et utiliser une bibliothèque qui le fournit, ou tester sur une image ARM adaptée ou sur un téléphone réel."
+    }
+   ]
+  },
+  {
+   "id": "adv-09-ndk",
+   "title": "NDK et JNI",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Le **NDK** permet d'écrire une partie d'une application en C ou C++. **JNI** est le pont entre ce code et Kotlin."
+    },
+    {
+     "type": "heading",
+     "text": "Quand l'utiliser"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Réutiliser une bibliothèque C ou C++ existante.",
+      "Effectuer un calcul très intensif, comme un traitement de signal ou d'image.",
+      "Accéder à des API uniquement natives, comme certaines API audio."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Le NDK ajoute de la complexité : compilation par ABI, plantages plus durs à analyser, erreurs de mémoire. Il rend rarement une application ordinaire plus rapide. Commencez toujours par mesurer."
+    },
+    {
+     "type": "heading",
+     "text": "Une fonction native"
+    },
+    {
+     "type": "paragraph",
+     "text": "Côté Kotlin, `external` déclare la fonction, et `System.loadLibrary` charge la bibliothèque."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "object Calcul {\n    init {\n        System.loadLibrary(\"calcul\")\n    }\n\n    external fun somme(a: Int, b: Int): Int\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Côté C++, le nom de la fonction suit une convention stricte :"
+    },
+    {
+     "type": "code",
+     "language": "cpp",
+     "code": "#include <jni.h>\n\nextern \"C\" JNIEXPORT jint JNICALL\nJava_com_exemple_notes_Calcul_somme(JNIEnv* env, jobject self, jint a, jint b) {\n    return a + b;\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`extern \"C\"` empêche le C++ de modifier le nom du symbole. Une faute dans ce nom donne une `UnsatisfiedLinkError` à l'exécution."
+    },
+    {
+     "type": "heading",
+     "text": "Compiler avec CMake"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "cmake_minimum_required(VERSION 3.22.1)\nproject(\"calcul\")\n\nadd_library(calcul SHARED calcul.cpp)\nfind_library(journal log)\ntarget_link_libraries(calcul ${journal})"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "android {\n    externalNativeBuild {\n        cmake {\n            path = file(\"src/main/cpp/CMakeLists.txt\")\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les règles de JNI"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`JNIEnv` est propre à un fil : ne le partagez pas.",
+      "Une référence reçue n'est valable que pendant l'appel. Pour la garder, créez une référence globale avec `NewGlobalRef`.",
+      "Libérez ce que vous obtenez : `ReleaseStringUTFChars` après `GetStringUTFChars`.",
+      "Après un appel vers Java, vérifiez qu'aucune exception n'est en attente.",
+      "Un fil créé en C++ doit s'attacher à la machine virtuelle avant d'appeler Java."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "cpp",
+     "code": "#include <jni.h>\n#include <string>\n\nextern \"C\" JNIEXPORT jstring JNICALL\nJava_com_exemple_notes_Calcul_saluer(JNIEnv* env, jobject self, jstring nom) {\n    const char* brut = env->GetStringUTFChars(nom, nullptr);\n    if (brut == nullptr) {\n        return nullptr;\n    }\n\n    std::string message = std::string(\"Bonjour, \") + brut;\n    env->ReleaseStringUTFChars(nom, brut);\n\n    return env->NewStringUTF(message.c_str());\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Avec R8, une méthode appelée uniquement depuis le code natif peut être supprimée ou renommée. Ajoutez une règle de conservation, sinon l'erreur n'apparaîtra qu'en release."
+    },
+    {
+     "type": "heading",
+     "text": "Limiter les allers-retours"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque passage de Kotlin à C++ a un coût, surtout pour copier des données. Faites peu d'appels, avec des tâches importantes, plutôt que des milliers de petits appels. `RegisterNatives` dans `JNI_OnLoad` détecte aussi les erreurs de nom dès le chargement."
+    },
+    {
+     "type": "info",
+     "text": "Dans Flutter, `dart:ffi` joue un rôle voisin : il appelle du code C directement depuis Dart, sans passer par un canal."
+    },
+    {
+     "type": "tip",
+     "text": "`UnsatisfiedLinkError` ? Vérifiez le nom de la bibliothèque, l'ABI, puis le nom exact de la fonction. Dans cet ordre !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel mot-clé Kotlin déclare une fonction native ?",
+     "options": [
+      "external",
+      "native",
+      "extern"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "En Java, c'est native."
+    },
+    {
+     "prompt": "Que provoque un mauvais nom de fonction JNI ?",
+     "options": [
+      "Une UnsatisfiedLinkError",
+      "Un warning sans effet",
+      "Une erreur Gradle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle apparaît à l'exécution."
+    },
+    {
+     "prompt": "Peut-on partager JNIEnv entre fils ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est propre à chaque fil."
+    },
+    {
+     "prompt": "Que faire après GetStringUTFChars ?",
+     "options": [
+      "Appeler ReleaseStringUTFChars",
+      "Rien",
+      "Redémarrer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon la mémoire n'est pas libérée."
+    },
+    {
+     "prompt": "Le NDK rend-il toute application plus rapide ?",
+     "options": [
+      "Non, il faut d'abord mesurer",
+      "Oui, toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ajoute surtout de la complexité."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-09-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction Kotlin ou Java charge une bibliothèque native ?",
+     "accepted": [
+      "System.loadLibrary",
+      "loadLibrary"
+     ],
+     "solution": "System.loadLibrary."
+    },
+    {
+     "id": "adv-09-ex2",
+     "kind": "self",
+     "prompt": "Déclarez un objet Kotlin `Filtre` qui charge la bibliothèque `image`, et une fonction native `flou(rayon: Int): Int`.",
+     "solution": "object Filtre {\n    init {\n        System.loadLibrary(\"image\")\n    }\n\n    external fun flou(rayon: Int): Int\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "adv-10-fastboot",
+   "title": "Fastboot, bootloader et Termux",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Certains outils travaillent au plus près de l'appareil. Ils sont puissants, et ils peuvent causer de vrais dégâts. Lisez entièrement cette leçon avant de les utiliser."
+    },
+    {
+     "type": "warning",
+     "text": "Les commandes de cette leçon peuvent **effacer toutes les données** d'un téléphone, annuler sa garantie ou le rendre inutilisable. Ne les essayez que sur un appareil de test, après avoir tout sauvegardé."
+    },
+    {
+     "type": "heading",
+     "text": "Le bootloader"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le **bootloader** est le premier programme lancé au démarrage. Il vérifie le système, puis le démarre. **Fastboot** est le protocole qui permet de lui parler depuis un ordinateur."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Redémarrer vers le bootloader\nadb reboot bootloader\n\n# Vérifier la connexion\nfastboot devices\n\n# Lire des informations\nfastboot getvar product\nfastboot getvar secure\n\n# Redémarrer normalement\nfastboot reboot"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les commandes de lecture sont sans danger. Il existe aussi **fastbootd**, une version de fastboot qui tourne dans l'espace utilisateur, pour les partitions dynamiques."
+    },
+    {
+     "type": "heading",
+     "text": "Déverrouiller le bootloader"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un bootloader verrouillé refuse d'installer un système non signé : c'est une protection contre un attaquant qui aurait le téléphone en main. Le déverrouillage exige d'activer **Déverrouillage OEM** dans les options pour les développeurs."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# DANGER : efface toutes les données de l'appareil\nfastboot flashing unlock"
+    },
+    {
+     "type": "warning",
+     "text": "`fastboot flashing unlock` provoque une **réinitialisation complète** de l'appareil. Toutes les photos, messages et applications sont perdus. Un bootloader déverrouillé réduit aussi la sécurité, et certains constructeurs n'autorisent pas cette opération."
+    },
+    {
+     "type": "warning",
+     "text": "`fastboot flash` écrit directement sur une partition. Une image incorrecte peut empêcher tout démarrage. Pour le développement d'applications, vous n'en avez pas besoin : un émulateur suffit largement."
+    },
+    {
+     "type": "heading",
+     "text": "Termux"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Termux** est un environnement Linux qui s'exécute dans une application Android, sans accès root. Vous y disposez d'un shell et d'un gestionnaire de paquets, directement sur le téléphone."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "pkg update\npkg install python git openssh"
+    },
+    {
+     "type": "info",
+     "text": "Installez Termux depuis F-Droid ou depuis ses versions sur GitHub. La version Google Play est expérimentale et moins complète. Ne mélangez pas les sources : ces applications doivent être signées avec la même clé, sinon vous obtiendrez une erreur `INSTALL_FAILED_UPDATE_INCOMPATIBLE`."
+    },
+    {
+     "type": "paragraph",
+     "text": "Termux est excellent pour apprendre Linux ou exécuter des scripts. Il ne remplace pas Android Studio : compiler un vrai projet Android complet sur un téléphone n'est pas une méthode de travail réaliste."
+    },
+    {
+     "type": "warning",
+     "text": "Ne collez jamais dans Termux, ni dans un shell, une commande dont vous ne comprenez pas l'effet."
+    },
+    {
+     "type": "tip",
+     "text": "Le meilleur réflexe avec ces outils : un téléphone de test, et une sauvegarde. Le deuxième réflexe : relire la commande avant d'appuyer sur Entrée !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait fastboot flashing unlock ?",
+     "options": [
+      "Il réinitialise complètement l'appareil",
+      "Il ne change rien",
+      "Il installe Android Studio"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Toutes les données sont perdues."
+    },
+    {
+     "prompt": "Quelle commande est sans danger ?",
+     "options": [
+      "fastboot getvar product",
+      "fastboot flashing unlock",
+      "fastboot flash boot image.img"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle lit seulement une information."
+    },
+    {
+     "prompt": "Qu'est-ce que le bootloader ?",
+     "options": [
+      "Le premier programme lancé au démarrage",
+      "Un plugin Flutter",
+      "Un service de notification"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il vérifie le système."
+    },
+    {
+     "prompt": "D'où installer Termux ?",
+     "options": [
+      "F-Droid ou GitHub",
+      "N'importe quel site"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sans mélanger les sources."
+    },
+    {
+     "prompt": "Faut-il flasher son téléphone pour développer des applications ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un émulateur ou le débogage USB suffisent."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-10-ex1",
+     "kind": "fill",
+     "prompt": "Quelle commande ADB redémarre un appareil vers le bootloader ?",
+     "accepted": [
+      "adb reboot bootloader"
+     ],
+     "solution": "adb reboot bootloader."
+    },
+    {
+     "id": "adv-10-ex2",
+     "kind": "self",
+     "prompt": "Un ami veut déverrouiller le bootloader de son téléphone principal pour « aller plus vite en développement ». Que lui répondez-vous ?",
+     "solution": "Je lui déconseille : le déverrouillage efface toutes ses données, réduit la sécurité, et n'apporte rien au développement d'applications. Le débogage USB et un émulateur suffisent. S'il veut expérimenter, qu'il utilise un téléphone de test après une sauvegarde complète."
+    }
+   ]
+  },
+  {
+   "id": "adv-11-compilation",
+   "title": "Analyser les erreurs de compilation",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une erreur de compilation fait peur, car elle s'étale sur des pages. Avec une méthode, elle se lit vite."
+    },
+    {
+     "type": "heading",
+     "text": "La méthode"
+    },
+    {
+     "type": "layers",
+     "title": "Lire une erreur de compilation",
+     "layers": [
+      {
+       "name": "1. Trouver le premier message",
+       "detail": "Les erreurs suivantes sont souvent des conséquences."
+      },
+      {
+       "name": "2. Identifier la tâche",
+       "detail": "Le nom indique l'étape : Kotlin, ressources, manifeste, R8."
+      },
+      {
+       "name": "3. Reformuler",
+       "detail": "Que réclame vraiment le message ?"
+      },
+      {
+       "name": "4. Changer une seule chose",
+       "detail": "Sinon, vous ne saurez pas ce qui a réglé le problème."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Obtenir plus d'informations"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "./gradlew assembleDebug --stacktrace\n./gradlew assembleDebug --info\n./gradlew :app:dependencies"
+    },
+    {
+     "type": "heading",
+     "text": "Les erreurs courantes"
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Could not resolve androidx.core:core-ktx:9.9.9\n→ Version inexistante, ou dépôt absent de settings.gradle.kts.\n\nDuplicate class kotlin.collections.jdk8...\n→ Deux bibliothèques fournissent la même classe.\n\nManifest merger failed : uses-sdk:minSdkVersion 21 cannot be smaller\nthan version 24 declared in library\n→ Une bibliothèque exige un minSdk supérieur au vôtre.\n\nDependency requires libraries to compile against version 37\n→ Augmentez compileSdk, ce qui peut exiger un AGP plus récent.\n\nMinimum supported Gradle version is 9.6.0\n→ Mettez à jour distributionUrl dans gradle-wrapper.properties.\n\nUnresolved reference: Foo\n→ Import, dépendance ou code généré manquant.\n\nMissing classes detected while running R8\n→ Une classe manque en release : ajoutez une règle ou la dépendance."
+    },
+    {
+     "type": "heading",
+     "text": "Les conflits de dépendances"
+    },
+    {
+     "type": "paragraph",
+     "text": "Deux bibliothèques peuvent réclamer des versions différentes d'une troisième. Gradle retient en général la plus récente, ce qui peut casser celle qui attendait l'ancienne."
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "# Voir d'où vient une bibliothèque\n./gradlew :app:dependencyInsight --dependency okhttp --configuration debugRuntimeClasspath"
+    },
+    {
+     "type": "heading",
+     "text": "Remonter la chaîne des versions"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une montée de version en entraîne souvent d'autres. Une bibliothèque récente peut exiger `compileSdk 37`, qui exige un AGP récent, qui exige lui-même un Gradle récent. Lisez les messages dans l'ordre, ils vous guident d'étape en étape."
+    },
+    {
+     "type": "heading",
+     "text": "Les erreurs qui n'arrivent qu'en release"
+    },
+    {
+     "type": "list",
+     "items": [
+      "R8 retire une classe utilisée par réflexion : ajoutez une règle `-keep`.",
+      "La permission `INTERNET` ne figure pas dans le manifeste principal.",
+      "La configuration de signature est absente."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les caches"
+    },
+    {
+     "type": "code",
+     "language": "shell",
+     "code": "./gradlew --stop\n./gradlew clean"
+    },
+    {
+     "type": "warning",
+     "text": "Évitez de supprimer `~/.gradle` à l'aveugle : tout sera retéléchargé, et cela masque la vraie cause. Nettoyez seulement après avoir compris le message. Avec Flutter, `flutter clean` joue un rôle voisin."
+    },
+    {
+     "type": "info",
+     "text": "Le Chaudron des Bugs de cette application vous aidera bientôt à analyser ces messages."
+    },
+    {
+     "type": "tip",
+     "text": "Copiez le premier message d'erreur en entier avant de chercher. C'est lui, et lui seul, qui compte au départ !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle erreur lire en premier ?",
+     "options": [
+      "La première",
+      "La dernière",
+      "Une au hasard"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Les suivantes sont souvent des conséquences."
+    },
+    {
+     "prompt": "Quelle option affiche la pile d'une erreur Gradle ?",
+     "options": [
+      "--stacktrace",
+      "--release",
+      "--clean"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "--info ajoute plus de détails."
+    },
+    {
+     "prompt": "Que signifie Manifest merger failed sur minSdkVersion ?",
+     "options": [
+      "Une bibliothèque exige un minSdk plus élevé",
+      "Le manifeste est absent",
+      "Le réseau est coupé"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Augmentez minSdk, ou changez de bibliothèque."
+    },
+    {
+     "prompt": "Comment trouver l'origine d'une dépendance ?",
+     "options": [
+      "dependencyInsight",
+      "signingReport",
+      "lintDebug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La tâche affiche qui la réclame."
+    },
+    {
+     "prompt": "Pourquoi une erreur apparaît-elle seulement en release ?",
+     "options": [
+      "R8 a pu retirer du code",
+      "Le debug n'utilise pas Kotlin",
+      "La release n'a pas de manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Ajoutez une règle -keep si besoin."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "adv-11-ex1",
+     "kind": "fill",
+     "prompt": "Quelle tâche Gradle affiche l'arbre des dépendances ?",
+     "accepted": [
+      "dependencies",
+      ":app:dependencies",
+      "./gradlew :app:dependencies"
+     ],
+     "solution": "dependencies, par exemple ./gradlew :app:dependencies."
+    },
+    {
+     "id": "adv-11-ex2",
+     "kind": "self",
+     "prompt": "Vous obtenez `Minimum supported Gradle version is 9.6.0. Current version is 9.3.1.` Que faites-vous ?",
+     "solution": "Je modifie distributionUrl dans gradle/wrapper/gradle-wrapper.properties pour pointer vers la version 9.6.0, puis je relance la compilation. Je vérifie aussi la compatibilité entre Gradle, AGP et Kotlin, et je lis l'erreur suivante si une autre exigence apparaît."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Quelle commande installe une mise à jour en gardant les données ?",
+    "options": [
+     "adb install -r",
+     "adb uninstall",
+     "adb shell pm clear"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Les deux autres effacent les données."
+   },
+   {
+    "prompt": "Quel outil simule la mort d'un processus en arrière-plan ?",
+    "options": [
+     "adb shell am kill",
+     "adb reboot"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il imite le système qui récupère la mémoire."
+   },
+   {
+    "prompt": "Où trouver la vraie cause dans une pile d'appels ?",
+    "options": [
+     "Au dernier Caused by",
+     "Sur la première ligne du fichier"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Puis dans votre premier fichier."
+   },
+   {
+    "prompt": "Après combien de temps sans réponse tactile survient un ANR ?",
+    "options": [
+     "5 secondes",
+     "30 millisecondes"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le fil principal est bloqué."
+   },
+   {
+    "prompt": "Quel est l'intervalle minimal de WorkManager ?",
+    "options": [
+     "15 minutes",
+     "10 secondes"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'heure exacte n'est pas garantie."
+   },
+   {
+    "prompt": "Que devient le réseau d'une application en Doze ?",
+    "options": [
+     "Il est suspendu",
+     "Il reste prioritaire"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Sauf pendant une fenêtre de maintenance."
+   },
+   {
+    "prompt": "Quels éléments provoquent souvent une fuite de mémoire ?",
+    "options": [
+     "Une activité gardée en statique",
+     "Un écouteur jamais retiré",
+     "Un `val` local"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Une variable locale disparaît à la fin de la fonction."
+   },
+   {
+    "prompt": "Qu'indique INSTALL_FAILED_NO_MATCHING_ABIS ?",
+    "options": [
+     "Il manque le code natif pour cet appareil",
+     "La clé est expirée"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Vérifiez les abiFilters."
+   },
+   {
+    "prompt": "Quelle est la conséquence de fastboot flashing unlock ?",
+    "options": [
+     "Une réinitialisation complète",
+     "Une mise à jour d'Android"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Toutes les données sont perdues."
+   },
+   {
+    "prompt": "Quel est le premier réflexe face à une erreur de compilation ?",
+    "options": [
+     "Lire le premier message",
+     "Supprimer ~/.gradle"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Les suivantes sont souvent des conséquences."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Android Debug Bridge",
+   "url": "https://developer.android.com/tools/adb"
+  },
+  {
+   "title": "Diagnostiquer les ANR",
+   "url": "https://developer.android.com/topic/performance/vitals/anr"
+  },
+  {
+   "title": "Doze et App Standby",
+   "url": "https://developer.android.com/training/monitoring-device-state/doze-standby"
+  },
+  {
+   "title": "WorkManager : définir un travail",
+   "url": "https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started/define-work"
+  },
+  {
+   "title": "Gestion de la mémoire",
+   "url": "https://developer.android.com/topic/performance/memory"
+  },
+  {
+   "title": "ABI prises en charge",
+   "url": "https://developer.android.com/ndk/guides/abis"
+  },
+  {
+   "title": "Pages mémoire de 16 Ko",
+   "url": "https://developer.android.com/guide/practices/page-sizes"
+  },
+  {
+   "title": "Conseils pour JNI",
+   "url": "https://developer.android.com/ndk/guides/jni-tips"
+  },
+  {
+   "title": "Déverrouillage du bootloader",
+   "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking"
+  },
+  {
+   "title": "Termux sur GitHub",
+   "url": "https://github.com/termux/termux-app"
+  }
+ ]
+}
