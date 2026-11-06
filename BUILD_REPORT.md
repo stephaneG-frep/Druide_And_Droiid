@@ -1,5 +1,16 @@
 # Rapport de compilation
 
+## Phase 5, tour 3 — 2026-11-05
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter test integration_test -d linux` | Réussi, compilé et exécuté par ces tests |
+| Exemples | `python3 tool/check_course_code.py` | 83 exemples compilés et exécutés |
+| Extraits Android | `python3 tool/check_android_snippets.py interfaces donnees-reseaux` | 53 extraits compilés |
+
+Le projet de preuve utilise AGP 9.5.0, Gradle 9.6.0, Kotlin 2.4.10, `compileSdk 37`, le BOM Compose 2026.09.00, Room 3.0.3 et Retrofit 3.0.0. Ces versions ne sont pas celles de l'application : AGP 9.1.0, Gradle 9.3.1.
+
 ## Phase 5, tour 2 — 2026-11-04
 
 | Cible | Commande | Résultat |

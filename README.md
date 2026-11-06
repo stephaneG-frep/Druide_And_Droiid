@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 5 (contenus) en cours.** Les modules 1 à 4 sont rédigés sur douze. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 5 (contenus) en cours.** Les modules 1 à 6 sont rédigés sur douze. L'IA et l'Android Lab n'existent pas encore. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 
@@ -39,6 +39,12 @@ Après toute modification d'un cours, contrôlez les exemples Kotlin et Java (`k
 
 ```bash
 python3 tool/check_course_code.py
+```
+
+Pour compiler les extraits Android d'un module dans un vrai projet Gradle (le premier lancement télécharge plusieurs gigaoctets) :
+
+```bash
+python3 tool/check_android_snippets.py interfaces donnees-reseaux
 ```
 
 Pour régénérer l'icône et des aperçus PNG des écrans :

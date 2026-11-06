@@ -87,6 +87,8 @@ Aucun exercice n'exécute de code : la correction ne prétend jamais avoir compi
 
 `tool/check_course_code.py` compile et exécute avec `kotlinc` et `javac` chaque exemple contenant `fun main` ou `public class Main`, y compris les corrigés, et compare la sortie au champ `output`. Les extraits utilisant des API Android ne s'exécutent pas sur un ordinateur : l'outil les liste comme non vérifiés. À lancer après toute modification d'un cours.
 
+`tool/check_android_snippets.py` compile les extraits Android des modules indiqués dans un vrai projet Gradle, généré dans `build/android_snippets` : Kotlin, KSP pour vérifier le SQL de Room, mises en page et fichiers XML de sécurité réseau. Il prouve que le code compile, pas qu'il se comporte comme annoncé. Les lignes `import` étant omises dans les cours, il les ajoute. Ses versions sont fixées en tête du script.
+
 Règles de progression, dans `rewards.dart` :
 
 | Action | Condition | XP |

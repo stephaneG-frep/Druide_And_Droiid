@@ -1,0 +1,1677 @@
+{
+ "moduleId": "interfaces",
+ "lessons": [
+  {
+   "id": "ui-01-activity",
+   "title": "Activity et cycle de vie",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une **Activity** est le point d'entrée d'un écran : c'est elle que le système lance. Comprendre son cycle de vie évite des plantages, et des pertes de données."
+    },
+    {
+     "type": "info",
+     "text": "Dans ce module, les exemples Android montrent le code utile, sans les lignes `import`. Android Studio les ajoute pour vous."
+    },
+    {
+     "type": "heading",
+     "text": "Les six étapes"
+    },
+    {
+     "type": "layers",
+     "title": "Le cycle de vie d'une activité",
+     "layers": [
+      {
+       "name": "onCreate",
+       "detail": "Une seule fois à la création : on prépare l'écran."
+      },
+      {
+       "name": "onStart",
+       "detail": "L'activité devient visible."
+      },
+      {
+       "name": "onResume",
+       "detail": "Elle passe au premier plan et reçoit les interactions."
+      },
+      {
+       "name": "onPause",
+       "detail": "Elle perd le premier plan, mais peut rester visible."
+      },
+      {
+       "name": "onStop",
+       "detail": "Elle n'est plus visible."
+      },
+      {
+       "name": "onDestroy",
+       "detail": "Elle est détruite."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Une activité moderne avec Compose tient en quelques lignes :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class MainActivity : ComponentActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContent {\n            MaterialTheme {\n                Text(\"Bonjour, jeune apprenti !\")\n            }\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les changements de configuration"
+    },
+    {
+     "type": "paragraph",
+     "text": "Par défaut, faire pivoter l'écran **détruit puis recrée** l'activité : `onPause`, `onStop`, `onDestroy`, puis `onCreate` sur une nouvelle instance. Il en va de même pour un changement de thème ou de taille de fenêtre. Tout ce qui n'est gardé que dans l'activité disparaît."
+    },
+    {
+     "type": "warning",
+     "text": "`onPause` est très bref. N'y enregistrez pas de données, n'y lancez ni requête réseau ni transaction : l'opération peut ne pas se terminer. Enregistrez plutôt tôt, pendant que l'activité est au premier plan, ou au plus tard dans `onStop`."
+    },
+    {
+     "type": "heading",
+     "text": "Une seule activité"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les applications modernes utilisent généralement **une seule activité**, et changent d'écran à l'intérieur avec une bibliothèque de navigation. L'activité sert alors surtout de porte d'entrée."
+    },
+    {
+     "type": "paragraph",
+     "text": "Avec Compose, évitez aussi de mettre votre logique dans `onStart` ou `onResume`. L'interface réagit naturellement au cycle de vie avec des API comme `collectAsStateWithLifecycle`, que vous découvrirez plus loin."
+    },
+    {
+     "type": "tip",
+     "text": "Ajoutez un `Log.d` dans chaque méthode, puis faites pivoter l'écran en regardant Logcat. Rien ne remplace ce spectacle !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle méthode est appelée une seule fois à la création ?",
+     "options": [
+      "onCreate",
+      "onResume",
+      "onStart"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est là que l'on prépare l'écran."
+    },
+    {
+     "prompt": "Que se passe-t-il par défaut quand l'écran pivote ?",
+     "options": [
+      "L'activité est détruite puis recréée",
+      "Rien",
+      "L'application se ferme"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un changement de configuration."
+    },
+    {
+     "prompt": "Peut-on enregistrer une base de données dans onPause ?",
+     "options": [
+      "Non, cette méthode est trop brève",
+      "Oui, c'est l'endroit idéal"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Préférez enregistrer plus tôt, ou dans onStop."
+    },
+    {
+     "prompt": "Combien d'activités une application moderne utilise-t-elle généralement ?",
+     "options": [
+      "Une seule",
+      "Une par écran",
+      "Au moins dix"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La navigation change d'écran à l'intérieur."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-01-ex1",
+     "kind": "fill",
+     "prompt": "Quelle méthode est appelée quand l'activité n'est plus visible ?",
+     "accepted": [
+      "onStop",
+      "onStop()"
+     ],
+     "solution": "onStop."
+    },
+    {
+     "id": "ui-01-ex2",
+     "kind": "self",
+     "prompt": "Un compteur stocké dans un champ de l'activité revient à 0 quand l'écran pivote. Expliquez pourquoi.",
+     "solution": "Le pivot est un changement de configuration : le système détruit l'activité et en crée une nouvelle instance. Le champ appartenait à l'ancienne instance, il est donc perdu. Il faut garder cette valeur avec rememberSaveable ou dans un ViewModel."
+    }
+   ]
+  },
+  {
+   "id": "ui-02-compose",
+   "title": "Jetpack Compose et les composables",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Jetpack Compose** est la bibliothèque moderne d'interface d'Android. Vous décrivez ce que l'écran doit afficher pour un état donné, et Compose se charge de le mettre à jour. C'est une approche **déclarative**."
+    },
+    {
+     "type": "heading",
+     "text": "Un composable"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **composable** est une fonction marquée `@Composable`, qui décrit une partie de l'interface. Par convention, son nom commence par une majuscule."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Salutation(nom: String) {\n    Text(text = \"Bonjour, $nom !\")\n}\n\n@Preview(showBackground = true)\n@Composable\nfun SalutationApercu() {\n    Salutation(\"Merlin\")\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`@Preview` affiche le composable directement dans Android Studio, sans lancer l'application."
+    },
+    {
+     "type": "heading",
+     "text": "Disposer les éléments"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`Column` : les enfants sont empilés verticalement.",
+      "`Row` : les enfants sont alignés horizontalement.",
+      "`Box` : les enfants sont superposés."
+     ]
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun CarteSort(nom: String, niveau: Int) {\n    Row(\n        modifier = Modifier\n            .fillMaxWidth()\n            .padding(16.dp),\n        verticalAlignment = Alignment.CenterVertically\n    ) {\n        Column(modifier = Modifier.weight(1f)) {\n            Text(text = nom, style = MaterialTheme.typography.titleMedium)\n            Text(text = \"Niveau $niveau\")\n        }\n        Button(onClick = { }) {\n            Text(\"Lancer\")\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les modificateurs"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un `Modifier` décore ou configure un composable : taille, marge, fond, clic. Ils s'enchaînent, et **l'ordre compte**."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Badges() {\n    // La marge est à l'extérieur du fond\n    Text(\"A\", Modifier.padding(16.dp).background(Color.Cyan))\n\n    // La marge est à l'intérieur du fond\n    Text(\"B\", Modifier.background(Color.Cyan).padding(16.dp))\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les listes"
+    },
+    {
+     "type": "paragraph",
+     "text": "`LazyColumn` ne compose que les éléments visibles : elle reste fluide avec des milliers de lignes. Indiquez une `key` stable, pour que Compose suive chaque élément quand la liste change."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Sort(val id: Int, val nom: String)\n\n@Composable\nfun ListeSorts(sorts: List<Sort>) {\n    LazyColumn {\n        items(sorts, key = { it.id }) { sort ->\n            Text(sort.nom, Modifier.padding(16.dp))\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "La recomposition"
+    },
+    {
+     "type": "paragraph",
+     "text": "Quand un état change, Compose rappelle les composables qui le lisent : c'est la **recomposition**. Un composable peut donc être rappelé très souvent."
+    },
+    {
+     "type": "warning",
+     "text": "Un composable doit rester rapide et sans effet de bord. N'y lancez ni requête réseau, ni écriture en base : ce code serait exécuté à chaque recomposition."
+    },
+    {
+     "type": "tip",
+     "text": "Pensez `f(état) = interface`. Vous ne modifiez plus un écran : vous le redécrivez !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle annotation marque une fonction d'interface ?",
+     "options": [
+      "@Composable",
+      "@Interface",
+      "@Screen"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par convention, son nom commence par une majuscule."
+    },
+    {
+     "prompt": "Quel composant dispose ses enfants verticalement ?",
+     "options": [
+      "Column",
+      "Row",
+      "Box"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Row les aligne horizontalement."
+    },
+    {
+     "prompt": "L'ordre des modificateurs compte-t-il ?",
+     "options": [
+      "Oui",
+      "Non"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "padding avant ou après background ne donne pas le même résultat."
+    },
+    {
+     "prompt": "Pourquoi utiliser LazyColumn pour une longue liste ?",
+     "options": [
+      "Elle ne compose que les éléments visibles",
+      "Elle est plus colorée",
+      "Elle évite d'utiliser Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle reste fluide avec beaucoup d'éléments."
+    },
+    {
+     "prompt": "Que ne faut-il pas faire directement dans un composable ?",
+     "options": [
+      "Une requête réseau",
+      "Afficher un Text",
+      "Lire un paramètre"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code peut être rappelé à chaque recomposition."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-02-ex1",
+     "kind": "fill",
+     "prompt": "Quelle annotation affiche un composable dans Android Studio sans lancer l'application ?",
+     "accepted": [
+      "@Preview",
+      "Preview"
+     ],
+     "solution": "@Preview."
+    },
+    {
+     "id": "ui-02-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un composable `Profil` qui affiche un nom et un grade, l'un sous l'autre, avec une marge de 16 dp.",
+     "solution": "@Composable\nfun Profil(nom: String, grade: String) {\n    Column(Modifier.padding(16.dp)) {\n        Text(nom)\n        Text(grade)\n    }\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-03-etats",
+   "title": "Les états",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un **état** est toute valeur qui peut changer et que l'écran affiche. Compose ne met à jour l'interface que s'il observe ce changement."
+    },
+    {
+     "type": "heading",
+     "text": "remember et mutableStateOf"
+    },
+    {
+     "type": "paragraph",
+     "text": "`mutableStateOf` crée une valeur observable : Compose recompose ce qui la lit. `remember` la conserve d'une recomposition à l'autre."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Compteur() {\n    var clics by remember { mutableStateOf(0) }\n\n    Button(onClick = { clics++ }) {\n        Text(\"Cliqué $clics fois\")\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Survivre à la rotation"
+    },
+    {
+     "type": "paragraph",
+     "text": "`remember` oublie sa valeur quand l'activité est recréée. `rememberSaveable` la conserve à travers les changements de configuration, et même si le système tue le processus."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Recherche() {\n    var texte by rememberSaveable { mutableStateOf(\"\") }\n\n    OutlinedTextField(\n        value = texte,\n        onValueChange = { texte = it },\n        label = { Text(\"Rechercher un sort\") }\n    )\n}"
+    },
+    {
+     "type": "warning",
+     "text": "`rememberSaveable` est prévu pour de petites données. Elles passent par un `Bundle`, et ne survivent pas si l'utilisateur ferme lui-même l'application depuis l'écran des applications récentes. Les données durables vont en base."
+    },
+    {
+     "type": "warning",
+     "text": "Une liste modifiable comme `mutableListOf()` n'est pas observable : l'écran n'est pas mis à jour quand elle change. Utilisez un `State<List<T>>` avec une liste immuable."
+    },
+    {
+     "type": "heading",
+     "text": "Remonter l'état"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un composable qui garde son état est difficile à réutiliser et à tester. La **remontée d'état** le rend sans état : il reçoit la valeur en paramètre, et signale les changements par un événement."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun EcranRecherche() {\n    var texte by rememberSaveable { mutableStateOf(\"\") }\n\n    ChampRecherche(texte = texte, surChangement = { texte = it })\n}\n\n@Composable\nfun ChampRecherche(texte: String, surChangement: (String) -> Unit) {\n    OutlinedTextField(value = texte, onValueChange = surChangement)\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`ChampRecherche` ne stocke plus rien : il est réutilisable partout, et l'état n'a qu'une seule source de vérité."
+    },
+    {
+     "type": "heading",
+     "text": "Le flux unidirectionnel"
+    },
+    {
+     "type": "layers",
+     "title": "L'état descend, les événements remontent",
+     "layers": [
+      {
+       "name": "EcranRecherche",
+       "detail": "Possède l'état, et le transmet vers le bas."
+      },
+      {
+       "name": "ChampRecherche",
+       "detail": "Affiche l'état, et remonte les saisies avec surChangement."
+      }
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "Remontez l'état au moins jusqu'au plus proche parent commun des composables qui le lisent, et jusqu'au plus haut niveau où il est modifié."
+    },
+    {
+     "type": "tip",
+     "text": "Un champ de texte qui refuse d'écrire ? Vous lui passez sûrement une valeur figée. Le champ n'affiche que ce que vous lui donnez !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que fait mutableStateOf ?",
+     "options": [
+      "Il crée une valeur observée par Compose",
+      "Il enregistre en base",
+      "Il lance une coroutine"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Tout changement recompose les lecteurs."
+    },
+    {
+     "prompt": "Quelle fonction survit à la rotation de l'écran ?",
+     "options": [
+      "rememberSaveable",
+      "remember"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "remember ne survit qu'à la recomposition."
+    },
+    {
+     "prompt": "Pourquoi remonter l'état ?",
+     "options": [
+      "Pour rendre un composable réutilisable et testable",
+      "Pour accélérer le GPU",
+      "Pour éviter Kotlin"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'état n'a alors qu'une seule source de vérité."
+    },
+    {
+     "prompt": "Dans un flux unidirectionnel, que font les événements ?",
+     "options": [
+      "Ils remontent",
+      "Ils descendent",
+      "Ils disparaissent"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'état descend, les événements remontent."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-03-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction garde une valeur à travers la rotation de l'écran ?",
+     "accepted": [
+      "rememberSaveable",
+      "rememberSaveable()"
+     ],
+     "solution": "rememberSaveable."
+    },
+    {
+     "id": "ui-03-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un composable sans état `Interrupteur`, qui reçoit `actif` et `surChangement`, et affiche un `Switch`.",
+     "solution": "@Composable\nfun Interrupteur(actif: Boolean, surChangement: (Boolean) -> Unit) {\n    Switch(checked = actif, onCheckedChange = surChangement)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-04-viewmodel",
+   "title": "ViewModel et MVVM",
+   "minutes": 13,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Plus un écran grandit, plus sa logique a besoin d'un endroit à elle. C'est le rôle du **ViewModel**."
+    },
+    {
+     "type": "heading",
+     "text": "MVVM"
+    },
+    {
+     "type": "layers",
+     "title": "Modèle, Vue, ViewModel",
+     "layers": [
+      {
+       "name": "Vue",
+       "detail": "Les composables : afficher l'état, transmettre les actions."
+      },
+      {
+       "name": "ViewModel",
+       "detail": "Produit l'état de l'écran, et traite les événements."
+      },
+      {
+       "name": "Modèle",
+       "detail": "Les données et la logique, derrière les dépôts."
+      }
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Un ViewModel"
+    },
+    {
+     "type": "paragraph",
+     "text": "Son atout principal : il **survit aux changements de configuration**. Après une rotation, la nouvelle activité retrouve le même ViewModel, et ses tâches en cours continuent."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class EtatDes(val valeur: Int? = null, val lancers: Int = 0)\n\nclass DesViewModel : ViewModel() {\n    private val _etat = MutableStateFlow(EtatDes())\n    val etat: StateFlow<EtatDes> = _etat.asStateFlow()\n\n    fun lancer() {\n        _etat.update { courant ->\n            courant.copy(\n                valeur = (1..6).random(),\n                lancers = courant.lancers + 1,\n            )\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`update` est sûre même si plusieurs coroutines écrivent à la fois. L'écran récupère l'état, et transmet les actions :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun EcranDes(viewModel: DesViewModel = viewModel()) {\n    val etat by viewModel.etat.collectAsStateWithLifecycle()\n\n    Column {\n        Text(\"Résultat : ${etat.valeur ?: \"-\"}\")\n        Text(\"Lancers : ${etat.lancers}\")\n        Button(onClick = viewModel::lancer) {\n            Text(\"Lancer le dé\")\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`collectAsStateWithLifecycle` cesse de collecter quand l'écran passe en arrière-plan, ce qui économise des ressources. C'est la façon recommandée de lire un `Flow` sur Android."
+    },
+    {
+     "type": "heading",
+     "text": "Décrire les états d'un écran"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une interface scellée évite les combinaisons impossibles, comme un chargement et une erreur en même temps. Cette logique ne dépend pas d'Android, on peut donc la tester sur un ordinateur :"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "sealed interface EtatProfil {\n    data object Chargement : EtatProfil\n    data class Pret(val nom: String) : EtatProfil\n    data class Echec(val message: String) : EtatProfil\n}\n\nfun texte(etat: EtatProfil) = when (etat) {\n    EtatProfil.Chargement -> \"Patientez...\"\n    is EtatProfil.Pret -> \"Bienvenue, ${etat.nom}\"\n    is EtatProfil.Echec -> \"Erreur : ${etat.message}\"\n}\n\nfun main() {\n    println(texte(EtatProfil.Chargement))\n    println(texte(EtatProfil.Pret(\"Viviane\")))\n    println(texte(EtatProfil.Echec(\"réseau indisponible\")))\n}",
+     "output": "Patientez...\nBienvenue, Viviane\nErreur : réseau indisponible"
+    },
+    {
+     "type": "heading",
+     "text": "Les règles à respecter"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Le ViewModel ne garde aucune référence vers un `Context`, une `Activity` ou une vue : il vit plus longtemps qu'eux.",
+      "Il ne connaît pas les détails de l'interface. Il expose des données, pas des couleurs.",
+      "Ne le passez pas à des sous-composables : donnez-leur seulement les valeurs et les événements utiles.",
+      "Il sert au niveau de l'écran, pas pour de petits composants réutilisables."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Un ViewModel survit à la rotation, mais pas à la mort du processus. Pour cela, utilisez `SavedStateHandle` ou un stockage durable."
+    },
+    {
+     "type": "tip",
+     "text": "Votre composable contient un `if` sur une règle métier ? Déplacez-le dans le ViewModel, et il deviendra testable sans écran !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel est l'atout principal d'un ViewModel ?",
+     "options": [
+      "Il survit aux changements de configuration",
+      "Il dessine plus vite",
+      "Il remplace la base de données"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Après une rotation, on retrouve le même ViewModel."
+    },
+    {
+     "prompt": "Que ne doit pas contenir un ViewModel ?",
+     "options": [
+      "Une référence vers une Activity",
+      "Un StateFlow",
+      "Une data class d'état"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il vit plus longtemps qu'elle : ce serait une fuite."
+    },
+    {
+     "prompt": "Quelle fonction lit un Flow en respectant le cycle de vie ?",
+     "options": [
+      "collectAsStateWithLifecycle",
+      "collect",
+      "toList"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est la méthode recommandée sur Android."
+    },
+    {
+     "prompt": "Le ViewModel survit-il à la mort du processus ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Utilisez SavedStateHandle ou un stockage durable."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-04-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction modifie un MutableStateFlow de façon sûre à partir de sa valeur courante ?",
+     "accepted": [
+      "update",
+      "update()",
+      ".update"
+     ],
+     "solution": "update."
+    },
+    {
+     "id": "ui-04-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un `CompteurViewModel` qui expose un `StateFlow<Int>` en lecture seule, et une fonction `incrementer`.",
+     "solution": "class CompteurViewModel : ViewModel() {\n    private val _valeur = MutableStateFlow(0)\n    val valeur: StateFlow<Int> = _valeur.asStateFlow()\n\n    fun incrementer() {\n        _valeur.update { it + 1 }\n    }\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-05-navigation",
+   "title": "La navigation",
+   "minutes": 11,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une application se compose de plusieurs écrans. La bibliothèque **Navigation** gère le passage de l'un à l'autre, et la pile de retour."
+    },
+    {
+     "type": "heading",
+     "text": "Les concepts"
+    },
+    {
+     "type": "list",
+     "items": [
+      "**Destination** : un écran.",
+      "**Route** : l'identifiant d'une destination, et les données dont elle a besoin.",
+      "**NavController** : déclenche la navigation et gère la pile de retour.",
+      "**NavHost** : le conteneur qui affiche la destination courante."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Des routes typées"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les routes sont des types sérialisables. Le compilateur vérifie alors les arguments : plus de chaînes à écrire à la main."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Serializable\nobject Accueil\n\n@Serializable\ndata class Detail(val sortId: Int)\n\n@Composable\nfun Navigation() {\n    val controleur = rememberNavController()\n\n    NavHost(navController = controleur, startDestination = Accueil) {\n        composable<Accueil> {\n            Button(onClick = { controleur.navigate(Detail(sortId = 7)) }) {\n                Text(\"Voir le sort\")\n            }\n        }\n        composable<Detail> { entree ->\n            val route = entree.toRoute<Detail>()\n            Text(\"Sort numéro ${route.sortId}\")\n        }\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Le bouton Retour du système dépile automatiquement la destination."
+    },
+    {
+     "type": "info",
+     "text": "Ces routes demandent le plugin de sérialisation Kotlin, en plus de la dépendance `navigation-compose`."
+    },
+    {
+     "type": "heading",
+     "text": "Passer des données"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ne transmettez qu'un identifiant, pas l'objet complet. L'écran suivant recharge ses données depuis sa source : c'est plus fiable, notamment si le processus a été tué entre-temps."
+    },
+    {
+     "type": "heading",
+     "text": "Navigation 3"
+    },
+    {
+     "type": "paragraph",
+     "text": "**Navigation 3** est une bibliothèque plus récente, conçue pour Compose. La pile de retour y est une simple liste que vous contrôlez : naviguer revient à y ajouter ou retirer une clé, et `NavDisplay` affiche le résultat. Elle facilite aussi les écrans à plusieurs volets."
+    },
+    {
+     "type": "paragraph",
+     "text": "Vous croiserez les deux approches : Navigation Compose est très répandue dans les projets existants, et la documentation présente désormais Navigation 3 pour les nouveaux projets Compose."
+    },
+    {
+     "type": "tip",
+     "text": "Partagez toujours la même règle : un identifiant dans la route, les données dans le dépôt !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel élément affiche la destination courante ?",
+     "options": [
+      "NavHost",
+      "Logcat",
+      "Le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il échange les destinations à l'intérieur."
+    },
+    {
+     "prompt": "Quel est l'intérêt des routes typées ?",
+     "options": [
+      "Le compilateur vérifie les arguments",
+      "Elles rendent l'application plus lourde",
+      "Elles évitent Compose"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Plus de chaînes écrites à la main."
+    },
+    {
+     "prompt": "Que transmettre d'un écran à l'autre ?",
+     "options": [
+      "Un identifiant",
+      "L'objet complet",
+      "La base de données"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'écran suivant recharge depuis sa source."
+    },
+    {
+     "prompt": "Dans Navigation 3, qu'est-ce que la pile de retour ?",
+     "options": [
+      "Une liste que vous contrôlez",
+      "Un fichier XML",
+      "Un service système"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Naviguer revient à modifier cette liste."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-05-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction crée le contrôleur de navigation dans Compose ?",
+     "accepted": [
+      "rememberNavController",
+      "rememberNavController()"
+     ],
+     "solution": "rememberNavController."
+    },
+    {
+     "id": "ui-05-ex2",
+     "kind": "self",
+     "prompt": "Déclarez une route typée `Profil`, qui reçoit un identifiant d'utilisateur de type `String`.",
+     "solution": "@Serializable\ndata class Profil(val utilisateurId: String)",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-06-themes",
+   "title": "Thèmes et Material Design",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "**Material Design** est le système de design de Google. Sa version actuelle, **Material 3**, fournit des composants prêts à l'emploi et un système de thèmes."
+    },
+    {
+     "type": "heading",
+     "text": "Le thème"
+    },
+    {
+     "type": "paragraph",
+     "text": "`MaterialTheme` distribue les couleurs, la typographie et les formes à tous les composants qu'il contient."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "private val CouleursSombres = darkColorScheme(\n    primary = Color(0xFF00D68F),\n    secondary = Color(0xFFB9A3FF),\n)\n\nprivate val CouleursClaires = lightColorScheme(\n    primary = Color(0xFF00704C),\n    secondary = Color(0xFF5B35D5),\n)\n\n@Composable\nfun ThemeAcademie(contenu: @Composable () -> Unit) {\n    val sombre = isSystemInDarkTheme()\n\n    MaterialTheme(\n        colorScheme = if (sombre) CouleursSombres else CouleursClaires,\n        content = contenu,\n    )\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Utiliser le thème"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ne codez pas les couleurs en dur : lisez-les dans le thème, et l'écran s'adaptera seul au mode sombre."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Titre(texte: String) {\n    Text(\n        text = texte,\n        style = MaterialTheme.typography.headlineSmall,\n        color = MaterialTheme.colorScheme.primary,\n    )\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "Chaque couleur a sa partenaire pour le texte : sur `primary`, écrivez avec `onPrimary`. C'est ce qui garantit la lisibilité."
+    },
+    {
+     "type": "heading",
+     "text": "Les couleurs dynamiques"
+    },
+    {
+     "type": "paragraph",
+     "text": "Depuis Android 12, le système peut proposer une palette tirée du fond d'écran de l'utilisateur. Vérifiez la version avant de l'utiliser."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun palette(sombre: Boolean): ColorScheme {\n    val context = LocalContext.current\n    return when {\n        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->\n            if (sombre) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)\n        sombre -> darkColorScheme()\n        else -> lightColorScheme()\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Scaffold"
+    },
+    {
+     "type": "paragraph",
+     "text": "`Scaffold` fournit la structure d'un écran Material : barre du haut, barre du bas, bouton d'action. Il transmet aussi les marges intérieures à respecter pour que le contenu ne passe pas sous ces barres."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@OptIn(ExperimentalMaterial3Api::class)\n@Composable\nfun EcranPrincipal() {\n    Scaffold(\n        topBar = { TopAppBar(title = { Text(\"Grimoire\") }) },\n        floatingActionButton = {\n            FloatingActionButton(onClick = { }) {\n                Text(\"+\")\n            }\n        },\n    ) { marges ->\n        Text(\"Contenu\", Modifier.padding(marges))\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Oublier d'appliquer `marges` fait passer votre contenu sous les barres. Si le haut de votre écran semble coupé, commencez par vérifier ce point."
+    },
+    {
+     "type": "tip",
+     "text": "Une couleur écrite en dur dans un écran est une promesse de bug en mode sombre. Passez toujours par le thème !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quel composant distribue couleurs et typographie ?",
+     "options": [
+      "MaterialTheme",
+      "Scaffold",
+      "LazyColumn"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Tous les composants qu'il contient en héritent."
+    },
+    {
+     "prompt": "Quelle couleur utiliser pour du texte sur primary ?",
+     "options": [
+      "onPrimary",
+      "primary",
+      "secondary"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Chaque couleur a sa partenaire lisible."
+    },
+    {
+     "prompt": "Depuis quelle version les couleurs dynamiques sont-elles disponibles ?",
+     "options": [
+      "Android 12",
+      "Android 8",
+      "Android 5"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut vérifier la version avant de les utiliser."
+    },
+    {
+     "prompt": "Que fournit Scaffold ?",
+     "options": [
+      "La structure d'un écran Material",
+      "Une base de données",
+      "Le thème de Gradle"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il transmet aussi les marges à respecter."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-06-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction indique si le système est en mode sombre ?",
+     "accepted": [
+      "isSystemInDarkTheme",
+      "isSystemInDarkTheme()"
+     ],
+     "solution": "isSystemInDarkTheme."
+    },
+    {
+     "id": "ui-06-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un composable `Alerte` qui affiche un texte avec la couleur d'erreur du thème.",
+     "solution": "@Composable\nfun Alerte(message: String) {\n    Text(text = message, color = MaterialTheme.colorScheme.error)\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-07-formulaires",
+   "title": "Les formulaires",
+   "minutes": 10,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Un bon formulaire guide l'utilisateur : le bon clavier, des erreurs claires, et rien de perdu en cas de rotation."
+    },
+    {
+     "type": "heading",
+     "text": "Le champ de saisie"
+    },
+    {
+     "type": "paragraph",
+     "text": "`OutlinedTextField` affiche ce que vous lui donnez : son contenu vient de l'état. `KeyboardOptions` choisit le clavier adapté, et `isError` signale un problème."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun ChampEmail(\n    valeur: String,\n    erreur: String?,\n    surChangement: (String) -> Unit,\n) {\n    OutlinedTextField(\n        value = valeur,\n        onValueChange = surChangement,\n        label = { Text(\"Adresse e-mail\") },\n        isError = erreur != null,\n        supportingText = { if (erreur != null) Text(erreur) },\n        singleLine = true,\n        keyboardOptions = KeyboardOptions(\n            keyboardType = KeyboardType.Email,\n            imeAction = ImeAction.Next,\n        ),\n    )\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Valider"
+    },
+    {
+     "type": "paragraph",
+     "text": "Sortez la validation de l'interface : une fonction simple se teste en un instant, sur votre ordinateur."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class Inscription(val email: String, val age: String)\n\nfun verifier(formulaire: Inscription): Map<String, String> {\n    val erreurs = mutableMapOf<String, String>()\n\n    if ('@' !in formulaire.email) {\n        erreurs[\"email\"] = \"Adresse invalide\"\n    }\n    val age = formulaire.age.toIntOrNull()\n    if (age == null || age !in 13..120) {\n        erreurs[\"age\"] = \"Âge invalide\"\n    }\n    return erreurs\n}\n\nfun main() {\n    println(verifier(Inscription(\"merlin@broceliande.fr\", \"42\")))\n    println(verifier(Inscription(\"merlin\", \"abc\")))\n}",
+     "output": "{}\n{email=Adresse invalide, age=Âge invalide}"
+    },
+    {
+     "type": "info",
+     "text": "Cette vérification sert seulement à aider l'utilisateur. Le serveur doit toujours refaire ses propres contrôles : le code d'une application peut être modifié."
+    },
+    {
+     "type": "heading",
+     "text": "L'état du formulaire"
+    },
+    {
+     "type": "paragraph",
+     "text": "Regroupez les champs et les erreurs dans une seule classe d'état, gérée par le ViewModel."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "data class EtatFormulaire(\n    val email: String = \"\",\n    val erreurEmail: String? = null,\n    val envoiEnCours: Boolean = false,\n)\n\nclass FormulaireViewModel : ViewModel() {\n    private val _etat = MutableStateFlow(EtatFormulaire())\n    val etat: StateFlow<EtatFormulaire> = _etat.asStateFlow()\n\n    fun surEmail(valeur: String) {\n        _etat.update { it.copy(email = valeur, erreurEmail = null) }\n    }\n\n    fun envoyer() {\n        if ('@' !in _etat.value.email) {\n            _etat.update { it.copy(erreurEmail = \"Adresse invalide\") }\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les bonnes pratiques"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Affichez l'erreur à côté du champ concerné, avec une solution.",
+      "Ne validez pas à chaque lettre : attendez la fin de la saisie ou l'envoi.",
+      "Désactivez le bouton pendant l'envoi, pour éviter les doublons.",
+      "Conservez ce qui a été saisi après une erreur."
+     ]
+    },
+    {
+     "type": "tip",
+     "text": "Un clavier numérique pour un code postal, c'est trois secondes de gagnées, à chaque utilisateur !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle option choisit le clavier adapté ?",
+     "options": [
+      "KeyboardOptions",
+      "Modifier.padding",
+      "MaterialTheme"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple KeyboardType.Email."
+    },
+    {
+     "prompt": "Où placer la logique de validation ?",
+     "options": [
+      "Dans une fonction testable, hors de l'interface",
+      "Dans le manifeste",
+      "Dans le thème"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle se teste alors sur un ordinateur."
+    },
+    {
+     "prompt": "Le contrôle dans l'application suffit-il ?",
+     "options": [
+      "Non, le serveur doit aussi vérifier",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le code d'une application peut être modifié."
+    },
+    {
+     "prompt": "Que faire du bouton pendant l'envoi ?",
+     "options": [
+      "Le désactiver",
+      "Le cacher définitivement",
+      "Rien"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela évite les envois en double."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-07-ex1",
+     "kind": "fill",
+     "prompt": "Quelle fonction de `String` renvoie `null` si le texte n'est pas un entier ?",
+     "accepted": [
+      "toIntOrNull",
+      "toIntOrNull()"
+     ],
+     "solution": "toIntOrNull."
+    },
+    {
+     "id": "ui-07-ex2",
+     "kind": "self",
+     "prompt": "Écrivez `motDePasseValide(texte: String)`, qui exige au moins 12 caractères et un chiffre, puis affichez le résultat pour deux exemples.",
+     "solution": "fun motDePasseValide(texte: String) =\n    texte.length >= 12 && texte.any { it.isDigit() }\n\nfun main() {\n    println(motDePasseValide(\"court1\"))\n    println(motDePasseValide(\"unmotdepasse2longueur\"))\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-08-adaptatif",
+   "title": "Accessibilité et interfaces adaptatives",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Votre application sera utilisée avec un lecteur d'écran, un texte très grand, sur un téléphone plié ou une tablette. Y penser dès le début ne coûte presque rien."
+    },
+    {
+     "type": "heading",
+     "text": "Décrire pour les lecteurs d'écran"
+    },
+    {
+     "type": "paragraph",
+     "text": "**TalkBack** lit l'interface à voix haute. Donnez une description à ce qui n'a pas de texte. Une icône décorative reçoit `null`, pour ne pas encombrer la lecture."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun BoutonFavori(surClic: () -> Unit) {\n    IconButton(onClick = surClic) {\n        Icon(\n            imageVector = Icons.Filled.Favorite,\n            contentDescription = \"Ajouter aux favoris\",\n        )\n    }\n}\n\n@Composable\nfun LigneStatistique(libelle: String, valeur: Int) {\n    Row(Modifier.semantics(mergeDescendants = true) { }) {\n        Text(libelle)\n        Text(\"$valeur\")\n    }\n}\n\n@Composable\nfun TitreSection(texte: String) {\n    Text(texte, Modifier.semantics { heading() })\n}"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`mergeDescendants` fait lire plusieurs éléments comme un seul.",
+      "`heading()` signale un titre : TalkBack permet de sauter de titre en titre."
+     ]
+    },
+    {
+     "type": "heading",
+     "text": "Les règles de base"
+    },
+    {
+     "type": "list",
+     "items": [
+      "Des cibles tactiles d'au moins **48 dp** de côté.",
+      "Un contraste d'au moins **4,5:1** pour le texte courant.",
+      "Le texte en **sp**, qui suit le réglage de taille de l'utilisateur, et les marges en **dp**.",
+      "Jamais d'information portée uniquement par la couleur."
+     ]
+    },
+    {
+     "type": "warning",
+     "text": "Testez votre écran avec le plus grand texte du système. Une hauteur fixe sur un conteneur de texte coupera les mots."
+    },
+    {
+     "type": "heading",
+     "text": "S'adapter à la fenêtre"
+    },
+    {
+     "type": "paragraph",
+     "text": "Ne demandez pas si l'appareil est une tablette : la fenêtre peut être en écran partagé, ou un téléphone peut se déplier. Raisonnez avec les **classes de taille de fenêtre**."
+    },
+    {
+     "type": "code",
+     "language": "text",
+     "code": "Compact      largeur < 600 dp            Téléphone en portrait\nMoyenne      600 dp à 840 dp             Tablette en portrait\nÉtendue      840 dp à 1200 dp            Tablette en paysage\nGrande       1200 dp à 1600 dp           Grande tablette\nTrès grande  1600 dp et plus             Écran de bureau"
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Accueil() {\n    val fenetre = currentWindowAdaptiveInfo().windowSizeClass\n    val large = fenetre.isWidthAtLeastBreakpoint(\n        WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND\n    )\n\n    if (large) {\n        Row {\n            Text(\"Liste\")\n            Text(\"Détail\")\n        }\n    } else {\n        Text(\"Liste\")\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "La bibliothèque **Compose Material 3 Adaptive** fournit des solutions prêtes : `NavigationSuiteScaffold` passe tout seul de la barre basse au rail latéral, et `ListDetailPaneScaffold` affiche côte à côte une liste et son détail."
+    },
+    {
+     "type": "info",
+     "text": "Un changement de taille de fenêtre est un changement de configuration : gardez l'état dans un ViewModel ou avec `rememberSaveable`."
+    },
+    {
+     "type": "tip",
+     "text": "Activez TalkBack et fermez les yeux une minute dans votre application. Vous ne la verrez plus jamais pareil !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que mettre comme description d'une icône décorative ?",
+     "options": [
+      "null",
+      "Le nom du fichier",
+      "Une longue phrase"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Cela évite d'encombrer la lecture."
+    },
+    {
+     "prompt": "Quelle taille minimale pour une cible tactile ?",
+     "options": [
+      "48 dp",
+      "12 dp",
+      "200 dp"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est le repère habituel d'accessibilité."
+    },
+    {
+     "prompt": "Quelle unité utiliser pour le texte ?",
+     "options": [
+      "sp",
+      "dp",
+      "px"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "sp suit le réglage de taille de l'utilisateur."
+    },
+    {
+     "prompt": "Quelle est la classe de taille d'un téléphone en portrait ?",
+     "options": [
+      "Compacte",
+      "Étendue",
+      "Très grande"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Largeur inférieure à 600 dp."
+    },
+    {
+     "prompt": "Sur quoi fonder une mise en page adaptative ?",
+     "options": [
+      "La taille de la fenêtre",
+      "Le nom du modèle d'appareil"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La fenêtre peut être en écran partagé."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-08-ex1",
+     "kind": "fill",
+     "prompt": "Quel service d'Android lit l'écran à voix haute ?",
+     "accepted": [
+      "TalkBack"
+     ],
+     "solution": "TalkBack."
+    },
+    {
+     "id": "ui-08-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un composable `Avatar` qui affiche une icône `Icons.Filled.Person` avec une description pour les lecteurs d'écran.",
+     "solution": "@Composable\nfun Avatar(nom: String) {\n    Icon(\n        imageVector = Icons.Filled.Person,\n        contentDescription = \"Photo de profil de $nom\",\n    )\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-09-animations",
+   "title": "Les animations",
+   "minutes": 9,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Une animation utile guide le regard et explique ce qui change. Compose rend les plus courantes très simples."
+    },
+    {
+     "type": "heading",
+     "text": "Animer une valeur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Les fonctions `animate*AsState` animent une valeur vers sa nouvelle cible, dès qu'elle change."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun BoutonDeplie(ouvert: Boolean) {\n    val angle by animateFloatAsState(\n        targetValue = if (ouvert) 180f else 0f,\n        label = \"rotation\",\n    )\n\n    Icon(\n        imageVector = Icons.Filled.KeyboardArrowDown,\n        contentDescription = if (ouvert) \"Replier\" else \"Déplier\",\n        modifier = Modifier.rotate(angle),\n    )\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Faire apparaître et disparaître"
+    },
+    {
+     "type": "paragraph",
+     "text": "`AnimatedVisibility` anime l'entrée et la sortie d'un contenu."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Details(visible: Boolean) {\n    AnimatedVisibility(\n        visible = visible,\n        enter = fadeIn() + expandVertically(),\n        exit = fadeOut() + shrinkVertically(),\n    ) {\n        Text(\"Les détails du sort\")\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Remplacer un contenu"
+    },
+    {
+     "type": "paragraph",
+     "text": "`AnimatedContent` passe en douceur d'un contenu à un autre. Il convient bien aux changements d'état d'un écran."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Score(valeur: Int) {\n    AnimatedContent(targetState = valeur, label = \"score\") { score ->\n        Text(\"$score XP\")\n    }\n}"
+    },
+    {
+     "type": "paragraph",
+     "text": "`animateContentSize` anime enfin le changement de taille d'un composable, en une ligne : `Modifier.animateContentSize()`."
+    },
+    {
+     "type": "heading",
+     "text": "Les performances"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une animation s'exécute image par image. Évitez de lire sa valeur plus haut que nécessaire : toute la zone serait recomposée à chaque image. Les modificateurs `graphicsLayer` avec un bloc, ou `offset` avec une lambda, travaillent plus tard dans le rendu et sont plus légers."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "@Composable\nfun Fondu(opacite: State<Float>) {\n    Text(\n        text = \"Sort\",\n        modifier = Modifier.graphicsLayer { alpha = opacite.value },\n    )\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Respecter l'utilisateur"
+    },
+    {
+     "type": "paragraph",
+     "text": "Certaines personnes sont gênées par le mouvement. Évitez les boucles infinies inutiles, et gardez les animations courtes. Android permet de réduire les animations dans ses options d'accessibilité : une application soignée en tient compte."
+    },
+    {
+     "type": "tip",
+     "text": "Une bonne animation ne se remarque pas : on remarque seulement que l'application paraît plus agréable !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Quelle fonction anime une valeur vers une cible ?",
+     "options": [
+      "animateFloatAsState",
+      "remember",
+      "LazyColumn"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'animation part dès que la cible change."
+    },
+    {
+     "prompt": "Quel composable anime l'apparition d'un contenu ?",
+     "options": [
+      "AnimatedVisibility",
+      "Scaffold",
+      "Row"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il gère l'entrée et la sortie."
+    },
+    {
+     "prompt": "Quel est le rôle d'une bonne animation ?",
+     "options": [
+      "Guider le regard et expliquer un changement",
+      "Occuper l'utilisateur",
+      "Ralentir l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Elle reste courte et utile."
+    },
+    {
+     "prompt": "Pourquoi utiliser graphicsLayer avec un bloc pour une opacité animée ?",
+     "options": [
+      "Cela évite une recomposition à chaque image",
+      "Cela ajoute un son",
+      "C'est obligatoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "La valeur est lue plus tard, pendant le rendu."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-09-ex1",
+     "kind": "fill",
+     "prompt": "Quel modificateur anime automatiquement les changements de taille ?",
+     "accepted": [
+      "animateContentSize",
+      "animateContentSize()"
+     ],
+     "solution": "animateContentSize."
+    },
+    {
+     "id": "ui-09-ex2",
+     "kind": "self",
+     "prompt": "Écrivez un composable `Message` qui affiche un texte, avec un fondu, seulement si `visible` est vrai.",
+     "solution": "@Composable\nfun Message(visible: Boolean, texte: String) {\n    AnimatedVisibility(\n        visible = visible,\n        enter = fadeIn(),\n        exit = fadeOut(),\n    ) {\n        Text(texte)\n    }\n}",
+     "language": "kotlin"
+    }
+   ]
+  },
+  {
+   "id": "ui-10-xml",
+   "title": "Interfaces XML et Fragments",
+   "minutes": 12,
+   "blocks": [
+    {
+     "type": "paragraph",
+     "text": "Compose est le choix actuel, mais des millions d'écrans sont écrits en **XML**. Vous en rencontrerez dans tous les projets anciens."
+    },
+    {
+     "type": "heading",
+     "text": "Une mise en page XML"
+    },
+    {
+     "type": "paragraph",
+     "text": "Une mise en page décrit un arbre de vues, dans `res/layout/`. Avec cette approche, on modifie ensuite les vues depuis le code."
+    },
+    {
+     "type": "code",
+     "language": "xml",
+     "code": "<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:orientation=\"vertical\"\n    android:padding=\"16dp\">\n\n    <TextView\n        android:id=\"@+id/titre\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"Bonjour\" />\n\n    <Button\n        android:id=\"@+id/bouton\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"Lancer\" />\n</LinearLayout>"
+    },
+    {
+     "type": "list",
+     "items": [
+      "`match_parent` : occupe la place du parent.",
+      "`wrap_content` : s'ajuste au contenu.",
+      "`@+id/titre` : crée un identifiant, utilisable depuis le code."
+     ]
+    },
+    {
+     "type": "paragraph",
+     "text": "`ConstraintLayout` positionne les vues les unes par rapport aux autres. Il évite d'imbriquer de nombreux conteneurs, et domine dans les écrans complexes."
+    },
+    {
+     "type": "heading",
+     "text": "View Binding"
+    },
+    {
+     "type": "paragraph",
+     "text": "**View Binding** génère une classe par mise en page. Il remplace `findViewById`, avec une sécurité sur les types et les valeurs nulles. Ce fichier s'appelant `activity_exemple.xml`, la classe générée est `ActivityExempleBinding`."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ExempleActivity : AppCompatActivity() {\n    private lateinit var liaison: ActivityExempleBinding\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        liaison = ActivityExempleBinding.inflate(layoutInflater)\n        setContentView(liaison.root)\n\n        liaison.bouton.setOnClickListener {\n            liaison.titre.text = \"Sort lancé !\"\n        }\n    }\n}"
+    },
+    {
+     "type": "heading",
+     "text": "Les Fragments"
+    },
+    {
+     "type": "paragraph",
+     "text": "Un **Fragment** est une portion d'écran réutilisable, hébergée par une activité. Il a son propre cycle de vie, et surtout **une vue qui peut être détruite avant lui**."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class ProfilFragment : Fragment(R.layout.fragment_profil) {\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        super.onViewCreated(view, savedInstanceState)\n        view.findViewById<TextView>(R.id.nom).text = \"Merlin\"\n    }\n}"
+    },
+    {
+     "type": "warning",
+     "text": "Une fuite classique : garder une référence à une vue après `onDestroyView`. Quand un Fragment conserve un `binding`, remettez-le à `null` dans cette méthode."
+    },
+    {
+     "type": "heading",
+     "text": "Mélanger XML et Compose"
+    },
+    {
+     "type": "paragraph",
+     "text": "Pas besoin de tout réécrire : `ComposeView` place du Compose dans un écran XML, et `AndroidView` place une vue classique dans Compose. C'est ainsi que l'on migre écran par écran."
+    },
+    {
+     "type": "code",
+     "language": "kotlin",
+     "code": "class EcranHybrideFragment : Fragment() {\n    override fun onCreateView(\n        inflater: LayoutInflater,\n        container: ViewGroup?,\n        savedInstanceState: Bundle?,\n    ): View {\n        return ComposeView(requireContext()).apply {\n            setViewCompositionStrategy(\n                ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed\n            )\n            setContent {\n                MaterialTheme {\n                    Text(\"Du Compose dans un Fragment\")\n                }\n            }\n        }\n    }\n}\n\n@Composable\nfun AncienneVue() {\n    AndroidView(factory = { context ->\n        TextView(context).apply { text = \"Une vue classique dans Compose\" }\n    })\n}"
+    },
+    {
+     "type": "tip",
+     "text": "Pour migrer, commencez par le petit écran le plus simple. Un premier succès vaut mieux qu'un grand chantier abandonné !"
+    }
+   ],
+   "quiz": [
+    {
+     "prompt": "Que signifie wrap_content ?",
+     "options": [
+      "La vue s'ajuste à son contenu",
+      "La vue occupe tout le parent",
+      "La vue est masquée"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "match_parent occupe la place du parent."
+    },
+    {
+     "prompt": "Quel est l'avantage de View Binding sur findViewById ?",
+     "options": [
+      "Une sécurité sur les types et les valeurs nulles",
+      "Il remplace Gradle",
+      "Il est obligatoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une classe est générée par mise en page."
+    },
+    {
+     "prompt": "Quel piège propose le cycle de vie d'un Fragment ?",
+     "options": [
+      "Sa vue peut être détruite avant lui",
+      "Il ne s'exécute jamais",
+      "Il remplace l'activité"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Libérez le binding dans onDestroyView."
+    },
+    {
+     "prompt": "Quelle classe insère du Compose dans un écran XML ?",
+     "options": [
+      "ComposeView",
+      "AndroidView",
+      "LinearLayout"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "AndroidView fait l'inverse."
+    }
+   ],
+   "exercises": [
+    {
+     "id": "ui-10-ex1",
+     "kind": "fill",
+     "prompt": "Quelle classe permet d'afficher une vue classique dans Compose ?",
+     "accepted": [
+      "AndroidView"
+     ],
+     "solution": "AndroidView."
+    },
+    {
+     "id": "ui-10-ex2",
+     "kind": "self",
+     "prompt": "Quelle classe View Binding sera générée pour `fragment_reglages.xml` ? Pourquoi faut-il libérer le binding dans `onDestroyView` ?",
+     "solution": "FragmentReglagesBinding. La vue d'un Fragment peut être détruite alors que le Fragment existe encore, par exemple dans la pile de retour. Garder le binding retiendrait toute la vue en mémoire : ce serait une fuite."
+    }
+   ]
+  }
+ ],
+ "evaluation": {
+  "passPercent": 80,
+  "questions": [
+   {
+    "prompt": "Quelle méthode prépare l'écran d'une activité ?",
+    "options": [
+     "onCreate",
+     "onStop"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Elle n'est appelée qu'une fois par instance."
+   },
+   {
+    "prompt": "Que décrit un composable ?",
+    "options": [
+     "Une partie de l'interface pour un état donné",
+     "Une table de base de données"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "C'est l'approche déclarative."
+   },
+   {
+    "prompt": "Quel état survit à la rotation ?",
+    "options": [
+     "rememberSaveable",
+     "remember"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "remember n'est conservé qu'entre deux recompositions."
+   },
+   {
+    "prompt": "Dans un flux unidirectionnel, que transmet l'écran au ViewModel ?",
+    "options": [
+     "Des événements",
+     "Son état complet",
+     "Sa base de données"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'état descend, les événements remontent."
+   },
+   {
+    "prompt": "Que ne doit jamais retenir un ViewModel ?",
+    "options": [
+     "Une Activity",
+     "Un StateFlow privé"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Il vit plus longtemps qu'elle."
+   },
+   {
+    "prompt": "Quels éléments une route de navigation devrait-elle transporter ?",
+    "options": [
+     "Un identifiant",
+     "Un objet complet avec toutes ses données"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "L'écran recharge ses données depuis sa source."
+   },
+   {
+    "prompt": "Lesquelles sont de bonnes pratiques de thème ?",
+    "options": [
+     "Lire les couleurs dans MaterialTheme",
+     "Écrire onPrimary sur primary",
+     "Coder les couleurs en dur"
+    ],
+    "answers": [
+     0,
+     1
+    ],
+    "explanation": "Les couleurs en dur cassent le mode sombre."
+   },
+   {
+    "prompt": "Où valider un formulaire pour des raisons de sécurité ?",
+    "options": [
+     "Côté serveur, en plus de l'application",
+     "Dans l'application uniquement"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Le code d'une application peut être modifié."
+   },
+   {
+    "prompt": "Sur quoi repose une mise en page adaptative ?",
+    "options": [
+     "Les classes de taille de fenêtre",
+     "Le nom du téléphone"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Une fenêtre peut être partagée ou redimensionnée."
+   },
+   {
+    "prompt": "Quelle classe permet de migrer un écran XML vers Compose progressivement ?",
+    "options": [
+     "ComposeView",
+     "WorkManager"
+    ],
+    "answers": [
+     0
+    ],
+    "explanation": "Elle place du Compose dans une hiérarchie de vues."
+   }
+  ]
+ },
+ "resources": [
+  {
+   "title": "Tutoriel Jetpack Compose",
+   "url": "https://developer.android.com/develop/ui/compose/tutorial"
+  },
+  {
+   "title": "État dans Compose",
+   "url": "https://developer.android.com/develop/ui/compose/state"
+  },
+  {
+   "title": "ViewModel",
+   "url": "https://developer.android.com/topic/libraries/architecture/viewmodel"
+  },
+  {
+   "title": "Cycle de vie d'une activité",
+   "url": "https://developer.android.com/guide/components/activities/activity-lifecycle"
+  },
+  {
+   "title": "Navigation",
+   "url": "https://developer.android.com/guide/navigation"
+  },
+  {
+   "title": "Navigation 3",
+   "url": "https://developer.android.com/guide/navigation/navigation-3"
+  },
+  {
+   "title": "Applications adaptatives",
+   "url": "https://developer.android.com/develop/ui/compose/layouts/adaptive"
+  },
+  {
+   "title": "Classes de taille de fenêtre",
+   "url": "https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes"
+  },
+  {
+   "title": "Accessibilité dans Compose",
+   "url": "https://developer.android.com/develop/ui/compose/accessibility"
+  }
+ ]
+}
