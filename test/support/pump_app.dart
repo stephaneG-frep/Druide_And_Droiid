@@ -12,6 +12,7 @@ import 'package:druide_and_droiid/features/parametres/presentation/appearance_co
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const phone = Size(390, 844);
@@ -44,6 +45,7 @@ Future<ProviderContainer> pumpApp(
   MotionLevel motion = MotionLevel.none,
   AppDatabase? database,
   AssetBundle? bundle,
+  List<Override> extraOverrides = const [],
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -60,6 +62,7 @@ Future<ProviderContainer> pumpApp(
         ref.onDispose(db.close);
         return db;
       }),
+      ...extraOverrides,
     ],
   );
   addTearDown(container.dispose);

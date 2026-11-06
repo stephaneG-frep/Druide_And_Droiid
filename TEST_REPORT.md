@@ -1,5 +1,37 @@
 # Rapport de tests
 
+## Phase 6 — 2026-11-06
+
+Le code est écrit et testé, mais **aucun fournisseur réel n'a été appelé** : la phase reste à valider.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 249 tests sur 249 réussis |
+| Clients des cinq fournisseurs, face à un serveur HTTP local | Requêtes, flux, usage, fin de réponse et erreurs vérifiés |
+| Intégration Linux, socle | 5 tests sur 5 réussis |
+| Intégration Linux, chat par le vrai réseau local et le vrai trousseau | 1 test sur 1 réussi |
+| Migration de la version 3 à la version 4 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base sauvegardée, migrée en version 4, données identiques (45 XP, 1 leçon, 1 quiz, 3 réponses), lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+Deux défauts réels ont été trouvés par ces tests et corrigés :
+
+- Une erreur survenue au milieu d'une réponse échappait à la traduction en message clair, à cause de `yield*`.
+- Arrêter une réponse ne coupait pas la connexion, car un générateur `async*` en attente ne voit l'annulation qu'à son prochain `yield`. Une méthode `abort` ferme désormais le client HTTP.
+
+Les serveurs de test reproduisent les protocoles lus dans la documentation : API Messages et flux SSE d'Anthropic, types du SDK Python d'OpenAI, référence de l'API Gemini, documentation d'Ollama.
+
+### Non vérifié
+
+- **Fournisseurs réels** : Anthropic, OpenAI, Gemini et Ollama n'ont jamais répondu à cette application. Un écart entre la documentation et le service reste possible. Aucun crédit n'a été consommé.
+- **Qualité pédagogique** : les consignes des douze modes n'ont été lues par aucun modèle.
+- **En-tête `x-goog-api-key` et liste des modèles Gemini** : la page lue ne les détaille pas, ils viennent de mes connaissances.
+- **Chat sur le Honor** : l'écran n'a pas été utilisé sur le téléphone. Sans Ollama ni clé, seul l'état sans fournisseur peut s'y afficher.
+- **Filet Claude** : le mécanisme automatique de repli après un refus n'est pas activé, car il n'a pas pu être testé. Un refus s'affiche simplement à l'utilisateur.
+- **Android sur réseau local** : une adresse HTTP autre que `127.0.0.1` ou `10.0.2.2` est bloquée par le système.
+- **Lecteur d'écran** : le chat n'a pas été parcouru avec TalkBack.
+
 ## Phase 5, fin de phase — 2026-11-06
 
 Phase terminée : douze modules, 121 leçons, 511 questions de quiz, 242 exercices corrigés et 121 questions d'évaluation.

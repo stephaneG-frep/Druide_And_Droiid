@@ -1,5 +1,17 @@
 # Rapport de compilation
 
+## Phase 6 — 2026-11-06
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter test integration_test/foundations_test.dart -d linux` | Réussi |
+| Linux debug | `flutter test integration_test/maitre_test.dart -d linux` | Réussi |
+
+Sur Linux, chaque fichier d'intégration se lance séparément : enchaîner les deux échoue au démarrage de la seconde application.
+
+Nouvelle dépendance : `http`.
+
 ## Phase 5, fin de phase — 2026-11-06
 
 | Cible | Commande | Résultat |

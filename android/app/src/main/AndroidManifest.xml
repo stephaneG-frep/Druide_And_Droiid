@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Nécessaire aux fournisseurs IA distants (phase 6). -->
+    <!-- Nécessaire aux fournisseurs IA. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Druide And-Droiīd"
         android:allowBackup="false"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

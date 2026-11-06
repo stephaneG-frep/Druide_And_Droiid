@@ -7,6 +7,8 @@ import '../../../design_system/arcane_button.dart';
 import '../../../design_system/code_panel.dart';
 import '../../../design_system/druide_toast.dart';
 import '../../../design_system/techno_card.dart';
+import '../../maitre/data/ai_settings_repository.dart';
+import '../../maitre/presentation/ai_actions.dart';
 import '../data/exercise_repository.dart';
 import '../domain/course.dart';
 
@@ -158,6 +160,11 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard>
     super.build(context);
     final exercise = widget.exercise;
     final isFill = exercise.kind == ExerciseKind.fill;
+    final hasTeacher = ref.watch(
+      aiSettingsProvider.select(
+        (settings) => settings.value?.activeConfig != null,
+      ),
+    );
 
     if (_loadFailed) {
       return const ErrorNotice(
@@ -184,6 +191,21 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard>
             ),
           ),
           ..._buildState(isFill),
+          if (hasTeacher)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                icon: const Icon(Icons.auto_awesome_outlined),
+                label: const Text('Corriger avec le Maître'),
+                onPressed: () => askForCorrection(
+                  context,
+                  ref,
+                  statement: exercise.prompt,
+                  answer: _answer.text,
+                  reference: exercise.solution,
+                ),
+              ),
+            ),
         ],
       ),
     );

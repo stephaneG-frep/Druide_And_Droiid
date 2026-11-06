@@ -112,6 +112,47 @@ void main() {
     database.close();
   }
 
+  test('la version 3 passe en version 4 sans perte', () async {
+    // Base réelle de la version 3 : version 2 migrée par le code précédent,
+    // puis ramenée au schéma exact de la version 3.
+    createV2Database();
+    final raw = sqlite3.open(file.path);
+    raw
+      ..execute(
+        'CREATE TABLE "exercise_answers" ("exercise_id" TEXT NOT NULL, '
+        '"module_id" TEXT NOT NULL, "answer" TEXT NOT NULL, "status" TEXT NOT '
+        'NULL, "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        "INSERT INTO exercise_answers VALUES ('ex', 'kotlin', 'Ma réponse', "
+        "'success', 1)",
+      )
+      ..execute('PRAGMA user_version = 3');
+    raw.close();
+
+    final database = AppDatabase(NativeDatabase(file));
+    final answers = await database.select(database.exerciseAnswers).get();
+    expect(answers.single.answer, 'Ma réponse');
+    expect(await database.readMeta('appearance.theme'), 'light');
+
+    final id = await database
+        .into(database.aiConversations)
+        .insert(
+          AiConversationsCompanion.insert(
+            title: 'Après migration',
+            providerKind: 'ollama',
+            model: 'm',
+            mode: 'general',
+            createdAt: DateTime(2026),
+            updatedAt: DateTime(2026),
+          ),
+        );
+    expect(id, greaterThan(0));
+    await database.close();
+
+    expect(schemaOf(file.path), contains('ai_messages'));
+  });
+
   test('la version 2 passe en version 3 sans perte', () async {
     createV2Database();
 

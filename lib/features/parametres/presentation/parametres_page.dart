@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/sections.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../design_system/arcane_button.dart';
 import '../../../design_system/druide_toast.dart';
 import '../../../design_system/motion.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
+import '../../maitre/presentation/ai_paths.dart';
 import 'appearance_controller.dart';
 
 class ParametresPage extends ConsumerWidget {
@@ -30,6 +33,25 @@ class ParametresPage extends ConsumerWidget {
     return PageFrame(
       title: AppSection.parametres.label,
       children: [
+        const SectionTitle('Professeur IA'),
+        TechnoCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+              Text(
+                'Fournisseur, modèle, clé et limites de Maître And-Droiīd.',
+                style: context.text.bodyMedium,
+              ),
+              ArcaneButton(
+                label: 'Réglages du Maître',
+                icon: Icons.tune,
+                secondary: true,
+                onPressed: () => context.go(aiSettingsPath),
+              ),
+            ],
+          ),
+        ),
         const SectionTitle('Apparence'),
         TechnoCard(
           child: Column(

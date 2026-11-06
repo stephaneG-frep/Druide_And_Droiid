@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## Phase 6, à valider — 2026-11-06
+
+- Fournisseurs interchangeables : Anthropic Claude, OpenAI, Google Gemini, Ollama et API compatible avec OpenAI.
+- Chat avec réponses progressives, arrêt, nouvel essai et historique enregistré.
+- Douze modes pédagogiques, adaptés au niveau déclaré.
+- Correction d'un exercice et question sur une leçon depuis l'Académie.
+- Réglages : clé dans le coffre, test de connexion, choix du modèle, délai, longueur maximale et tarifs facultatifs.
+- Accord demandé avant le premier envoi vers un service externe.
+- Coût et jetons affichés lorsque le service les annonce.
+- Base en version 4 : conversations et messages.
+- Message clair quand le trousseau Linux est verrouillé.
+- Trafic Android limité à HTTPS, sauf vers la machine locale.
+
 ## Phase 5 — 2026-11-06
 
 - Module 11 Publication et maintenance rédigé : douze leçons et évaluation.
