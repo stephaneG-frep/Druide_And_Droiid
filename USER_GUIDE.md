@@ -13,7 +13,7 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 ## Ce qui est disponible
 
 - **Accueil** : votre grade, vos statistiques et une question flash chaque jour.
-- **Académie** : le programme des douze modules et vos favoris. Pour l'instant, les modules 1 à 10 sont rédigés : Fondations, Kotlin, Java, Android Studio, Interfaces, Données et réseaux, Flutter pour Android, Android avancé, Sécurité Android, Intelligence artificielle.
+- **Académie** : le programme des douze modules et vos favoris. Les douze modules sont rédigés. Le module Expert Android se termine par un projet réel, que vous évaluez avec sa grille : l'application ne le corrige pas à votre place.
 - **Mes notes** : vos notes personnelles.
 - **Lab** : un exemple de code Kotlin à lire et à copier. Il ne peut pas être exécuté dans l'application.
 - **Projets** : la liste des vingt projets prévus.
