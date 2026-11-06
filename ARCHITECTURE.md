@@ -133,3 +133,23 @@ Les repositories sont dans `features/*/data`. Les lectures sont des flux : les �
 
 - **Linux à l'exécution** : GTK 3 et libsecret, avec un service de trousseau actif (gnome-keyring ou équivalent). À déclarer dans le `.deb` en phase 13.
 - **SQLite** : `libsqlite3.so` est fourni avec l'application, aucune dépendance système.
+
+## Professeur IA
+
+`lib/features/maitre` est découpé en trois couches :
+
+- `domain` : fournisseurs, réglages, messages, événements de réponse, erreurs et consignes pédagogiques. Rien n'y dépend du réseau.
+- `data` : `AiClient`, le contrat commun, et ses quatre implémentations. `OpenAiClient` sert aussi aux API compatibles. `AiHttp` gère les délais, la traduction des erreurs et la lecture des flux.
+- `presentation` : `ChatController` orchestre une réponse, enregistre le résultat et expose l'état à l'écran.
+
+Pour ajouter un fournisseur, il suffit d'une valeur dans `AiProviderKind` et d'une implémentation de `AiClient`.
+
+Règles à respecter :
+
+- Une clé ne vit que dans `SecretStore`. La base retient seulement sa présence, pour ne pas solliciter le trousseau à chaque écran.
+- Une clé ne part jamais en HTTP, sauf vers la machine locale. Gemini la reçoit en en-tête, jamais dans l'adresse.
+- Le texte d'erreur d'un service est tronqué et nettoyé de la clé.
+- `listModels` sert de test de connexion : il ne génère rien, donc ne coûte aucun jeton.
+- L'historique envoyé à Claude ne contient que du texte. Les blocs de réflexion ne sont pas conservés, ce que l'API accepte sans usage d'outils.
+- Dans `AiHttp.lines`, n'utilisez pas `yield*` : ses erreurs échappent au `try`. Pour arrêter une réponse, appelez `abort`.
+- Les tests n'appellent aucun service payant. `aiClientBuilderProvider` remplace le client dans les tests d'écran.

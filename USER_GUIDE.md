@@ -14,6 +14,7 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 
 - **Accueil** : votre grade, vos statistiques et une question flash chaque jour.
 - **Académie** : le programme des douze modules et vos favoris. Les douze modules sont rédigés. Le module Expert Android se termine par un projet réel, que vous évaluez avec sa grille : l'application ne le corrige pas à votre place.
+- **Maître** : votre professeur IA, relié au fournisseur de votre choix. Sans fournisseur, l'application reste complète, mais le Maître ne répond pas.
 - **Mes notes** : vos notes personnelles.
 - **Lab** : un exemple de code Kotlin à lire et à copier. Il ne peut pas être exécuté dans l'application.
 - **Projets** : la liste des vingt projets prévus.
@@ -74,3 +75,17 @@ Ouvrez **Plus**, puis **Paramètres**.
 - **Animations** : Toutes, Réduites ou Aucune.
 
 Vos choix sont conservés au redémarrage.
+
+## Relier le Maître à une IA
+
+1. Ouvrez **Plus**, **Paramètres**, puis **Réglages du Maître**.
+2. Choisissez un fournisseur : Anthropic Claude, OpenAI, Google Gemini, Ollama ou une API compatible avec OpenAI.
+3. Saisissez votre clé, si le service en demande une. Elle reste dans le stockage sécurisé de votre appareil : elle n'est jamais affichée, ni incluse dans les sauvegardes.
+4. Touchez **Tester la connexion**. Ce test liste les modèles et ne génère aucune réponse.
+5. Choisissez un modèle, puis touchez **Enregistrer et activer**.
+
+Avant le premier envoi vers un service externe, l'application vous demande votre accord. Ces services peuvent facturer chaque réponse sur votre compte : fixez un plafond de dépenses chez eux. Les tarifs facultatifs des réglages servent seulement à afficher une estimation.
+
+Avec Ollama sur Linux, gardez l'adresse proposée. Sur un téléphone relié en USB, lancez `adb reverse tcp:11434 tcp:11434`, à refaire après avoir débranché le câble. Sur l'émulateur, utilisez `http://10.0.2.2:11434`.
+
+Les réponses sont générées par une IA et peuvent contenir des erreurs. Relisez tout code avant de l'utiliser : l'application ne l'exécute jamais.

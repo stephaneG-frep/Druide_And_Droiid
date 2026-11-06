@@ -68,3 +68,31 @@ class Favorites extends Table {
   @override
   Set<Column<Object>> get primaryKey => {kind, targetId};
 }
+
+/// Conversation avec le Professeur IA.
+@DataClassName('AiConversationRow')
+class AiConversations extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  TextColumn get providerKind => text()();
+  TextColumn get model => text()();
+  TextColumn get mode => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+}
+
+@DataClassName('AiMessageRow')
+class AiMessages extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get conversationId => integer().references(AiConversations, #id)();
+  TextColumn get role => text()();
+  TextColumn get content => text()();
+
+  /// Jetons annoncés par le fournisseur, s'il les communique.
+  IntColumn get inputTokens => integer().nullable()();
+  IntColumn get outputTokens => integer().nullable()();
+
+  /// Fin de la réponse : terminée, coupée, refusée ou interrompue.
+  TextColumn get stopReason => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+}

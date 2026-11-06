@@ -8,6 +8,9 @@ import '../../../design_system/arcane_button.dart';
 import '../../../design_system/druide_toast.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
+import '../../maitre/data/ai_settings_repository.dart';
+import '../../maitre/domain/teaching.dart';
+import '../../maitre/presentation/ai_actions.dart';
 import '../../notes/presentation/notes_page.dart';
 import '../../progression/data/progress_repository.dart';
 import '../data/course_repository.dart';
@@ -128,6 +131,11 @@ class _LessonContent extends ConsumerWidget {
     final isCompleted = completed.contains(lesson.id);
     final position = course.lessons.indexOf(lesson) + 1;
     final hasNext = course.lessonAfter(lesson.id) != null;
+    final hasTeacher = ref.watch(
+      aiSettingsProvider.select(
+        (settings) => settings.value?.activeConfig != null,
+      ),
+    );
 
     return PageFrame(
       // La clé évite de réutiliser les réponses d'une leçon dans la suivante.
@@ -162,6 +170,20 @@ class _LessonContent extends ConsumerWidget {
               moduleId: _moduleId,
             ),
         ],
+        if (hasTeacher)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              icon: const Icon(Icons.auto_awesome_outlined),
+              label: const Text('Demander au Maître'),
+              onPressed: () => openNewConversation(
+                context,
+                ref,
+                TeachingMode.explain,
+                question: 'Explique-moi la leçon « ${lesson.title} ».',
+              ),
+            ),
+          ),
         Wrap(
           spacing: 8,
           runSpacing: 8,

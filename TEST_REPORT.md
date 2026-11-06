@@ -1,5 +1,43 @@
 # Rapport de tests
 
+## Phase 6 — 2026-11-06
+
+Phase terminée : Ollama et Anthropic ont répondu pour de vrai. OpenAI et Gemini n'ont pas été essayés.
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 249 tests sur 249 réussis |
+| Clients des cinq fournisseurs, face à un serveur HTTP local | Requêtes, flux, usage, fin de réponse et erreurs vérifiés |
+| Intégration Linux, socle | 5 tests sur 5 réussis |
+| Intégration Linux, chat par le vrai réseau local et le vrai trousseau | 1 test sur 1 réussi |
+| Migration de la version 3 à la version 4 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base sauvegardée, migrée en version 4, données identiques (45 XP, 1 leçon, 1 quiz, 3 réponses), lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+| Client Ollama face à un vrai serveur (0.40.15, `gemma3:1b`) | 5 tests sur 5 : liste des modèles, réponse par morceaux, usage, réponse coupée, modèle absent, arrêt |
+| Honor et Linux, Ollama et Anthropic, dans l'écran | Fonctionnent, selon l'essai fait par l'utilisateur |
+
+Le test réel se lance à la demande : `OLLAMA_MODEL=gemma3:1b flutter test test/features/maitre/ollama_live_test.dart`.
+
+L'essai sur Anthropic a été fait par l'utilisateur, avec sa clé, sur ses deux appareils. Aucune clé n'est passée par cette session, et ce rapport ne détaille ni le modèle ni le coût.
+
+Deux défauts réels ont été trouvés par ces tests et corrigés :
+
+- Une erreur survenue au milieu d'une réponse échappait à la traduction en message clair, à cause de `yield*`.
+- Arrêter une réponse ne coupait pas la connexion, car un générateur `async*` en attente ne voit l'annulation qu'à son prochain `yield`. Une méthode `abort` ferme désormais le client HTTP.
+
+Les serveurs de test reproduisent les protocoles lus dans la documentation : API Messages et flux SSE d'Anthropic, types du SDK Python d'OpenAI, référence de l'API Gemini, documentation d'Ollama.
+
+### Non vérifié
+
+- **OpenAI et Gemini** : leur code n'a jamais rencontré le service réel. Un écart avec la documentation reste possible.
+- **Essai utilisateur** : il confirme que les deux fournisseurs répondent sur les deux appareils. Les autres chemins, comme les erreurs réelles d'Anthropic, le refus et le coût affiché, n'ont pas été observés un par un.
+- **Qualité pédagogique** : `gemma3:1b` répond en français, mais de façon approximative. Les douze modes n'ont pas été évalués un par un.
+- **En-tête `x-goog-api-key` et liste des modèles Gemini** : la page lue ne les détaille pas, ils viennent de mes connaissances.
+- **Filet Claude** : le mécanisme automatique de repli après un refus n'est pas activé, car il n'a pas pu être testé. Un refus s'affiche simplement à l'utilisateur.
+- **Android sur réseau local** : une adresse HTTP autre que `127.0.0.1` ou `10.0.2.2` est bloquée par le système.
+- **Lecteur d'écran** : le chat n'a pas été parcouru avec TalkBack.
+
 ## Phase 5, fin de phase — 2026-11-06
 
 Phase terminée : douze modules, 121 leçons, 511 questions de quiz, 242 exercices corrigés et 121 questions d'évaluation.

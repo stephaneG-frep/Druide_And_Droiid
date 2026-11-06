@@ -11,6 +11,8 @@ import '../features/accueil/presentation/accueil_page.dart';
 import '../features/chaudron/presentation/chaudron_page.dart';
 import '../features/grimoire/presentation/grimoire_page.dart';
 import '../features/lab/presentation/lab_page.dart';
+import '../features/maitre/presentation/ai_settings_page.dart';
+import '../features/maitre/presentation/chat_page.dart';
 import '../features/maitre/presentation/maitre_page.dart';
 import '../features/notes/presentation/note_editor_page.dart';
 import '../features/notes/presentation/notes_page.dart';
@@ -67,6 +69,22 @@ final routerProvider = Provider<GoRouter>((ref) {
                   path: section.path,
                   builder: (context, state) => _pageFor(section),
                   routes: [
+                    if (section == AppSection.maitre)
+                      GoRoute(
+                        path: 'conversation/:conversationId',
+                        builder: (context, state) {
+                          final id = int.tryParse(
+                            state.pathParameters['conversationId']!,
+                          );
+                          return id == null
+                              ? NotFoundPage(uri: state.uri)
+                              : ChatPage(
+                                  conversationId: id,
+                                  question:
+                                      state.uri.queryParameters['question'],
+                                );
+                        },
+                      ),
                     if (section == AppSection.academie)
                       GoRoute(
                         path: ':moduleId',
@@ -108,6 +126,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                     GoRoute(
                       path: section.path.substring(plusPath.length + 1),
                       builder: (context, state) => _pageFor(section),
+                      routes: [
+                        if (section == AppSection.parametres)
+                          GoRoute(
+                            path: 'ia',
+                            builder: (context, state) => const AiSettingsPage(),
+                          ),
+                      ],
                     ),
                 ],
               ),
