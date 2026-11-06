@@ -3185,6 +3185,670 @@ class AiMessagesCompanion extends UpdateCompanion<AiMessageRow> {
   }
 }
 
+class $LabDraftsTable extends LabDrafts
+    with TableInfo<$LabDraftsTable, LabDraft> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LabDraftsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _solvedMeta = const VerificationMeta('solved');
+  @override
+  late final GeneratedColumn<bool> solved = GeneratedColumn<bool>(
+    'solved',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("solved" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [exerciseId, code, solved, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lab_drafts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LabDraft> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_codeMeta);
+    }
+    if (data.containsKey('solved')) {
+      context.handle(
+        _solvedMeta,
+        solved.isAcceptableOrUnknown(data['solved']!, _solvedMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {exerciseId};
+  @override
+  LabDraft map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabDraft(
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      solved: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}solved'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LabDraftsTable createAlias(String alias) {
+    return $LabDraftsTable(attachedDatabase, alias);
+  }
+}
+
+class LabDraft extends DataClass implements Insertable<LabDraft> {
+  final String exerciseId;
+  final String code;
+  final bool solved;
+  final DateTime updatedAt;
+  const LabDraft({
+    required this.exerciseId,
+    required this.code,
+    required this.solved,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['code'] = Variable<String>(code);
+    map['solved'] = Variable<bool>(solved);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LabDraftsCompanion toCompanion(bool nullToAbsent) {
+    return LabDraftsCompanion(
+      exerciseId: Value(exerciseId),
+      code: Value(code),
+      solved: Value(solved),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LabDraft.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabDraft(
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      code: serializer.fromJson<String>(json['code']),
+      solved: serializer.fromJson<bool>(json['solved']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'code': serializer.toJson<String>(code),
+      'solved': serializer.toJson<bool>(solved),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LabDraft copyWith({
+    String? exerciseId,
+    String? code,
+    bool? solved,
+    DateTime? updatedAt,
+  }) => LabDraft(
+    exerciseId: exerciseId ?? this.exerciseId,
+    code: code ?? this.code,
+    solved: solved ?? this.solved,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LabDraft copyWithCompanion(LabDraftsCompanion data) {
+    return LabDraft(
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      code: data.code.present ? data.code.value : this.code,
+      solved: data.solved.present ? data.solved.value : this.solved,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabDraft(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('code: $code, ')
+          ..write('solved: $solved, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(exerciseId, code, solved, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabDraft &&
+          other.exerciseId == this.exerciseId &&
+          other.code == this.code &&
+          other.solved == this.solved &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LabDraftsCompanion extends UpdateCompanion<LabDraft> {
+  final Value<String> exerciseId;
+  final Value<String> code;
+  final Value<bool> solved;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const LabDraftsCompanion({
+    this.exerciseId = const Value.absent(),
+    this.code = const Value.absent(),
+    this.solved = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LabDraftsCompanion.insert({
+    required String exerciseId,
+    required String code,
+    this.solved = const Value.absent(),
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : exerciseId = Value(exerciseId),
+       code = Value(code),
+       updatedAt = Value(updatedAt);
+  static Insertable<LabDraft> custom({
+    Expression<String>? exerciseId,
+    Expression<String>? code,
+    Expression<bool>? solved,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (code != null) 'code': code,
+      if (solved != null) 'solved': solved,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LabDraftsCompanion copyWith({
+    Value<String>? exerciseId,
+    Value<String>? code,
+    Value<bool>? solved,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return LabDraftsCompanion(
+      exerciseId: exerciseId ?? this.exerciseId,
+      code: code ?? this.code,
+      solved: solved ?? this.solved,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (solved.present) {
+      map['solved'] = Variable<bool>(solved.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabDraftsCompanion(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('code: $code, ')
+          ..write('solved: $solved, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LabRevisionsTable extends LabRevisions
+    with TableInfo<$LabRevisionsTable, LabRevisionRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LabRevisionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    exerciseId,
+    code,
+    label,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lab_revisions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LabRevisionRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_codeMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LabRevisionRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LabRevisionRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LabRevisionsTable createAlias(String alias) {
+    return $LabRevisionsTable(attachedDatabase, alias);
+  }
+}
+
+class LabRevisionRow extends DataClass implements Insertable<LabRevisionRow> {
+  final int id;
+  final String exerciseId;
+  final String code;
+  final String label;
+  final DateTime createdAt;
+  const LabRevisionRow({
+    required this.id,
+    required this.exerciseId,
+    required this.code,
+    required this.label,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['code'] = Variable<String>(code);
+    map['label'] = Variable<String>(label);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  LabRevisionsCompanion toCompanion(bool nullToAbsent) {
+    return LabRevisionsCompanion(
+      id: Value(id),
+      exerciseId: Value(exerciseId),
+      code: Value(code),
+      label: Value(label),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory LabRevisionRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LabRevisionRow(
+      id: serializer.fromJson<int>(json['id']),
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      code: serializer.fromJson<String>(json['code']),
+      label: serializer.fromJson<String>(json['label']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'code': serializer.toJson<String>(code),
+      'label': serializer.toJson<String>(label),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  LabRevisionRow copyWith({
+    int? id,
+    String? exerciseId,
+    String? code,
+    String? label,
+    DateTime? createdAt,
+  }) => LabRevisionRow(
+    id: id ?? this.id,
+    exerciseId: exerciseId ?? this.exerciseId,
+    code: code ?? this.code,
+    label: label ?? this.label,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  LabRevisionRow copyWithCompanion(LabRevisionsCompanion data) {
+    return LabRevisionRow(
+      id: data.id.present ? data.id.value : this.id,
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      code: data.code.present ? data.code.value : this.code,
+      label: data.label.present ? data.label.value : this.label,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabRevisionRow(')
+          ..write('id: $id, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('code: $code, ')
+          ..write('label: $label, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, exerciseId, code, label, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LabRevisionRow &&
+          other.id == this.id &&
+          other.exerciseId == this.exerciseId &&
+          other.code == this.code &&
+          other.label == this.label &&
+          other.createdAt == this.createdAt);
+}
+
+class LabRevisionsCompanion extends UpdateCompanion<LabRevisionRow> {
+  final Value<int> id;
+  final Value<String> exerciseId;
+  final Value<String> code;
+  final Value<String> label;
+  final Value<DateTime> createdAt;
+  const LabRevisionsCompanion({
+    this.id = const Value.absent(),
+    this.exerciseId = const Value.absent(),
+    this.code = const Value.absent(),
+    this.label = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  LabRevisionsCompanion.insert({
+    this.id = const Value.absent(),
+    required String exerciseId,
+    required String code,
+    required String label,
+    required DateTime createdAt,
+  }) : exerciseId = Value(exerciseId),
+       code = Value(code),
+       label = Value(label),
+       createdAt = Value(createdAt);
+  static Insertable<LabRevisionRow> custom({
+    Expression<int>? id,
+    Expression<String>? exerciseId,
+    Expression<String>? code,
+    Expression<String>? label,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (code != null) 'code': code,
+      if (label != null) 'label': label,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  LabRevisionsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? exerciseId,
+    Value<String>? code,
+    Value<String>? label,
+    Value<DateTime>? createdAt,
+  }) {
+    return LabRevisionsCompanion(
+      id: id ?? this.id,
+      exerciseId: exerciseId ?? this.exerciseId,
+      code: code ?? this.code,
+      label: label ?? this.label,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LabRevisionsCompanion(')
+          ..write('id: $id, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('code: $code, ')
+          ..write('label: $label, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3201,6 +3865,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $AiMessagesTable aiMessages = $AiMessagesTable(this);
+  late final $LabDraftsTable labDrafts = $LabDraftsTable(this);
+  late final $LabRevisionsTable labRevisions = $LabRevisionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3215,6 +3881,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     exerciseAnswers,
     aiConversations,
     aiMessages,
+    labDrafts,
+    labRevisions,
   ];
 }
 
@@ -5245,6 +5913,395 @@ typedef $$AiMessagesTableProcessedTableManager =
       AiMessageRow,
       PrefetchHooks Function({bool conversationId})
     >;
+typedef $$LabDraftsTableCreateCompanionBuilder = LabDraftsCompanion Function({
+  required String exerciseId,
+  required String code,
+  Value<bool> solved,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$LabDraftsTableUpdateCompanionBuilder = LabDraftsCompanion Function({
+  Value<String> exerciseId,
+  Value<String> code,
+  Value<bool> solved,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$LabDraftsTableFilterComposer
+    extends Composer<_$AppDatabase, $LabDraftsTable> {
+  $$LabDraftsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get solved => $composableBuilder(
+    column: $table.solved,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LabDraftsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LabDraftsTable> {
+  $$LabDraftsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get solved => $composableBuilder(
+    column: $table.solved,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LabDraftsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LabDraftsTable> {
+  $$LabDraftsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<bool> get solved =>
+      $composableBuilder(column: $table.solved, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LabDraftsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LabDraftsTable,
+          LabDraft,
+          $$LabDraftsTableFilterComposer,
+          $$LabDraftsTableOrderingComposer,
+          $$LabDraftsTableAnnotationComposer,
+          $$LabDraftsTableCreateCompanionBuilder,
+          $$LabDraftsTableUpdateCompanionBuilder,
+          (LabDraft, BaseReferences<_$AppDatabase, $LabDraftsTable, LabDraft>),
+          LabDraft,
+          PrefetchHooks Function()
+        > {
+  $$LabDraftsTableTableManager(_$AppDatabase db, $LabDraftsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LabDraftsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LabDraftsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LabDraftsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> exerciseId = const Value.absent(),
+                Value<String> code = const Value.absent(),
+                Value<bool> solved = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LabDraftsCompanion(
+                exerciseId: exerciseId,
+                code: code,
+                solved: solved,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String exerciseId,
+                required String code,
+                Value<bool> solved = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LabDraftsCompanion.insert(
+                exerciseId: exerciseId,
+                code: code,
+                solved: solved,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LabDraftsTable, LabDraft>(table),
+                  BaseReferences<_$AppDatabase, $LabDraftsTable, LabDraft>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LabDraftsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LabDraftsTable,
+      LabDraft,
+      $$LabDraftsTableFilterComposer,
+      $$LabDraftsTableOrderingComposer,
+      $$LabDraftsTableAnnotationComposer,
+      $$LabDraftsTableCreateCompanionBuilder,
+      $$LabDraftsTableUpdateCompanionBuilder,
+      (LabDraft, BaseReferences<_$AppDatabase, $LabDraftsTable, LabDraft>),
+      LabDraft,
+      PrefetchHooks Function()
+    >;
+typedef $$LabRevisionsTableCreateCompanionBuilder =
+    LabRevisionsCompanion Function({
+      Value<int> id,
+      required String exerciseId,
+      required String code,
+      required String label,
+      required DateTime createdAt,
+    });
+typedef $$LabRevisionsTableUpdateCompanionBuilder =
+    LabRevisionsCompanion Function({
+      Value<int> id,
+      Value<String> exerciseId,
+      Value<String> code,
+      Value<String> label,
+      Value<DateTime> createdAt,
+    });
+
+class $$LabRevisionsTableFilterComposer
+    extends Composer<_$AppDatabase, $LabRevisionsTable> {
+  $$LabRevisionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LabRevisionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LabRevisionsTable> {
+  $$LabRevisionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LabRevisionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LabRevisionsTable> {
+  $$LabRevisionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<String> get label =>
+      $composableBuilder(column: $table.label, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$LabRevisionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LabRevisionsTable,
+          LabRevisionRow,
+          $$LabRevisionsTableFilterComposer,
+          $$LabRevisionsTableOrderingComposer,
+          $$LabRevisionsTableAnnotationComposer,
+          $$LabRevisionsTableCreateCompanionBuilder,
+          $$LabRevisionsTableUpdateCompanionBuilder,
+          (
+            LabRevisionRow,
+            BaseReferences<_$AppDatabase, $LabRevisionsTable, LabRevisionRow>,
+          ),
+          LabRevisionRow,
+          PrefetchHooks Function()
+        > {
+  $$LabRevisionsTableTableManager(_$AppDatabase db, $LabRevisionsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LabRevisionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LabRevisionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LabRevisionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> exerciseId = const Value.absent(),
+                Value<String> code = const Value.absent(),
+                Value<String> label = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => LabRevisionsCompanion(
+                id: id,
+                exerciseId: exerciseId,
+                code: code,
+                label: label,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String exerciseId,
+                required String code,
+                required String label,
+                required DateTime createdAt,
+              }) => LabRevisionsCompanion.insert(
+                id: id,
+                exerciseId: exerciseId,
+                code: code,
+                label: label,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LabRevisionsTable, LabRevisionRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $LabRevisionsTable,
+                    LabRevisionRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LabRevisionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LabRevisionsTable,
+      LabRevisionRow,
+      $$LabRevisionsTableFilterComposer,
+      $$LabRevisionsTableOrderingComposer,
+      $$LabRevisionsTableAnnotationComposer,
+      $$LabRevisionsTableCreateCompanionBuilder,
+      $$LabRevisionsTableUpdateCompanionBuilder,
+      (
+        LabRevisionRow,
+        BaseReferences<_$AppDatabase, $LabRevisionsTable, LabRevisionRow>,
+      ),
+      LabRevisionRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5267,4 +6324,8 @@ class $AppDatabaseManager {
       $$AiConversationsTableTableManager(_db, _db.aiConversations);
   $$AiMessagesTableTableManager get aiMessages =>
       $$AiMessagesTableTableManager(_db, _db.aiMessages);
+  $$LabDraftsTableTableManager get labDrafts =>
+      $$LabDraftsTableTableManager(_db, _db.labDrafts);
+  $$LabRevisionsTableTableManager get labRevisions =>
+      $$LabRevisionsTableTableManager(_db, _db.labRevisions);
 }

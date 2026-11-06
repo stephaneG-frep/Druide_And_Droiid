@@ -16,7 +16,7 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 - **Académie** : le programme des douze modules et vos favoris. Les douze modules sont rédigés. Le module Expert Android se termine par un projet réel, que vous évaluez avec sa grille : l'application ne le corrige pas à votre place.
 - **Maître** : votre professeur IA, relié au fournisseur de votre choix. Sans fournisseur, l'application reste complète, mais le Maître ne répond pas.
 - **Mes notes** : vos notes personnelles.
-- **Lab** : un exemple de code Kotlin à lire et à copier. Il ne peut pas être exécuté dans l'application.
+- **Lab** : un éditeur de code, des exercices Kotlin, Java, Dart et XML, et des feuilles libres.
 - **Projets** : la liste des vingt projets prévus.
 - **Progression** : les huit grades de l'Académie.
 - **Grimoire** : l'aide de l'application.
@@ -89,3 +89,13 @@ Avant le premier envoi vers un service externe, l'application vous demande votre
 Avec Ollama sur Linux, gardez l'adresse proposée. Sur un téléphone relié en USB, lancez `adb reverse tcp:11434 tcp:11434`, à refaire après avoir débranché le câble. Sur l'émulateur, utilisez `http://10.0.2.2:11434`.
 
 Les réponses sont générées par une IA et peuvent contenir des erreurs. Relisez tout code avant de l'utiliser : l'application ne l'exécute jamais.
+
+## Utiliser le Lab
+
+Votre code s'enregistre tout seul. **Enregistrer une version** le garde dans l'**Historique**, d'où vous pouvez le comparer ou y revenir. **Comparer au corrigé** montre les différences, et **Exporter** crée un fichier.
+
+**Sur Linux**, **Exécuter** utilise les vrais compilateurs de votre machine. Un exercice est réussi quand la sortie correspond à celle attendue. Le code s'exécute avec vos droits : le Lab limite sa durée et sa sortie, mais ce n'est pas un bac à sable. N'exécutez que du code que vous avez lu et compris, y compris celui d'une IA.
+
+Les fichiers exportés arrivent dans le dossier Téléchargements, sous `Druide And-Droiid`. **Outils Linux** indique ce qui est installé, avec la procédure pour le reste. Le Lab n'installe rien lui-même.
+
+**Sur téléphone**, le code Kotlin, Java et Dart ne s'exécute pas, car aucun compilateur n'y tourne. Le Lab ne simule rien : comparez avec le corrigé, demandez une correction au Maître, ou reprenez le code sur Linux. **Je valide moi-même** marque un exercice comme réussi, sur votre seule appréciation. Le XML est réellement analysé sur les deux plateformes : syntaxe et éléments attendus, sans compilation Android.

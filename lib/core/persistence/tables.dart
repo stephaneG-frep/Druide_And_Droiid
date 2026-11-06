@@ -96,3 +96,24 @@ class AiMessages extends Table {
   TextColumn get stopReason => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
 }
+
+/// Code en cours d'un exercice du Lab, ou d'une feuille libre.
+class LabDrafts extends Table {
+  TextColumn get exerciseId => text()();
+  TextColumn get code => text()();
+  BoolColumn get solved => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {exerciseId};
+}
+
+/// Versions enregistrées, pour comparer ou revenir en arrière.
+@DataClassName('LabRevisionRow')
+class LabRevisions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get exerciseId => text()();
+  TextColumn get code => text()();
+  TextColumn get label => text()();
+  DateTimeColumn get createdAt => dateTime()();
+}

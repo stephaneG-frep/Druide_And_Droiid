@@ -1,5 +1,15 @@
 # Rapport de compilation
 
+## Phase 7 — 2026-11-06
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter test integration_test/lab_test.dart -d linux` | Réussi |
+| Exercices | `python3 tool/check_lab_exercises.py` | 18 exercices vérifiés |
+
+Nouvelles dépendances : `file_picker`, pour l'export sur Android, et `xml`.
+
 ## Phase 6 — 2026-11-06
 
 | Cible | Commande | Résultat |
