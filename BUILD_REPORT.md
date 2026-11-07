@@ -1,5 +1,15 @@
 # Rapport de compilation
 
+## Phase 11 — 2026-11-07
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter build linux --debug` | Réussi |
+| Linux, intégration | `flutter test integration_test/sauvegarde_test.dart -d linux` | Réussi |
+
+Nouvelles dépendances : `archive`, pour le ZIP, et `pdf`, pour les exports.
+
 ## Phase 10 — 2026-11-07
 
 | Cible | Commande | Résultat |

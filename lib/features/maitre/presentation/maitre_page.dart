@@ -16,6 +16,8 @@ import '../domain/ai_provider.dart';
 import '../domain/teaching.dart';
 import 'ai_actions.dart';
 import 'ai_paths.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class MaitrePage extends ConsumerWidget {
   const MaitrePage({super.key});
@@ -143,6 +145,7 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
     return PageFrame(
       title: AppSection.maitre.label,
       actions: [
+        const HelpButton(GrimoireTopic.ia),
         IconButton(
           tooltip: 'Réglages du Maître',
           icon: const Icon(Icons.tune),
@@ -156,6 +159,14 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
             spacing: 12,
             children: [
               _ProviderSwitch(active: widget.config),
+              Text(
+                widget.config.staysOnDevice
+                    ? 'Fonctionne sans Internet, tant qu\'Ollama est lancé.'
+                    : 'Ce fournisseur a besoin d\'une connexion Internet.',
+                style: context.text.bodySmall!.copyWith(
+                  color: context.techno.muted,
+                ),
+              ),
               DropdownButtonFormField<TeachingMode>(
                 initialValue: _mode,
                 isExpanded: true,

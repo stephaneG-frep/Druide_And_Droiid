@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## Phase 11 — 2026-11-07
+
+- Export et import JSON de toutes les données, sans les clés d'API.
+- Sauvegarde complète en ZIP, avec des copies lisibles des notes, des réponses et du code.
+- Restauration confirmée, d'un seul bloc, précédée d'une copie de l'état actuel.
+- Copie de sécurité quotidienne au démarrage, cinq gardées.
+- Export PDF des modules, des notes, des fiches de projet et des certificats, polices embarquées.
+- Export Markdown des exercices.
+- Choix de la destination : sélecteur du système sur Android, boîte de dialogue native sur Linux.
+- Le Grimoire du Druide couvre tous les sujets du mode d'emploi, avec une aide contextuelle dans les écrans complexes.
+- La page Maître indique si le fournisseur a besoin d'Internet.
+
 ## Phase 10 — 2026-11-07
 
 - Barème définitif, avec expérience pour le Lab, les projets, les bugs vérifiés et l'évaluation finale.

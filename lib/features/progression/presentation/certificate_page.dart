@@ -8,6 +8,8 @@ import '../../../design_system/techno_card.dart';
 import '../data/gamification_repository.dart';
 import '../domain/certificates.dart';
 import '../domain/learner_stats.dart';
+import '../../sauvegarde/presentation/pdf_action.dart';
+import '../../sauvegarde/data/document_exports.dart';
 
 class CertificatePage extends ConsumerStatefulWidget {
   const CertificatePage({required this.certificateId, super.key});
@@ -53,6 +55,15 @@ class _CertificatePageState extends ConsumerState<CertificatePage> {
 
     return PageFrame(
       title: 'Certificat interne',
+      actions: [
+        if (certificate != null)
+          PdfExportButton(
+            fileName: 'certificat-${certificate.id}.pdf',
+            build: (ref) => ref
+                .read(pdfExporterProvider)
+                .certificate(certificate, _name.text.trim()),
+          ),
+      ],
       children: [
         if (certificate == null)
           Text(

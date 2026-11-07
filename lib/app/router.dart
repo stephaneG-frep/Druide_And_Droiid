@@ -27,6 +27,7 @@ import '../features/progression/presentation/certificate_page.dart';
 import '../features/progression/presentation/history_page.dart';
 import '../features/progression/presentation/progression_page.dart';
 import '../features/projets/presentation/final_project_page.dart';
+import '../features/sauvegarde/presentation/backup_page.dart';
 import '../features/projets/presentation/project_page.dart';
 import '../features/projets/presentation/projets_page.dart';
 import 'sections.dart';
@@ -198,11 +199,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                             ),
                           ),
                         ],
-                        if (section == AppSection.parametres)
+                        if (section == AppSection.parametres) ...[
                           GoRoute(
                             path: 'ia',
                             builder: (context, state) => const AiSettingsPage(),
                           ),
+                          GoRoute(
+                            path: 'sauvegardes',
+                            builder: (context, state) => const BackupPage(),
+                          ),
+                        ],
                       ],
                     ),
                 ],

@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
+import '../../sauvegarde/data/file_saver.dart';
 import 'code_runner.dart';
 import 'tool_commands.dart';
 import 'tool_detector.dart';
@@ -41,40 +38,17 @@ abstract interface class CodeExporter {
   Future<String?> export(String fileName, String code);
 }
 
+/// Passe par l'enregistreur commun, qui laisse choisir la destination.
 class SystemCodeExporter implements CodeExporter {
-  const SystemCodeExporter();
+  const SystemCodeExporter(this._saver);
+
+  final FileSaver _saver;
 
   @override
-  Future<String?> export(String fileName, String code) async {
-    final bytes = Uint8List.fromList(utf8.encode(code));
-    if (Platform.isAndroid) {
-      final uri = await FilePicker.saveFile(fileName: fileName, bytes: bytes);
-      return uri?.toString();
-    }
-
-    // Pas de boîte de dialogue : sur Linux, elle dépend d'outils souvent absents.
-    final base =
-        await getDownloadsDirectory() ??
-        await getApplicationDocumentsDirectory();
-    final folder = await Directory(p.join(base.path, 'Druide And-Droiid'))
-        .create(recursive: true);
-    final file = await _unusedFile(folder, fileName);
-    await file.writeAsBytes(bytes);
-    return file.path;
-  }
-
-  /// N'écrase jamais un fichier déjà exporté.
-  Future<File> _unusedFile(Directory folder, String fileName) async {
-    final name = p.basenameWithoutExtension(fileName);
-    final extension = p.extension(fileName);
-    var file = File(p.join(folder.path, fileName));
-    for (var index = 2; await file.exists(); index++) {
-      file = File(p.join(folder.path, '$name-$index$extension'));
-    }
-    return file;
-  }
+  Future<String?> export(String fileName, String code) =>
+      _saver.save(fileName, utf8.encode(code));
 }
 
 final codeExporterProvider = Provider<CodeExporter>(
-  (ref) => const SystemCodeExporter(),
+  (ref) => SystemCodeExporter(ref.watch(fileSaverProvider)),
 );

@@ -1,6 +1,6 @@
 # Mode d'emploi
 
-L'application est en cours de développement. Ce guide sera complété à chaque phase, et repris dans la rubrique « Le Grimoire du Druide » en phase 11.
+Ce guide reprend l'essentiel. Dans l'application, la rubrique **Plus**, **Grimoire** en donne la version complète, et le bouton d'aide des écrans les plus riches ouvre directement le bon passage.
 
 ## Se déplacer
 
@@ -17,14 +17,13 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 - **Maître** : votre professeur IA, relié au fournisseur de votre choix. Sans fournisseur, l'application reste complète, mais le Maître ne répond pas.
 - **Mes notes** : vos notes personnelles.
 - **Lab** : un éditeur de code, des exercices Kotlin, Java, Dart et XML, et des feuilles libres.
-- **Projets** : la liste des vingt projets prévus.
-- **Progression** : les huit grades de l'Académie.
-- **Grimoire** : l'aide de l'application.
-- **Paramètres** : le thème et les animations.
+- **Chaudron des Bugs** : l'analyse de vos erreurs, avec ou sans IA.
+- **Projets** : vingt projets pratiques et l'évaluation finale.
+- **Progression** : grades, badges, défis, statistiques et certificats internes.
+- **Grimoire** : le mode d'emploi complet.
+- **Paramètres** : le thème, les animations, le Maître et les sauvegardes.
 
-Toutes vos données restent sur cet appareil. Il n'y a pas encore d'export ni de sauvegarde : si vous désinstallez l'application, elles sont perdues.
-
-Le Maître And-Droiīd et le Chaudron des Bugs présentent ce qu'ils sauront faire, mais ils ne sont pas encore reliés à une IA.
+Toutes vos données restent sur cet appareil, et s'enregistrent automatiquement. Pour les garder en cas de désinstallation ou de changement d'appareil, exportez une sauvegarde : voir plus bas.
 
 ## Suivre une leçon
 
@@ -131,3 +130,26 @@ Les projets se réalisent dans Android Studio ou votre éditeur : le code fourni
 - **Certificats internes** : un par module terminé, avec son évaluation. Ce ne sont ni des diplômes, ni des certifications professionnelles officielles.
 
 L'expérience du Lab, des projets, des bugs et de l'évaluation finale s'ajoute au moment de l'action, ou à la prochaine ouverture de la page Progression. Sur téléphone, un exercice du Lab validé par vous-même rapporte la même expérience : la note repose sur votre honnêteté.
+
+## Sauvegarder et restaurer
+
+Dans **Plus**, **Paramètres**, **Sauvegardes** :
+
+- **Exporter en JSON** : un fichier qui contient toutes vos données.
+- **Sauvegarde complète (ZIP)** : la même sauvegarde, plus vos notes, vos réponses et votre code dans des fichiers lisibles.
+- **Mes exercices (Markdown)** et **Mes notes (PDF)** : des copies à lire ou à imprimer.
+- **Restaurer depuis un fichier** : choisissez une sauvegarde JSON ou ZIP. Toutes vos données actuelles sont remplacées, après confirmation. Une copie de l'état actuel est créée juste avant.
+
+Chaque jour d'utilisation, une copie de sécurité est créée dans le dossier privé de l'application. Les cinq plus récentes sont gardées, et elles se restaurent depuis le même écran. Elles disparaissent avec l'application : seule une sauvegarde exportée vous protège d'une désinstallation.
+
+Les clés d'API ne sont jamais sauvegardées : saisissez-les de nouveau après une restauration.
+
+Sur téléphone, le sélecteur du système vous laisse choisir l'emplacement. Sur Linux, une boîte de dialogue s'ouvre. Si elle ne peut pas s'ouvrir, le fichier va dans Téléchargements, sous `Druide And-Droiid`.
+
+## Exporter en PDF
+
+Le bouton PDF, en haut de l'écran, exporte un module de l'Académie (cours et corrigés), vos notes, une fiche de projet ou un certificat interne.
+
+## Sans connexion
+
+Les cours, quiz, exercices, corrigés, notes, le Lab, le Chaudron, les projets et la progression fonctionnent sans Internet. Les fournisseurs IA distants ont besoin d'une connexion, et la page Maître l'indique. Ollama fonctionne sans Internet, s'il est installé et lancé.

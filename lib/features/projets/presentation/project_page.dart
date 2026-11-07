@@ -20,6 +20,10 @@ import '../../maitre/presentation/ai_actions.dart';
 import '../../progression/presentation/reward_toast.dart';
 import '../data/project_repository.dart';
 import '../domain/project.dart';
+import '../../sauvegarde/presentation/pdf_action.dart';
+import '../../sauvegarde/data/document_exports.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 const _passPercent = 80;
 
@@ -117,6 +121,14 @@ class _ProjectContentState extends ConsumerState<_ProjectContent> {
 
     return PageFrame(
       title: _project.title,
+      actions: [
+        PdfExportButton(
+          fileName: 'projet-${_project.id}.pdf',
+          build: (ref) =>
+              ref.read(pdfExporterProvider).project(_project, state),
+        ),
+        const HelpButton(GrimoireTopic.projets),
+      ],
       children: [
         TechnoTag(label: _project.stack, color: techno.cyan),
         const SectionTitle('Objectif'),

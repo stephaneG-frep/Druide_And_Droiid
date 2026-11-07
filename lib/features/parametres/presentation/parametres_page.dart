@@ -10,6 +10,7 @@ import '../../../design_system/motion.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
 import '../../maitre/presentation/ai_paths.dart';
+import '../../sauvegarde/presentation/backup_paths.dart';
 import 'appearance_controller.dart';
 
 class ParametresPage extends ConsumerWidget {
@@ -105,10 +106,24 @@ class ParametresPage extends ConsumerWidget {
             ],
           ),
         ),
-        const PhaseNotice(
-          message:
-              'Les réglages des fournisseurs IA et des sauvegardes '
-              'arriveront avec ces fonctionnalités.',
+        const SectionTitle('Sauvegardes'),
+        TechnoCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+              Text(
+                'Exporter, restaurer et retrouver vos copies de sécurité.',
+                style: context.text.bodyMedium,
+              ),
+              ArcaneButton(
+                label: 'Sauvegardes',
+                icon: Icons.save_outlined,
+                secondary: true,
+                onPressed: () => context.go(backupPath),
+              ),
+            ],
+          ),
         ),
       ],
     );

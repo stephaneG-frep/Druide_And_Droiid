@@ -189,3 +189,17 @@ L'expérience passe toujours par `ProgressRepository.award`, avec une source uni
 `GamificationRepository.reconcile` attribue ce qui est dû à partir de l'état de la base : exercices du Lab, projets, bugs vérifiés, évaluation finale et badges. On peut l'appeler à tout moment. `rewardAndCelebrate` l'appelle après ces actions, et la page Progression à son ouverture.
 
 Les badges, défis, parcours et certificats sont des fonctions pures de `LearnerStats` : ajoutez-en dans `lib/features/progression/domain`. Si le barème change, `gamification_test.dart` vérifie que Grand Druide reste atteignable avec le contenu réel.
+
+## Sauvegardes et exports
+
+`BackupRepository` sauvegarde toutes les tables de `AppDatabase.allTables`, ligne par ligne, sans connaître leur contenu. Une nouvelle table est donc sauvegardée automatiquement. Le jeu d'essai de `test/features/sauvegarde/backup_test.dart` doit cependant la remplir : un test échoue sinon.
+
+- La restauration remplace tout, dans une transaction. Une sauvegarde d'un schéma plus récent est refusée. Une plus ancienne se restaure, les colonnes absentes prenant leur valeur par défaut.
+- Les drapeaux `ai.key.*` ne sont jamais exportés ni restaurés : les clés restent dans le coffre.
+- `AutoBackups` écrit dans le dossier privé. `main.dart` le lance une fois par jour.
+- `FileSaver` et `FileOpener` passent par le sélecteur d'Android, ou par la boîte de dialogue native de GTK sur Linux, avec repli vers Téléchargements. Le Lab utilise le même `FileSaver`.
+- `PdfExporter` embarque les polices de l'application.
+
+## Grimoire et aide contextuelle
+
+Le texte de l'aide vit dans `GrimoireTopic`. La page du Grimoire et `HelpButton` l'affichent tous les deux : modifiez-le à un seul endroit.
