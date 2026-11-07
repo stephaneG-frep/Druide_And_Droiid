@@ -113,6 +113,87 @@ void main() {
     database.close();
   }
 
+  test('la version 7 passe en version 8 sans perte', () async {
+    createV2Database();
+    final raw = sqlite3.open(file.path);
+    raw
+      ..execute(
+        'CREATE TABLE "exercise_answers" ("exercise_id" TEXT NOT NULL, '
+        '"module_id" TEXT NOT NULL, "answer" TEXT NOT NULL, "status" TEXT NOT '
+        'NULL, "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "ai_conversations" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "title" TEXT NOT NULL, "provider_kind" TEXT NOT NULL, '
+        '"model" TEXT NOT NULL, "mode" TEXT NOT NULL, "created_at" INTEGER NOT '
+        'NULL, "updated_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "ai_messages" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "conversation_id" INTEGER NOT NULL REFERENCES '
+        'ai_conversations (id), "role" TEXT NOT NULL, "content" TEXT NOT NULL, '
+        '"input_tokens" INTEGER NULL, "output_tokens" INTEGER NULL, '
+        '"stop_reason" TEXT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "lab_drafts" ("exercise_id" TEXT NOT NULL, "code" TEXT '
+        'NOT NULL, "solved" INTEGER NOT NULL DEFAULT 0 CHECK ("solved" IN (0, '
+        '1)), "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "lab_revisions" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "exercise_id" TEXT NOT NULL, "code" TEXT NOT NULL, '
+        '"label" TEXT NOT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "bug_cases" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "title" TEXT NOT NULL, "error_text" TEXT NOT NULL, '
+        '"description" TEXT NOT NULL, "code" TEXT NOT NULL, "conversation_id" '
+        'INTEGER NULL, "status" TEXT NOT NULL, "verification" TEXT NULL, '
+        '"created_at" INTEGER NOT NULL, "updated_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        "INSERT INTO bug_cases (title, error_text, description, code, status, "
+        "created_at, updated_at) VALUES ('Dossier', 'e', '', '', 'open', 1, 1)",
+      )
+      ..execute(
+        'CREATE TABLE "project_progress" ("project_id" TEXT NOT NULL, '
+        '"done_steps" TEXT NOT NULL DEFAULT \'[]\', "done_criteria" TEXT NOT '
+        'NULL DEFAULT \'[]\', "quiz_passed" INTEGER NOT NULL DEFAULT 0 CHECK '
+        '("quiz_passed" IN (0, 1)), "proof" TEXT NOT NULL DEFAULT \'\', '
+        '"completed_at" INTEGER NULL, "updated_at" INTEGER NOT NULL, PRIMARY '
+        'KEY ("project_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "final_project_scores" ("criterion" TEXT NOT NULL, '
+        '"score" INTEGER NOT NULL, "proof" TEXT NOT NULL, "updated_at" INTEGER '
+        'NOT NULL, PRIMARY KEY ("criterion"))',
+      )
+      ..execute(
+        "INSERT INTO project_progress (project_id, done_steps, updated_at) "
+        "VALUES ('notes', '[1]', 1)",
+      )
+      ..execute('PRAGMA user_version = 7');
+    raw.close();
+
+    final database = AppDatabase(NativeDatabase(file));
+    final progress = await ProjectRepository(
+      database,
+      DateTime.now,
+    ).read('notes');
+    expect(progress.doneSteps, {1});
+
+    await database
+        .into(database.badgeUnlocks)
+        .insert(
+          BadgeUnlocksCompanion.insert(
+            badgeId: 'premiere-lecon',
+            unlockedAt: DateTime(2026),
+          ),
+        );
+    await database.close();
+  });
+
   test('la version 6 passe en version 7 sans perte', () async {
     createV2Database();
     final raw = sqlite3.open(file.path);

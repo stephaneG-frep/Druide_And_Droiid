@@ -119,3 +119,15 @@ Les projets se réalisent dans Android Studio ou votre éditeur : le code fourni
 **Valider le projet** exige toutes les étapes, le questionnaire, tous les critères et une preuve écrite, comme l'adresse de votre dépôt. Décocher un élément annule la validation. C'est une autoévaluation : l'application ne lit pas votre code.
 
 **Évaluation finale** : la grille du module Expert Android, notée sur 100. Une note sans preuve compte pour zéro. La validation demande 70 points, avec au moins 10 en sécurité et 10 en tests.
+
+## Progresser
+
+**Plus**, **Progression** rassemble votre grade, votre objectif de la semaine, votre parcours, les défis, vos statistiques, vos badges et vos certificats.
+
+- **Expérience** : chaque action ne rapporte qu'une fois. Leçon 20 XP, quiz 15, exercice 10, évaluation de module 50, exercice du Lab 15, projet de 50 à 200 selon son niveau, évaluation finale 500. Un bug vérifié rapporte 20 XP, pour dix dossiers au plus. Grand Druide And-Droiīd demande 9 000 XP : il faut avoir parcouru presque tout le programme.
+- **Défis** : deux défis du jour et un de la semaine. Une fois accompli, touchez **Réclamer**.
+- **Parcours** : choisissez un objectif. **Continuer** ouvre la prochaine leçon à suivre.
+- **Badges** : ils se débloquent automatiquement, et restent acquis.
+- **Certificats internes** : un par module terminé, avec son évaluation. Ce ne sont ni des diplômes, ni des certifications professionnelles officielles.
+
+L'expérience du Lab, des projets, des bugs et de l'évaluation finale s'ajoute au moment de l'action, ou à la prochaine ouverture de la page Progression. Sur téléphone, un exercice du Lab validé par vous-même rapporte la même expérience : la note repose sur votre honnêteté.

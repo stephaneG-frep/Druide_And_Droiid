@@ -56,8 +56,8 @@ void main() {
     });
 
     test('forXp respecte les bornes de chaque grade', () {
-      expect(Rank.forXp(99), Rank.apprenti);
-      expect(Rank.forXp(100), Rank.initie);
+      expect(Rank.forXp(149), Rank.apprenti);
+      expect(Rank.forXp(150), Rank.initie);
       expect(Rank.forXp(1000000), Rank.grandDruide);
     });
   });

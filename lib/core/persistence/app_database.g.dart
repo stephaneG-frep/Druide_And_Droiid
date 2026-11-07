@@ -5248,6 +5248,225 @@ class FinalProjectScoresCompanion extends UpdateCompanion<FinalProjectScore> {
   }
 }
 
+class $BadgeUnlocksTable extends BadgeUnlocks
+    with TableInfo<$BadgeUnlocksTable, BadgeUnlock> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BadgeUnlocksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _badgeIdMeta = const VerificationMeta(
+    'badgeId',
+  );
+  @override
+  late final GeneratedColumn<String> badgeId = GeneratedColumn<String>(
+    'badge_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unlockedAtMeta = const VerificationMeta(
+    'unlockedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> unlockedAt = GeneratedColumn<DateTime>(
+    'unlocked_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [badgeId, unlockedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'badge_unlocks';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BadgeUnlock> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('badge_id')) {
+      context.handle(
+        _badgeIdMeta,
+        badgeId.isAcceptableOrUnknown(data['badge_id']!, _badgeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_badgeIdMeta);
+    }
+    if (data.containsKey('unlocked_at')) {
+      context.handle(
+        _unlockedAtMeta,
+        unlockedAt.isAcceptableOrUnknown(data['unlocked_at']!, _unlockedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unlockedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {badgeId};
+  @override
+  BadgeUnlock map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BadgeUnlock(
+      badgeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}badge_id'],
+      )!,
+      unlockedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}unlocked_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BadgeUnlocksTable createAlias(String alias) {
+    return $BadgeUnlocksTable(attachedDatabase, alias);
+  }
+}
+
+class BadgeUnlock extends DataClass implements Insertable<BadgeUnlock> {
+  final String badgeId;
+  final DateTime unlockedAt;
+  const BadgeUnlock({required this.badgeId, required this.unlockedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['badge_id'] = Variable<String>(badgeId);
+    map['unlocked_at'] = Variable<DateTime>(unlockedAt);
+    return map;
+  }
+
+  BadgeUnlocksCompanion toCompanion(bool nullToAbsent) {
+    return BadgeUnlocksCompanion(
+      badgeId: Value(badgeId),
+      unlockedAt: Value(unlockedAt),
+    );
+  }
+
+  factory BadgeUnlock.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BadgeUnlock(
+      badgeId: serializer.fromJson<String>(json['badgeId']),
+      unlockedAt: serializer.fromJson<DateTime>(json['unlockedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'badgeId': serializer.toJson<String>(badgeId),
+      'unlockedAt': serializer.toJson<DateTime>(unlockedAt),
+    };
+  }
+
+  BadgeUnlock copyWith({String? badgeId, DateTime? unlockedAt}) => BadgeUnlock(
+    badgeId: badgeId ?? this.badgeId,
+    unlockedAt: unlockedAt ?? this.unlockedAt,
+  );
+  BadgeUnlock copyWithCompanion(BadgeUnlocksCompanion data) {
+    return BadgeUnlock(
+      badgeId: data.badgeId.present ? data.badgeId.value : this.badgeId,
+      unlockedAt: data.unlockedAt.present
+          ? data.unlockedAt.value
+          : this.unlockedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BadgeUnlock(')
+          ..write('badgeId: $badgeId, ')
+          ..write('unlockedAt: $unlockedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(badgeId, unlockedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BadgeUnlock &&
+          other.badgeId == this.badgeId &&
+          other.unlockedAt == this.unlockedAt);
+}
+
+class BadgeUnlocksCompanion extends UpdateCompanion<BadgeUnlock> {
+  final Value<String> badgeId;
+  final Value<DateTime> unlockedAt;
+  final Value<int> rowid;
+  const BadgeUnlocksCompanion({
+    this.badgeId = const Value.absent(),
+    this.unlockedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BadgeUnlocksCompanion.insert({
+    required String badgeId,
+    required DateTime unlockedAt,
+    this.rowid = const Value.absent(),
+  }) : badgeId = Value(badgeId),
+       unlockedAt = Value(unlockedAt);
+  static Insertable<BadgeUnlock> custom({
+    Expression<String>? badgeId,
+    Expression<DateTime>? unlockedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (badgeId != null) 'badge_id': badgeId,
+      if (unlockedAt != null) 'unlocked_at': unlockedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BadgeUnlocksCompanion copyWith({
+    Value<String>? badgeId,
+    Value<DateTime>? unlockedAt,
+    Value<int>? rowid,
+  }) {
+    return BadgeUnlocksCompanion(
+      badgeId: badgeId ?? this.badgeId,
+      unlockedAt: unlockedAt ?? this.unlockedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (badgeId.present) {
+      map['badge_id'] = Variable<String>(badgeId.value);
+    }
+    if (unlockedAt.present) {
+      map['unlocked_at'] = Variable<DateTime>(unlockedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BadgeUnlocksCompanion(')
+          ..write('badgeId: $badgeId, ')
+          ..write('unlockedAt: $unlockedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5272,6 +5491,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $FinalProjectScoresTable finalProjectScores =
       $FinalProjectScoresTable(this);
+  late final $BadgeUnlocksTable badgeUnlocks = $BadgeUnlocksTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5291,6 +5511,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     bugCases,
     projectProgress,
     finalProjectScores,
+    badgeUnlocks,
   ];
 }
 
@@ -8479,6 +8700,160 @@ typedef $$FinalProjectScoresTableProcessedTableManager =
       FinalProjectScore,
       PrefetchHooks Function()
     >;
+typedef $$BadgeUnlocksTableCreateCompanionBuilder =
+    BadgeUnlocksCompanion Function({
+      required String badgeId,
+      required DateTime unlockedAt,
+      Value<int> rowid,
+    });
+typedef $$BadgeUnlocksTableUpdateCompanionBuilder =
+    BadgeUnlocksCompanion Function({
+      Value<String> badgeId,
+      Value<DateTime> unlockedAt,
+      Value<int> rowid,
+    });
+
+class $$BadgeUnlocksTableFilterComposer
+    extends Composer<_$AppDatabase, $BadgeUnlocksTable> {
+  $$BadgeUnlocksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get badgeId => $composableBuilder(
+    column: $table.badgeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get unlockedAt => $composableBuilder(
+    column: $table.unlockedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BadgeUnlocksTableOrderingComposer
+    extends Composer<_$AppDatabase, $BadgeUnlocksTable> {
+  $$BadgeUnlocksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get badgeId => $composableBuilder(
+    column: $table.badgeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get unlockedAt => $composableBuilder(
+    column: $table.unlockedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BadgeUnlocksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BadgeUnlocksTable> {
+  $$BadgeUnlocksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get badgeId =>
+      $composableBuilder(column: $table.badgeId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get unlockedAt => $composableBuilder(
+    column: $table.unlockedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$BadgeUnlocksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BadgeUnlocksTable,
+          BadgeUnlock,
+          $$BadgeUnlocksTableFilterComposer,
+          $$BadgeUnlocksTableOrderingComposer,
+          $$BadgeUnlocksTableAnnotationComposer,
+          $$BadgeUnlocksTableCreateCompanionBuilder,
+          $$BadgeUnlocksTableUpdateCompanionBuilder,
+          (
+            BadgeUnlock,
+            BaseReferences<_$AppDatabase, $BadgeUnlocksTable, BadgeUnlock>,
+          ),
+          BadgeUnlock,
+          PrefetchHooks Function()
+        > {
+  $$BadgeUnlocksTableTableManager(_$AppDatabase db, $BadgeUnlocksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BadgeUnlocksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BadgeUnlocksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BadgeUnlocksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> badgeId = const Value.absent(),
+                Value<DateTime> unlockedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BadgeUnlocksCompanion(
+                badgeId: badgeId,
+                unlockedAt: unlockedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String badgeId,
+                required DateTime unlockedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BadgeUnlocksCompanion.insert(
+                badgeId: badgeId,
+                unlockedAt: unlockedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BadgeUnlocksTable, BadgeUnlock>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $BadgeUnlocksTable,
+                    BadgeUnlock
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BadgeUnlocksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BadgeUnlocksTable,
+      BadgeUnlock,
+      $$BadgeUnlocksTableFilterComposer,
+      $$BadgeUnlocksTableOrderingComposer,
+      $$BadgeUnlocksTableAnnotationComposer,
+      $$BadgeUnlocksTableCreateCompanionBuilder,
+      $$BadgeUnlocksTableUpdateCompanionBuilder,
+      (
+        BadgeUnlock,
+        BaseReferences<_$AppDatabase, $BadgeUnlocksTable, BadgeUnlock>,
+      ),
+      BadgeUnlock,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8511,4 +8886,6 @@ class $AppDatabaseManager {
       $$ProjectProgressTableTableManager(_db, _db.projectProgress);
   $$FinalProjectScoresTableTableManager get finalProjectScores =>
       $$FinalProjectScoresTableTableManager(_db, _db.finalProjectScores);
+  $$BadgeUnlocksTableTableManager get badgeUnlocks =>
+      $$BadgeUnlocksTableTableManager(_db, _db.badgeUnlocks);
 }

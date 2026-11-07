@@ -1,5 +1,30 @@
 # Rapport de tests
 
+## Phase 10 — 2026-11-07
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 376 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| Grand Druide atteignable avec le contenu réel, mais pas avec les trois quarts | Vérifié |
+| Récompenses uniques, badges conservés, limite des bugs, défis réclamés une fois | Vérifiés |
+| Série de jours, y compris au changement d'heure | Vérifiée |
+| Certificats : conditions et mention interne | Vérifiés |
+| Intégration Linux | Socle 5 sur 5, Maître 1 sur 1, Lab 3 sur 3 |
+| Migration de la version 7 à la version 8 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base migrée en version 8, données identiques (45 XP), lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+Vérifié sur un rendu de test : la page Progression.
+
+### Non vérifié
+
+- **Équilibre du barème** : il est calculé sur le contenu, pas éprouvé par de vrais apprenants. Les seuils pourront changer.
+- **Récompenses sur le Honor** : le premier badge de l'utilisateur ne sera attribué qu'à l'ouverture de la page Progression, qui n'a pas été ouverte sur le téléphone.
+- **Leçons, quiz et exercices de l'Académie** : leurs badges ne s'annoncent pas au moment de l'action, mais à la prochaine ouverture de la page Progression.
+- **Autoévaluations** : les exercices validés soi-même, les projets et l'évaluation finale rapportent de l'expérience sur la parole de l'apprenant.
+- **Lecteur d'écran** : la page n'a pas été parcourue avec TalkBack.
+
 ## Phase 9 — 2026-11-07
 
 | Vérification | Résultat |

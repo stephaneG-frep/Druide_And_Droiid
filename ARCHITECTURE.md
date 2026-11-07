@@ -181,3 +181,11 @@ Les projets vivent dans `assets/projects/projects.json`. `tool/check_projects.py
 Chaque test de projet doit être un programme autonome, avec sa sortie exacte dans `output`.
 
 `ProjectRepository.complete` refuse un projet incomplet, et toute modification efface `completedAt` : une validation doit rester vraie. La grille finale se calcule dans `final_grid.dart`, qui doit rester alignée sur la leçon `exp-11-final`.
+
+## Gamification
+
+L'expérience passe toujours par `ProgressRepository.award`, avec une source unique : `lesson:`, `quiz:`, `exercise:`, `lab:`, `project:`, `bug:`, `final:` ou `challenge:`. Rien ne se paie deux fois, et rien n'est jamais retiré.
+
+`GamificationRepository.reconcile` attribue ce qui est dû à partir de l'état de la base : exercices du Lab, projets, bugs vérifiés, évaluation finale et badges. On peut l'appeler à tout moment. `rewardAndCelebrate` l'appelle après ces actions, et la page Progression à son ouverture.
+
+Les badges, défis, parcours et certificats sont des fonctions pures de `LearnerStats` : ajoutez-en dans `lib/features/progression/domain`. Si le barème change, `gamification_test.dart` vérifie que Grand Druide reste atteignable avec le contenu réel.

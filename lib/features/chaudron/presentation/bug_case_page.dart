@@ -14,6 +14,7 @@ import '../../maitre/data/ai_settings_repository.dart';
 import '../../maitre/domain/teaching.dart';
 import '../../maitre/presentation/ai_actions.dart';
 import '../../maitre/presentation/ai_paths.dart';
+import '../../progression/presentation/reward_toast.dart';
 import '../data/bug_repository.dart';
 import '../domain/bug_rule.dart';
 import '../domain/log_tools.dart';
@@ -145,6 +146,9 @@ class _CaseContentState extends ConsumerState<_CaseContent> {
     await ref
         .read(bugRepositoryProvider)
         .recordVerification(_row.id, status, result);
+    if (status == BugStatus.verified && mounted) {
+      await rewardAndCelebrate(context, ref);
+    }
   }
 
   Future<void> _delete() async {

@@ -6,6 +6,7 @@ import '../../../design_system/arcane_button.dart';
 import '../../../design_system/druide_toast.dart';
 import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
+import '../../progression/presentation/reward_toast.dart';
 import '../data/project_repository.dart';
 import '../domain/final_grid.dart';
 
@@ -45,7 +46,10 @@ class _FinalProjectPageState extends ConsumerState<FinalProjectPage> {
         _proofs[criterion.name]!.text.trim(),
       );
     }
-    if (mounted) showDruideToast(context, 'Grille enregistrée.');
+    if (mounted) {
+      showDruideToast(context, 'Grille enregistrée.');
+      await rewardAndCelebrate(context, ref);
+    }
   }
 
   @override
