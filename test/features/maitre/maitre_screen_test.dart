@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:druide_and_droiid/app/sections.dart';
 import 'package:druide_and_droiid/core/persistence/app_database.dart';
 import 'package:druide_and_droiid/features/academie/presentation/paths.dart';
@@ -259,6 +261,16 @@ void main() {
       findsOneWidget,
     );
 
+    // Le premier modèle de la liste n'est jamais choisi à la place de
+    // l'utilisateur : il pourrait être le plus cher.
+    await tester.tap(find.text('Enregistrer et activer'));
+    await tester.pumpAndSettle();
+    expect(find.text('Choisissez un modèle.'), findsOneWidget);
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Modèle'),
+      'modele-a',
+    );
     await tester.tap(find.text('Enregistrer et activer'));
     await tester.pumpAndSettle();
     await tester.pump(const Duration(seconds: 5));
@@ -266,6 +278,81 @@ void main() {
 
     await goTo(tester, container, AppSection.maitre.path);
     expect(find.text('Ollama · modele-a'), findsOneWidget);
+  });
+
+  testWidgets('le fournisseur choisi survit à la fermeture de l\'application', (
+    tester,
+  ) async {
+    final directory = Directory.systemTemp.createTempSync('druide_active');
+    addTearDown(() => directory.deleteSync(recursive: true));
+    final file = File('${directory.path}/base.sqlite');
+    final client = ScriptedClient(const []);
+
+    Future<ProviderContainer> open() => pumpApp(
+      tester,
+      size: tall,
+      database: AppDatabase(NativeDatabase(file)),
+      extraOverrides: [
+        aiClientBuilderProvider.overrideWithValue((config) async => client),
+      ],
+    );
+
+    var container = await open();
+    await configure(tester, container);
+    await goTo(tester, container, aiSettingsPath);
+    expect(find.text('Actif : Ollama · modele-a'), findsOneWidget);
+
+    // Choisir dans la liste n'active rien, et l'écran le dit.
+    await tester.tap(find.text('Ollama').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Anthropic Claude').last);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Anthropic Claude n\'est pas actif'),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Clé d\'API'),
+      'cle-de-test',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Modèle'),
+      'modele-b',
+    );
+    await tester.tap(find.text('Enregistrer et activer'));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    expect(find.text('Actif : Anthropic Claude · modele-b'), findsOneWidget);
+
+    // Fermeture : tout est détruit, seul le fichier de la base reste.
+    await tester.pumpWidget(const SizedBox());
+    container.dispose();
+    await tester.pumpAndSettle();
+
+    container = await open();
+    await goTo(tester, container, AppSection.maitre.path);
+    expect(find.text('Anthropic Claude · modele-b'), findsWidgets);
+  });
+
+  testWidgets('deux fournisseurs prêts se changent depuis le Maître', (
+    tester,
+  ) async {
+    final container = await pumpAppWith(tester, ScriptedClient(const []));
+    await configure(tester, container, kind: AiProviderKind.anthropic);
+    await configure(tester, container);
+    await goTo(tester, container, AppSection.maitre.path);
+
+    await tester.tap(find.text('Ollama · modele-a'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Anthropic Claude · modele-a').last);
+    await tester.pumpAndSettle();
+
+    final settings = await tester.runAsync(
+      () => container.read(aiSettingsRepositoryProvider).read(),
+    );
+    expect(settings!.active, AiProviderKind.anthropic);
   });
 
   testWidgets('une clé manquante est refusée sans appel réseau', (

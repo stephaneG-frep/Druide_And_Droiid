@@ -155,13 +155,12 @@ class _ProviderFormState extends ConsumerState<_ProviderForm> {
     final client = await ref.read(aiClientBuilderProvider)(_config);
     final models = await client.listModels();
     if (!mounted) return;
+    // Aucun choix automatique : le premier de la liste peut être le plus cher.
     setState(() => _models = models);
-    if (_model.text.isEmpty && models.isNotEmpty) {
-      _model.text = models.first;
-    }
     _show(
-      'Connexion réussie : ${models.length} modèles disponibles. Ce test '
-      'liste les modèles, sans générer de réponse.',
+      'Connexion réussie : ${models.length} modèles disponibles. Choisissez-en '
+      'un, puis touchez Enregistrer et activer. Ce test ne génère aucune '
+      'réponse.',
       ok: true,
     );
   });
@@ -178,7 +177,9 @@ class _ProviderFormState extends ConsumerState<_ProviderForm> {
     final repository = ref.read(aiSettingsRepositoryProvider);
     await repository.saveConfig(config);
     await repository.setActive(_kind);
-    if (mounted) showDruideToast(context, 'Réglages enregistrés.');
+    if (mounted) {
+      showDruideToast(context, '${_kind.label} est maintenant actif.');
+    }
   });
 
   Future<void> _deleteKey() async {
@@ -214,6 +215,7 @@ class _ProviderFormState extends ConsumerState<_ProviderForm> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 16,
       children: [
+        _ActiveNotice(settings: widget.settings, selected: _kind),
         TechnoCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -385,6 +387,41 @@ class _ProviderFormState extends ConsumerState<_ProviderForm> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Dit quel fournisseur répond vraiment : choisir dans la liste ne l'active pas.
+class _ActiveNotice extends StatelessWidget {
+  const _ActiveNotice({required this.settings, required this.selected});
+
+  final AiSettings settings;
+  final AiProviderKind selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final config = settings.activeConfig;
+    return TechnoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 4,
+        children: [
+          Text(
+            config == null
+                ? 'Aucun fournisseur actif'
+                : 'Actif : ${config.kind.label} · ${config.model}',
+            style: context.text.titleSmall,
+          ),
+          if (selected != settings.active)
+            Text(
+              '${selected.label} n\'est pas actif. Touchez Enregistrer et '
+              'activer pour l\'utiliser.',
+              style: context.text.bodySmall!.copyWith(
+                color: context.techno.orange,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

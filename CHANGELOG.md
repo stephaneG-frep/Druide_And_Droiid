@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Correctifs du Maître — 2026-11-07
+
+- Les réglages affichent le fournisseur actif, et préviennent si celui de la liste ne l'est pas.
+- Le Maître change de fournisseur d'un geste, parmi ceux déjà configurés.
+- Le test de connexion ne choisit plus le premier modèle de la liste, qui pouvait être le plus cher.
+- Une erreur de connexion avec Ollama explique la cause probable : pont USB perdu sur téléphone, Ollama éteint sur Linux.
+
 ## Phase 8 — 2026-11-07
 
 - Dossiers du Chaudron des Bugs : erreur, journal importé, description et code.

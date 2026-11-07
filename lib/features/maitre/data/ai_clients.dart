@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import '../domain/ai_chat.dart';
 import '../domain/ai_provider.dart';
@@ -19,8 +20,10 @@ AiClient createAiClient({
   required AiProviderConfig config,
   required String? apiKey,
   required HttpClientFactory clientFactory,
+  bool? onAndroid,
 }) {
   final key = apiKey == null || apiKey.isEmpty ? null : apiKey;
+  final isAndroid = onAndroid ?? Platform.isAndroid;
   final problem = config.urlProblem(withKey: key != null);
   if (problem != null) {
     throw AiFailure(AiFailureKind.insecureUrl, detail: problem);
@@ -29,6 +32,7 @@ AiClient createAiClient({
     clientFactory: clientFactory,
     timeout: Duration(seconds: config.timeoutSeconds),
     secret: key,
+    connectionHint: _connectionHint(config, onAndroid: isAndroid),
   );
   var base = config.baseUrl.trim();
   while (base.endsWith('/')) {
@@ -51,6 +55,24 @@ AiClient createAiClient({
     AiProviderKind.gemini => GeminiClient(http, base, key ?? ''),
     AiProviderKind.ollama => OllamaClient(http, base),
   };
+}
+
+/// Sur Android, `127.0.0.1` désigne le téléphone, pas l'ordinateur : Ollama n'y
+/// est joignable que par le pont USB, qui disparaît au débranchement.
+String? _connectionHint(AiProviderConfig config, {required bool onAndroid}) {
+  if (config.kind != AiProviderKind.ollama || !config.staysOnDevice) {
+    return null;
+  }
+  final host = Uri.tryParse(config.baseUrl.trim())?.host;
+  if (!onAndroid) {
+    return 'Ollama ne semble pas lancé sur cet ordinateur : démarrez-le avec '
+        'ollama serve.';
+  }
+  return host == '10.0.2.2'
+      ? 'Vérifiez qu\'Ollama tourne sur l\'ordinateur qui héberge l\'émulateur.'
+      : 'Sur téléphone, Ollama passe par le câble USB. Vérifiez le câble, puis '
+            'relancez sur l\'ordinateur : adb reverse tcp:11434 tcp:11434. Ce '
+            'lien disparaît à chaque débranchement.';
 }
 
 String _roleName(AiRole role) => role == AiRole.user ? 'user' : 'assistant';
