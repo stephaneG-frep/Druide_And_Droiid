@@ -23,6 +23,8 @@ part 'app_database.g.dart';
     LabDrafts,
     LabRevisions,
     BugCases,
+    ProjectProgress,
+    FinalProjectScores,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -31,7 +33,7 @@ class AppDatabase extends _$AppDatabase {
   /// Toute hausse de version exige une étape dans [migration] et un test sur
   /// une base réelle de l'ancienne version.
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -57,6 +59,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 6) {
         await migrator.createTable(bugCases);
+      }
+      if (from < 7) {
+        await migrator.createTable(projectProgress);
+        await migrator.createTable(finalProjectScores);
       }
     },
   );

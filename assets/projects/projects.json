@@ -1,0 +1,1747 @@
+{
+ "projects": [
+  {
+   "id": "calculatrice",
+   "level": "debutant",
+   "title": "Calculatrice",
+   "stack": "Kotlin et Compose",
+   "objective": "Réaliser une calculatrice à deux nombres, qui gère les erreurs de saisie et la division par zéro.",
+   "prerequisites": [
+    "Variables, fonctions et `when` en Kotlin.",
+    "Premier écran Compose."
+   ],
+   "modules": [
+    "kotlin",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Écrire la logique",
+     "text": "Séparez le calcul de l'écran. Une fonction pure se teste sans Android. La division par zéro renvoie `null` : c'est un cas prévu, pas un plantage.",
+     "verify": "La fonction compile, et ne dépend d'aucune classe Android.",
+     "code": {
+      "language": "kotlin",
+      "code": "enum class Operation(val symbole: String) {\n    ADDITION(\"+\"),\n    SOUSTRACTION(\"-\"),\n    MULTIPLICATION(\"×\"),\n    DIVISION(\"÷\"),\n}\n\nfun calculer(a: Double, b: Double, operation: Operation): Double? = when (operation) {\n    Operation.ADDITION -> a + b\n    Operation.SOUSTRACTION -> a - b\n    Operation.MULTIPLICATION -> a * b\n    Operation.DIVISION -> if (b == 0.0) null else a / b\n}"
+     }
+    },
+    {
+     "title": "Construire l'écran",
+     "text": "Deux champs, une rangée de boutons et un résultat. `rememberSaveable` garde la saisie après une rotation.",
+     "verify": "Les nombres saisis survivent à une rotation de l'écran.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Composable\nfun CalculatriceEcran() {\n    var premier by rememberSaveable { mutableStateOf(\"\") }\n    var second by rememberSaveable { mutableStateOf(\"\") }\n    var resultat by rememberSaveable { mutableStateOf(\"\") }\n\n    Column(Modifier.padding(16.dp)) {\n        OutlinedTextField(\n            value = premier,\n            onValueChange = { premier = it },\n            label = { Text(\"Premier nombre\") },\n            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),\n        )\n        OutlinedTextField(\n            value = second,\n            onValueChange = { second = it },\n            label = { Text(\"Second nombre\") },\n            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),\n        )\n        Row {\n            Operation.entries.forEach { operation ->\n                Button(onClick = { resultat = afficher(premier, second, operation) }) {\n                    Text(operation.symbole)\n                }\n            }\n        }\n        Text(resultat)\n    }\n}"
+     }
+    },
+    {
+     "title": "Gérer les saisies invalides",
+     "text": "En France, on tape souvent une virgule. Acceptez-la, et affichez un message clair si le texte n'est pas un nombre.",
+     "verify": "Une saisie vide, ou `abc`, n'arrête jamais l'application.",
+     "code": {
+      "language": "kotlin",
+      "code": "fun afficher(premier: String, second: String, operation: Operation): String {\n    val a = premier.replace(',', '.').toDoubleOrNull()\n    val b = second.replace(',', '.').toDoubleOrNull()\n    if (a == null || b == null) return \"Saisissez deux nombres\"\n    val resultat = calculer(a, b, operation) ?: return \"Division par zéro impossible\"\n    return \"Résultat : $resultat\"\n}"
+     }
+    },
+    {
+     "title": "Essayer sur un appareil",
+     "text": "Lancez l'application, puis faites les calculs des critères de réussite. Essayez un texte agrandi dans les réglages du téléphone.",
+     "verify": "Tous les boutons restent accessibles avec un texte agrandi."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "enum class Operation { ADDITION, DIVISION }\n\nfun calculer(a: Double, b: Double, operation: Operation): Double? = when (operation) {\n    Operation.ADDITION -> a + b\n    Operation.DIVISION -> if (b == 0.0) null else a / b\n}\n\nfun verifier(nom: String, condition: Boolean) = println(\"${if (condition) \"OK\" else \"ÉCHEC\"} : $nom\")\n\nfun main() {\n    verifier(\"addition\", calculer(2.0, 3.0, Operation.ADDITION) == 5.0)\n    verifier(\"division\", calculer(9.0, 3.0, Operation.DIVISION) == 3.0)\n    verifier(\"division par zéro\", calculer(1.0, 0.0, Operation.DIVISION) == null)\n}",
+    "output": "OK : addition\nOK : division\nOK : division par zéro"
+   },
+   "testIntro": "Exécutez ce test dans le Lab, ou adaptez-le en test JUnit dans votre projet.",
+   "criteria": [
+    "Les quatre opérations donnent le bon résultat.",
+    "Une division par zéro affiche un message, sans plantage.",
+    "Une saisie invalide affiche un message clair.",
+    "La saisie survit à une rotation."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi séparer le calcul de l'écran ?",
+     "options": [
+      "Pour le tester sans Android",
+      "Pour ralentir l'application"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une fonction pure se teste facilement."
+    },
+    {
+     "prompt": "Que garde rememberSaveable ?",
+     "options": [
+      "L'état après une rotation",
+      "Les données après la désinstallation"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il survit à la recréation de l'activité."
+    },
+    {
+     "prompt": "Comment convertir un texte sans risque ?",
+     "options": [
+      "toDoubleOrNull",
+      "toDouble"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "toDouble lève une exception si le texte est invalide."
+    }
+   ]
+  },
+  {
+   "id": "convertisseur",
+   "level": "debutant",
+   "title": "Convertisseur",
+   "stack": "Kotlin et Compose",
+   "objective": "Convertir des longueurs et des températures, sans erreur d'arrondi visible.",
+   "prerequisites": [
+    "Fonctions et classes de Kotlin.",
+    "État dans Compose."
+   ],
+   "modules": [
+    "kotlin",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Modéliser les conversions",
+     "text": "Une `enum` regroupe chaque conversion et son calcul. Ajouter une conversion ne touche alors qu'une ligne.",
+     "verify": "Chaque conversion a un nom lisible et une fonction.",
+     "code": {
+      "language": "kotlin",
+      "code": "enum class Conversion(val libelle: String, val calcul: (Double) -> Double) {\n    KM_VERS_MILES(\"Kilomètres en miles\", { it * 0.621371 }),\n    MILES_VERS_KM(\"Miles en kilomètres\", { it / 0.621371 }),\n    CELSIUS_VERS_FAHRENHEIT(\"Celsius en Fahrenheit\", { it * 9 / 5 + 32 }),\n    FAHRENHEIT_VERS_CELSIUS(\"Fahrenheit en Celsius\", { (it - 32) * 5 / 9 }),\n}"
+     }
+    },
+    {
+     "title": "Formater le résultat",
+     "text": "`Double` donne parfois `3.9999999`. Arrondissez à l'affichage seulement, avec une locale fixe pour rester prévisible.",
+     "verify": "Le résultat affiche deux décimales.",
+     "code": {
+      "language": "kotlin",
+      "code": "fun convertir(texte: String, conversion: Conversion): String {\n    val valeur = texte.replace(',', '.').toDoubleOrNull() ?: return \"Nombre invalide\"\n    return \"%.2f\".format(Locale.FRANCE, conversion.calcul(valeur))\n}"
+     }
+    },
+    {
+     "title": "Construire l'écran",
+     "text": "Le résultat se calcule depuis l'état : pas besoin de bouton ni de variable de plus. Un `FilterChip` choisit la conversion.",
+     "verify": "Le résultat change à chaque frappe.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Composable\nfun ConvertisseurEcran() {\n    var texte by rememberSaveable { mutableStateOf(\"\") }\n    var choix by rememberSaveable { mutableStateOf(Conversion.KM_VERS_MILES) }\n\n    LazyColumn(Modifier.padding(16.dp)) {\n        item {\n            OutlinedTextField(\n                value = texte,\n                onValueChange = { texte = it },\n                label = { Text(\"Valeur\") },\n            )\n            Text(if (texte.isBlank()) \"\" else convertir(texte, choix))\n        }\n        items(Conversion.entries) { conversion ->\n            FilterChip(\n                selected = conversion == choix,\n                onClick = { choix = conversion },\n                label = { Text(conversion.libelle) },\n            )\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Vérifier les valeurs connues",
+     "text": "Testez avec des repères sûrs : 0 °C vaut 32 °F, et 100 °C vaut 212 °F.",
+     "verify": "Les valeurs repères sont justes."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun celsiusVersFahrenheit(celsius: Double) = celsius * 9 / 5 + 32\nfun fahrenheitVersCelsius(fahrenheit: Double) = (fahrenheit - 32) * 5 / 9\n\nfun main() {\n    println(celsiusVersFahrenheit(0.0))\n    println(celsiusVersFahrenheit(100.0))\n    println(fahrenheitVersCelsius(212.0))\n}",
+    "output": "32.0\n212.0\n100.0"
+   },
+   "testIntro": "Ces valeurs repères doivent rester exactes après toute modification.",
+   "criteria": [
+    "Les quatre conversions sont justes.",
+    "La virgule et le point sont acceptés.",
+    "Le résultat affiche deux décimales.",
+    "Une nouvelle conversion s'ajoute en une ligne."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi arrondir seulement à l'affichage ?",
+     "options": [
+      "Pour garder la précision du calcul",
+      "Pour aller plus vite"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le calcul garde la valeur complète."
+    },
+    {
+     "prompt": "Que vaut 100 °C en Fahrenheit ?",
+     "options": [
+      "212",
+      "180"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "C'est un bon repère de test."
+    }
+   ]
+  },
+  {
+   "id": "liste-taches",
+   "level": "debutant",
+   "title": "Liste de tâches",
+   "stack": "Kotlin et Compose",
+   "objective": "Ajouter, cocher et supprimer des tâches, avec un état qui survit à la rotation.",
+   "prerequisites": [
+    "Listes et `data class`.",
+    "`ViewModel` et `StateFlow`."
+   ],
+   "modules": [
+    "kotlin",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Décrire les données",
+     "text": "Une tâche est immuable : pour la modifier, on crée une copie. Compose détecte ainsi le changement.",
+     "verify": "`Tache` ne contient que des `val`.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class Tache(val id: Long, val titre: String, val faite: Boolean = false)\n\nfun List<Tache>.basculer(id: Long): List<Tache> =\n    map { if (it.id == id) it.copy(faite = !it.faite) else it }"
+     }
+    },
+    {
+     "title": "Écrire le ViewModel",
+     "text": "Le ViewModel détient l'état et survit à la rotation. L'écran n'a accès qu'à une version en lecture seule.",
+     "verify": "Une rotation ne perd aucune tâche.",
+     "code": {
+      "language": "kotlin",
+      "code": "class TachesViewModel : ViewModel() {\n    private val _taches = MutableStateFlow<List<Tache>>(emptyList())\n    val taches: StateFlow<List<Tache>> = _taches.asStateFlow()\n    private var prochainId = 1L\n\n    fun ajouter(titre: String) {\n        val propre = titre.trim()\n        if (propre.isEmpty()) return\n        _taches.update { it + Tache(prochainId++, propre) }\n    }\n\n    fun basculer(id: Long) = _taches.update { it.basculer(id) }\n\n    fun supprimer(id: Long) = _taches.update { liste -> liste.filterNot { it.id == id } }\n}"
+     }
+    },
+    {
+     "title": "Afficher la liste",
+     "text": "`key` aide Compose à suivre chaque ligne. `collectAsStateWithLifecycle` arrête l'écoute quand l'écran n'est plus visible.",
+     "verify": "Cocher une tâche ne recrée pas les autres lignes.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Composable\nfun TachesEcran(viewModel: TachesViewModel = viewModel()) {\n    val taches by viewModel.taches.collectAsStateWithLifecycle()\n    var saisie by rememberSaveable { mutableStateOf(\"\") }\n\n    Column(Modifier.padding(16.dp)) {\n        Row {\n            OutlinedTextField(saisie, { saisie = it }, Modifier.weight(1f))\n            Button(onClick = { viewModel.ajouter(saisie); saisie = \"\" }) { Text(\"Ajouter\") }\n        }\n        LazyColumn {\n            items(taches, key = { it.id }) { tache ->\n                Row(verticalAlignment = Alignment.CenterVertically) {\n                    Checkbox(tache.faite, { viewModel.basculer(tache.id) })\n                    Text(tache.titre, Modifier.weight(1f))\n                    TextButton(onClick = { viewModel.supprimer(tache.id) }) { Text(\"Supprimer\") }\n                }\n            }\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Prévoir l'état vide",
+     "text": "Une liste vide doit expliquer quoi faire. Ajoutez un message, puis essayez TalkBack : chaque case doit être compréhensible.",
+     "verify": "La liste vide affiche un message utile."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "data class Tache(val id: Long, val titre: String, val faite: Boolean = false)\n\nfun List<Tache>.basculer(id: Long) = map { if (it.id == id) it.copy(faite = !it.faite) else it }\n\nfun main() {\n    val taches = listOf(Tache(1, \"Lire\"), Tache(2, \"Coder\"))\n    val apres = taches.basculer(2)\n    println(apres.map { it.faite })\n    println(taches.map { it.faite })\n}",
+    "output": "[false, true]\n[false, false]"
+   },
+   "testIntro": "Le test prouve que la liste d'origine n'est pas modifiée.",
+   "criteria": [
+    "Ajouter, cocher et supprimer fonctionnent.",
+    "Une tâche vide est refusée.",
+    "La liste survit à une rotation.",
+    "Une liste vide affiche un message."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi copier une tâche au lieu de la modifier ?",
+     "options": [
+      "Compose détecte le nouvel objet",
+      "Cela économise la batterie"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'état immuable rend les changements visibles."
+    },
+    {
+     "prompt": "À quoi sert key dans LazyColumn ?",
+     "options": [
+      "À suivre chaque ligne",
+      "À trier la liste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Compose réutilise la bonne ligne."
+    },
+    {
+     "prompt": "La liste survit-elle à la fermeture de l'application ?",
+     "options": [
+      "Non, il faudrait une base de données",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le ViewModel survit à une rotation, pas à la fermeture."
+    }
+   ]
+  },
+  {
+   "id": "chronometre",
+   "level": "debutant",
+   "title": "Chronomètre",
+   "stack": "Kotlin et Compose",
+   "objective": "Mesurer le temps avec précision, malgré les rotations, avec démarrage, pause et remise à zéro.",
+   "prerequisites": [
+    "Coroutines : `delay` et `launch`.",
+    "`ViewModel`."
+   ],
+   "modules": [
+    "kotlin",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Formater le temps",
+     "text": "Commencez par la logique pure : des millisecondes vers `mm:ss.cc`.",
+     "verify": "Le format affiche toujours deux chiffres.",
+     "code": {
+      "language": "kotlin",
+      "code": "fun formater(millis: Long): String {\n    val minutes = millis / 60_000\n    val secondes = millis / 1_000 % 60\n    val centiemes = millis / 10 % 100\n    return \"%02d:%02d.%02d\".format(minutes, secondes, centiemes)\n}"
+     }
+    },
+    {
+     "title": "Mesurer sans dériver",
+     "text": "N'additionnez pas des `delay` : ils sont imprécis. Mesurez l'écart avec une horloge monotone, comme `SystemClock.elapsedRealtime`, qui ne dépend pas de l'heure système.",
+     "verify": "Après une minute, l'écart avec une montre reste faible.",
+     "code": {
+      "language": "kotlin",
+      "code": "class ChronoViewModel(private val horloge: () -> Long) : ViewModel() {\n    private val _ecoule = MutableStateFlow(0L)\n    val ecoule: StateFlow<Long> = _ecoule.asStateFlow()\n    private var tache: Job? = null\n\n    fun demarrer() {\n        if (tache?.isActive == true) return\n        val origine = horloge() - _ecoule.value\n        tache = viewModelScope.launch {\n            while (true) {\n                _ecoule.value = horloge() - origine\n                delay(30)\n            }\n        }\n    }\n\n    fun pause() {\n        tache?.cancel()\n    }\n\n    fun remettreAZero() {\n        pause()\n        _ecoule.value = 0\n    }\n}"
+     }
+    },
+    {
+     "title": "Brancher l'écran",
+     "text": "Fournissez la vraie horloge par une fabrique de ViewModel. Le test pourra fournir une fausse horloge.",
+     "verify": "Une rotation ne remet pas le chronomètre à zéro.",
+     "code": {
+      "language": "kotlin",
+      "code": "val fabriqueChrono = object : ViewModelProvider.Factory {\n    @Suppress(\"UNCHECKED_CAST\")\n    override fun <T : ViewModel> create(modelClass: Class<T>): T =\n        ChronoViewModel(SystemClock::elapsedRealtime) as T\n}\n\n@Composable\nfun ChronoEcran(viewModel: ChronoViewModel = viewModel(factory = fabriqueChrono)) {\n    val ecoule by viewModel.ecoule.collectAsStateWithLifecycle()\n\n    Column(Modifier.padding(16.dp)) {\n        Text(formater(ecoule), style = MaterialTheme.typography.displayMedium)\n        Row {\n            Button(onClick = viewModel::demarrer) { Text(\"Démarrer\") }\n            Button(onClick = viewModel::pause) { Text(\"Pause\") }\n            Button(onClick = viewModel::remettreAZero) { Text(\"Zéro\") }\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Comprendre la limite",
+     "text": "`viewModelScope` s'arrête si Android tue le processus. Pour un chronomètre visible écran éteint, il faudrait enregistrer l'heure de départ, ou un service de premier plan.",
+     "verify": "Vous savez expliquer ce qui se passe si le processus est tué."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun formater(millis: Long): String {\n    val minutes = millis / 60_000\n    val secondes = millis / 1_000 % 60\n    val centiemes = millis / 10 % 100\n    return \"%02d:%02d.%02d\".format(minutes, secondes, centiemes)\n}\n\nfun main() {\n    println(formater(0))\n    println(formater(61_230))\n    println(formater(3_599_990))\n}",
+    "output": "00:00.00\n01:01.23\n59:59.99"
+   },
+   "testIntro": "Testez les limites : zéro, une minute passée, et presque une heure.",
+   "criteria": [
+    "Démarrer, pause et zéro fonctionnent.",
+    "Une pause puis une reprise conservent le temps.",
+    "Une rotation ne perd rien.",
+    "Deux appuis sur Démarrer ne lancent pas deux boucles."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi éviter d'additionner des delay ?",
+     "options": [
+      "Ils sont imprécis et le chronomètre dériverait",
+      "Ils consomment de la mémoire"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Mesurez l'écart avec une horloge."
+    },
+    {
+     "prompt": "Quelle horloge utiliser ?",
+     "options": [
+      "Une horloge monotone comme elapsedRealtime",
+      "L'heure du système"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'heure système peut être changée."
+    }
+   ]
+  },
+  {
+   "id": "notes",
+   "level": "debutant",
+   "title": "Application de notes",
+   "stack": "Kotlin, Compose et Room",
+   "objective": "Créer, lire, modifier et supprimer des notes conservées après la fermeture de l'application.",
+   "prerequisites": [
+    "Les projets précédents.",
+    "Room : entités et DAO."
+   ],
+   "modules": [
+    "donnees-reseaux",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Définir la base",
+     "text": "Room vérifie vos requêtes à la compilation. `Flow` met l'écran à jour tout seul à chaque changement.",
+     "verify": "Une requête fausse empêche la compilation.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Entity(tableName = \"notes\")\ndata class Note(\n    @PrimaryKey(autoGenerate = true) val id: Long = 0,\n    val titre: String,\n    val contenu: String,\n    val modifieeLe: Long,\n)\n\n@Dao\ninterface NoteDao {\n    @Query(\"SELECT * FROM notes ORDER BY modifieeLe DESC\")\n    fun toutes(): Flow<List<Note>>\n\n    @Upsert\n    suspend fun enregistrer(note: Note)\n\n    @Delete\n    suspend fun supprimer(note: Note)\n}"
+     }
+    },
+    {
+     "title": "Ajouter un dépôt",
+     "text": "L'écran ne parle pas à Room directement. Le dépôt cache cette décision, ce qui facilite les tests.",
+     "verify": "Le ViewModel ne connaît pas `NoteDao`.",
+     "code": {
+      "language": "kotlin",
+      "code": "interface NotesDepot {\n    fun notes(): Flow<List<Note>>\n    suspend fun enregistrer(titre: String, contenu: String, id: Long = 0)\n    suspend fun supprimer(note: Note)\n}\n\nclass RoomNotesDepot(\n    private val dao: NoteDao,\n    private val horloge: () -> Long,\n) : NotesDepot {\n    override fun notes() = dao.toutes()\n\n    override suspend fun enregistrer(titre: String, contenu: String, id: Long) {\n        dao.enregistrer(Note(id, titre.trim(), contenu, horloge()))\n    }\n\n    override suspend fun supprimer(note: Note) = dao.supprimer(note)\n}"
+     }
+    },
+    {
+     "title": "Écrire le ViewModel",
+     "text": "`stateIn` transforme le flux en état, et l'arrête quand l'écran n'écoute plus.",
+     "verify": "La liste se met à jour après un ajout, sans rechargement manuel.",
+     "code": {
+      "language": "kotlin",
+      "code": "class NotesViewModel(private val depot: NotesDepot) : ViewModel() {\n    val notes: StateFlow<List<Note>> = depot.notes().stateIn(\n        scope = viewModelScope,\n        started = SharingStarted.WhileSubscribed(5_000),\n        initialValue = emptyList(),\n    )\n\n    fun enregistrer(titre: String, contenu: String, id: Long = 0) {\n        if (titre.isBlank() && contenu.isBlank()) return\n        viewModelScope.launch { depot.enregistrer(titre, contenu, id) }\n    }\n\n    fun supprimer(note: Note) {\n        viewModelScope.launch { depot.supprimer(note) }\n    }\n}"
+     }
+    },
+    {
+     "title": "Confirmer les suppressions",
+     "text": "Une suppression est définitive : demandez une confirmation avec un `AlertDialog`, ou proposez d'annuler avec un `Snackbar`.",
+     "verify": "Aucune note ne disparaît sans action claire."
+    },
+    {
+     "title": "Vérifier la persistance",
+     "text": "Ajoutez une note, forcez l'arrêt de l'application, puis rouvrez-la.",
+     "verify": "La note est toujours là."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "data class Note(val id: Long, val titre: String, val modifieeLe: Long)\n\nfun trier(notes: List<Note>) = notes.sortedByDescending { it.modifieeLe }.map { it.titre }\n\nfun main() {\n    val notes = listOf(Note(1, \"Ancienne\", 10), Note(2, \"Récente\", 30), Note(3, \"Moyenne\", 20))\n    println(trier(notes))\n}",
+    "output": "[Récente, Moyenne, Ancienne]"
+   },
+   "testIntro": "Le tri se vérifie aussi avec un test Room sur une base en mémoire.",
+   "criteria": [
+    "Les notes survivent à un arrêt forcé.",
+    "La liste se met à jour toute seule.",
+    "Une note vide n'est pas enregistrée.",
+    "Une suppression demande une confirmation."
+   ],
+   "quiz": [
+    {
+     "prompt": "Que garantit Room à la compilation ?",
+     "options": [
+      "La validité des requêtes SQL",
+      "L'absence de bugs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une table inexistante est refusée."
+    },
+    {
+     "prompt": "Pourquoi un dépôt ?",
+     "options": [
+      "L'écran ne dépend pas de la source de données",
+      "Pour doubler le code"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il facilite aussi les tests."
+    }
+   ]
+  },
+  {
+   "id": "fichiers",
+   "level": "intermediaire",
+   "title": "Gestionnaire de fichiers",
+   "stack": "Kotlin et Compose",
+   "objective": "Lister, créer et supprimer des fichiers dans le dossier privé de l'application, et importer un document choisi par l'utilisateur.",
+   "prerequisites": [
+    "Stockage interne.",
+    "Sélecteur de documents du système."
+   ],
+   "modules": [
+    "donnees-reseaux",
+    "securite"
+   ],
+   "steps": [
+    {
+     "title": "Lister les fichiers",
+     "text": "Le stockage interne ne demande aucune permission. Ce projet n'accède jamais à tout le téléphone.",
+     "verify": "Aucune permission de stockage n'est déclarée.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class Fichier(val nom: String, val taille: Long)\n\nfun lister(dossier: File): List<Fichier> =\n    dossier.listFiles().orEmpty()\n        .filter { it.isFile }\n        .map { Fichier(it.name, it.length()) }\n        .sortedBy { it.nom.lowercase() }"
+     }
+    },
+    {
+     "title": "Protéger les chemins",
+     "text": "Un nom venu de l'extérieur peut contenir `../`. Vérifiez toujours que le fichier reste dans le dossier.",
+     "verify": "Un nom contenant `../` est refusé.",
+     "code": {
+      "language": "kotlin",
+      "code": "fun fichierSur(dossier: File, nom: String): File? {\n    val cible = File(dossier, nom).canonicalFile\n    val autorise = cible.path.startsWith(dossier.canonicalPath + File.separator)\n    return if (autorise) cible else null\n}"
+     }
+    },
+    {
+     "title": "Importer un document",
+     "text": "Le sélecteur du système donne accès à un seul fichier, choisi par l'utilisateur. Aucune permission n'est nécessaire.",
+     "verify": "Le fichier importé apparaît dans la liste.",
+     "code": {
+      "language": "kotlin",
+      "code": "fun importer(context: Context, uri: Uri, nom: String): Boolean {\n    val cible = fichierSur(context.filesDir, nom) ?: return false\n    val entree = context.contentResolver.openInputStream(uri) ?: return false\n    entree.use { source -> cible.outputStream().use { source.copyTo(it) } }\n    return true\n}\n\n@Composable\nfun BoutonImporter(onChoisi: (Uri) -> Unit) {\n    val lanceur = rememberLauncherForActivityResult(\n        ActivityResultContracts.OpenDocument(),\n    ) { uri -> uri?.let(onChoisi) }\n\n    Button(onClick = { lanceur.launch(arrayOf(\"*/*\")) }) { Text(\"Importer\") }\n}"
+     }
+    },
+    {
+     "title": "Ne pas bloquer l'écran",
+     "text": "Copier un gros fichier prend du temps. Faites-le sur `Dispatchers.IO`, avec un indicateur.",
+     "verify": "L'écran reste fluide pendant une copie."
+    },
+    {
+     "title": "Confirmer la suppression",
+     "text": "Montrez le nom du fichier dans la confirmation.",
+     "verify": "Annuler ne supprime rien."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun taille(octets: Long): String = when {\n    octets < 1_024 -> \"$octets o\"\n    octets < 1_048_576 -> \"${octets / 1_024} Ko\"\n    else -> \"${octets / 1_048_576} Mo\"\n}\n\nfun main() {\n    println(taille(512))\n    println(taille(2_048))\n    println(taille(5_242_880))\n}",
+    "output": "512 o\n2 Ko\n5 Mo"
+   },
+   "testIntro": "Ajoutez ce format à votre liste, puis testez les limites : 1 023 et 1 024 octets.",
+   "criteria": [
+    "Aucune permission de stockage n'est demandée.",
+    "Un chemin hors du dossier est refusé.",
+    "L'import passe par le sélecteur du système.",
+    "Une suppression demande confirmation."
+   ],
+   "quiz": [
+    {
+     "prompt": "Le stockage interne demande-t-il une permission ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il est privé à l'application."
+    },
+    {
+     "prompt": "Comment bloquer ../ dans un nom ?",
+     "options": [
+      "Résoudre le chemin réel et vérifier le dossier",
+      "Interdire les points"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "canonicalFile résout le chemin."
+    }
+   ]
+  },
+  {
+   "id": "meteo",
+   "level": "intermediaire",
+   "title": "Application météo",
+   "stack": "Kotlin, Retrofit et Compose",
+   "objective": "Afficher la météo actuelle d'une ville, avec les états de chargement et d'erreur.",
+   "prerequisites": [
+    "Retrofit et kotlinx.serialization.",
+    "États d'écran."
+   ],
+   "modules": [
+    "donnees-reseaux",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Lire l'API",
+     "text": "Open-Meteo est un service gratuit et sans clé pour un usage non commercial. Vérifiez ses conditions sur son site, puis essayez la requête dans un terminal.",
+     "verify": "Vous avez vu la vraie réponse JSON.",
+     "code": {
+      "language": "shell",
+      "code": "curl \"https://api.open-meteo.com/v1/forecast?latitude=48.85&longitude=2.35&current=temperature_2m,weather_code\""
+     }
+    },
+    {
+     "title": "Décrire la réponse",
+     "text": "`@SerialName` relie un nom JSON à un nom Kotlin. Le client ignorera les champs inconnus.",
+     "verify": "Le modèle ne contient que ce qui vous sert.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Serializable\ndata class ReponseMeteo(val current: MeteoActuelle)\n\n@Serializable\ndata class MeteoActuelle(\n    @SerialName(\"temperature_2m\") val temperature: Double,\n    @SerialName(\"weather_code\") val code: Int,\n)\n\ninterface MeteoApi {\n    @GET(\"v1/forecast\")\n    suspend fun actuelle(\n        @Query(\"latitude\") latitude: Double,\n        @Query(\"longitude\") longitude: Double,\n        @Query(\"current\") champs: String = \"temperature_2m,weather_code\",\n    ): ReponseMeteo\n}"
+     }
+    },
+    {
+     "title": "Représenter les états",
+     "text": "Un écran réseau a au moins trois états. Une interface scellée oblige à tous les traiter.",
+     "verify": "Le mode avion affiche un message, pas un écran blanc.",
+     "code": {
+      "language": "kotlin",
+      "code": "sealed interface MeteoEtat {\n    data object Chargement : MeteoEtat\n    data class Pret(val meteo: MeteoActuelle) : MeteoEtat\n    data class Erreur(val message: String) : MeteoEtat\n}\n\nclass MeteoViewModel(private val api: MeteoApi) : ViewModel() {\n    private val _etat = MutableStateFlow<MeteoEtat>(MeteoEtat.Chargement)\n    val etat: StateFlow<MeteoEtat> = _etat.asStateFlow()\n\n    fun charger(latitude: Double, longitude: Double) {\n        _etat.value = MeteoEtat.Chargement\n        viewModelScope.launch {\n            _etat.value = try {\n                MeteoEtat.Pret(api.actuelle(latitude, longitude).current)\n            } catch (e: IOException) {\n                MeteoEtat.Erreur(\"Connexion impossible. Réessayez.\")\n            }\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Traduire le code météo",
+     "text": "L'API renvoie un code WMO. Traduisez les principaux, avec un cas par défaut pour les autres.",
+     "verify": "Un code inconnu affiche un texte neutre."
+    },
+    {
+     "title": "Déclarer le réseau",
+     "text": "La permission `INTERNET` doit être dans le manifeste principal, sinon la release n'accède pas au réseau.",
+     "verify": "La version de release affiche la météo."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "import kotlinx.serialization.SerialName\nimport kotlinx.serialization.Serializable\nimport kotlinx.serialization.json.Json\n\n@Serializable\ndata class MeteoActuelle(\n    @SerialName(\"temperature_2m\") val temperature: Double,\n    @SerialName(\"weather_code\") val code: Int,\n)\n\n@Serializable\ndata class ReponseMeteo(val current: MeteoActuelle)\n\nval lecteur = Json { ignoreUnknownKeys = true }\n\nfun main() {\n    val brut = \"\"\"{\"latitude\":48.85,\"current\":{\"time\":\"2026-11-07T20:30\",\"temperature_2m\":7.8,\"weather_code\":2}}\"\"\"\n    val meteo = lecteur.decodeFromString<ReponseMeteo>(brut).current\n    println(meteo.temperature)\n    println(meteo.code)\n}",
+    "output": "7.8\n2"
+   },
+   "testIntro": "Ce JSON reprend la forme d'une vraie réponse d'Open-Meteo.",
+   "criteria": [
+    "La température réelle s'affiche.",
+    "Le mode avion affiche une erreur claire, avec un bouton Réessayer.",
+    "Un champ inconnu ne casse pas la lecture.",
+    "La version de release fonctionne."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi ignoreUnknownKeys ?",
+     "options": [
+      "Pour résister aux nouveaux champs",
+      "Pour chiffrer"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une API évolue."
+    },
+    {
+     "prompt": "Où déclarer INTERNET ?",
+     "options": [
+      "Dans le manifeste principal",
+      "Dans le manifeste de debug seulement"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon la release n'a pas de réseau."
+    }
+   ]
+  },
+  {
+   "id": "lecteur",
+   "level": "intermediaire",
+   "title": "Lecteur multimédia",
+   "stack": "Kotlin, Media3 et Compose",
+   "objective": "Lire un fichier audio ou vidéo avec Media3, avec lecture, pause, position et liste de lecture.",
+   "prerequisites": [
+    "Cycle de vie d'une activité.",
+    "Sélecteur de documents."
+   ],
+   "modules": [
+    "fondations",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Ajouter Media3",
+     "text": "Media3 est la bibliothèque recommandée sur Android. Consultez sa version stable avant de l'ajouter.",
+     "verify": "Le projet compile avec la dépendance.",
+     "code": {
+      "language": "kotlin",
+      "code": "dependencies {\n    implementation(\"androidx.media3:media3-exoplayer:1.11.1\")\n}"
+     }
+    },
+    {
+     "title": "Créer et libérer le lecteur",
+     "text": "Un lecteur occupe des ressources : créez-le avec l'écran et libérez-le à sa sortie. `DisposableEffect` s'en charge.",
+     "verify": "Quitter l'écran arrête le son.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Composable\nfun rememberLecteur(uri: Uri): ExoPlayer {\n    val context = LocalContext.current\n    val lecteur = remember(uri) {\n        ExoPlayer.Builder(context).build().apply {\n            setMediaItem(MediaItem.fromUri(uri))\n            prepare()\n        }\n    }\n    DisposableEffect(lecteur) {\n        onDispose { lecteur.release() }\n    }\n    return lecteur\n}"
+     }
+    },
+    {
+     "title": "Gérer une liste de lecture",
+     "text": "Isolez la logique dans une classe pure, facile à tester, avant de la brancher au lecteur.",
+     "verify": "Le titre suivant revient au premier après le dernier.",
+     "code": {
+      "language": "kotlin",
+      "code": "class ListeLecture(private val titres: List<String>) {\n    var position = 0\n        private set\n\n    val courant: String? get() = titres.getOrNull(position)\n\n    fun suivant() {\n        if (titres.isNotEmpty()) position = (position + 1) % titres.size\n    }\n\n    fun precedent() {\n        if (titres.isNotEmpty()) position = (position - 1 + titres.size) % titres.size\n    }\n}"
+     }
+    },
+    {
+     "title": "Écouter en arrière-plan",
+     "text": "Pour continuer écran éteint, il faut un `MediaSessionService`, un service de premier plan et sa notification. Gardez cela pour une seconde version.",
+     "verify": "Vous savez pourquoi le son s'arrête en quittant l'écran."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "class ListeLecture(private val titres: List<String>) {\n    var position = 0\n        private set\n\n    val courant: String? get() = titres.getOrNull(position)\n\n    fun suivant() {\n        if (titres.isNotEmpty()) position = (position + 1) % titres.size\n    }\n\n    fun precedent() {\n        if (titres.isNotEmpty()) position = (position - 1 + titres.size) % titres.size\n    }\n}\n\nfun main() {\n    val liste = ListeLecture(listOf(\"Un\", \"Deux\"))\n    liste.suivant()\n    println(liste.courant)\n    liste.suivant()\n    println(liste.courant)\n    liste.precedent()\n    println(liste.courant)\n    println(ListeLecture(emptyList()).courant)\n}",
+    "output": "Deux\nUn\nDeux\nnull"
+   },
+   "testIntro": "Le dernier cas vérifie qu'une liste vide ne provoque pas de plantage.",
+   "criteria": [
+    "Un fichier choisi se lit.",
+    "Quitter l'écran libère le lecteur.",
+    "Suivant et précédent bouclent correctement.",
+    "Une liste vide ne provoque pas de plantage."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi libérer le lecteur ?",
+     "options": [
+      "Il occupe des ressources système",
+      "Pour effacer le fichier"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "release() les rend au système."
+    },
+    {
+     "prompt": "Que faut-il pour écouter en arrière-plan ?",
+     "options": [
+      "Un service de premier plan avec notification",
+      "Rien de plus"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Par exemple un MediaSessionService."
+    }
+   ]
+  },
+  {
+   "id": "api",
+   "level": "intermediaire",
+   "title": "Application utilisant une API",
+   "stack": "Kotlin, Retrofit et Compose",
+   "objective": "Afficher la liste paginée des dépôts publics d'un compte GitHub, avec recherche et gestion des limites.",
+   "prerequisites": [
+    "Retrofit.",
+    "États d'écran."
+   ],
+   "modules": [
+    "donnees-reseaux"
+   ],
+   "steps": [
+    {
+     "title": "Découvrir l'API",
+     "text": "L'API publique de GitHub ne demande pas de clé pour ces données, mais elle limite le nombre de requêtes. Ne mettez aucun jeton dans l'application.",
+     "verify": "Vous avez vu la réponse dans un terminal.",
+     "code": {
+      "language": "shell",
+      "code": "curl -H \"Accept: application/vnd.github+json\" \"https://api.github.com/users/octocat/repos?per_page=5&page=1\""
+     }
+    },
+    {
+     "title": "Décrire le client",
+     "text": "Une réponse brute `Response` donne accès au code HTTP, utile pour distinguer les erreurs.",
+     "verify": "Le client compile, et n'a aucune clé.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Serializable\ndata class Depot(\n    val name: String,\n    val description: String? = null,\n    @SerialName(\"stargazers_count\") val etoiles: Int = 0,\n)\n\ninterface GithubApi {\n    @GET(\"users/{compte}/repos\")\n    suspend fun depots(\n        @Path(\"compte\") compte: String,\n        @Query(\"per_page\") parPage: Int = 30,\n        @Query(\"page\") page: Int = 1,\n    ): Response<List<Depot>>\n}"
+     }
+    },
+    {
+     "title": "Traduire les erreurs",
+     "text": "Un code HTTP doit devenir un message utile à l'utilisateur.",
+     "verify": "Un compte inexistant affiche « Compte introuvable ».",
+     "code": {
+      "language": "kotlin",
+      "code": "fun messageErreur(code: Int): String = when (code) {\n    404 -> \"Compte introuvable\"\n    403, 429 -> \"Trop de requêtes. Réessayez plus tard.\"\n    in 500..599 -> \"Le service rencontre un problème\"\n    else -> \"Erreur inattendue ($code)\"\n}"
+     }
+    },
+    {
+     "title": "Charger page par page",
+     "text": "Ne chargez pas tout d'un coup. Demandez la page suivante en approchant de la fin de la liste, et arrêtez-vous quand une page est incomplète.",
+     "verify": "Le défilement charge la suite, sans doublon."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun encoreDesPages(recus: Int, parPage: Int) = recus == parPage\n\nfun messageErreur(code: Int): String = when (code) {\n    404 -> \"Compte introuvable\"\n    403, 429 -> \"Trop de requêtes. Réessayez plus tard.\"\n    in 500..599 -> \"Le service rencontre un problème\"\n    else -> \"Erreur inattendue ($code)\"\n}\n\nfun main() {\n    println(encoreDesPages(30, 30))\n    println(encoreDesPages(12, 30))\n    println(messageErreur(404))\n    println(messageErreur(503))\n}",
+    "output": "true\nfalse\nCompte introuvable\nLe service rencontre un problème"
+   },
+   "testIntro": "Ces deux règles décident du comportement réseau : gardez-les en fonctions pures.",
+   "criteria": [
+    "La liste réelle s'affiche.",
+    "La pagination ne crée pas de doublons.",
+    "404, 403 et le mode avion donnent des messages distincts.",
+    "Aucun jeton ne figure dans l'application."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi Response<T> plutôt que T ?",
+     "options": [
+      "Pour lire le code HTTP",
+      "Pour aller plus vite"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "On distingue ainsi les erreurs."
+    },
+    {
+     "prompt": "Quand arrêter la pagination ?",
+     "options": [
+      "Quand une page est incomplète",
+      "Après dix pages"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il n'y a plus rien à charger."
+    }
+   ]
+  },
+  {
+   "id": "donnees-locales",
+   "level": "intermediaire",
+   "title": "Gestionnaire de données locales",
+   "stack": "Kotlin, Room et DataStore",
+   "objective": "Suivre ses dépenses par catégorie, avec totaux calculés en SQL, préférences et export CSV.",
+   "prerequisites": [
+    "Room.",
+    "DataStore."
+   ],
+   "modules": [
+    "donnees-reseaux"
+   ],
+   "steps": [
+    {
+     "title": "Calculer en SQL",
+     "text": "Laissez la base additionner : c'est plus rapide que de charger toutes les lignes.",
+     "verify": "Le total reste juste après une suppression.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Entity(tableName = \"depenses\")\ndata class Depense(\n    @PrimaryKey(autoGenerate = true) val id: Long = 0,\n    val categorie: String,\n    val centimes: Long,\n    val date: Long,\n)\n\ndata class TotalCategorie(val categorie: String, val total: Long)\n\n@Dao\ninterface DepenseDao {\n    @Query(\"SELECT categorie, SUM(centimes) AS total FROM depenses GROUP BY categorie ORDER BY total DESC\")\n    fun totaux(): Flow<List<TotalCategorie>>\n\n    @Insert\n    suspend fun ajouter(depense: Depense)\n}"
+     }
+    },
+    {
+     "title": "Stocker l'argent en centimes",
+     "text": "Un `Double` accumule des erreurs d'arrondi. Pour de l'argent, stockez un entier en centimes.",
+     "verify": "Trois fois 0,10 € font exactement 0,30 €."
+    },
+    {
+     "title": "Retenir un réglage",
+     "text": "DataStore convient aux petits réglages, pas aux données volumineuses.",
+     "verify": "La catégorie par défaut revient après un redémarrage.",
+     "code": {
+      "language": "kotlin",
+      "code": "val Context.reglages: DataStore<Preferences> by preferencesDataStore(name = \"reglages\")\n\nval CATEGORIE_PAR_DEFAUT = intPreferencesKey(\"categorie_par_defaut\")\n\nsuspend fun choisirCategorie(context: Context, index: Int) {\n    context.reglages.edit { it[CATEGORIE_PAR_DEFAUT] = index }\n}"
+     }
+    },
+    {
+     "title": "Exporter en CSV",
+     "text": "Un champ qui contient un point-virgule doit être entre guillemets. Passez par le sélecteur de fichiers du système.",
+     "verify": "Le fichier s'ouvre correctement dans un tableur."
+    },
+    {
+     "title": "Préparer une migration",
+     "text": "Ajoutez une colonne `note` avec une migration Room, puis testez la mise à jour avec des données réelles.",
+     "verify": "Les anciennes dépenses survivent à la mise à jour."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun euros(centimes: Long) = \"%d,%02d €\".format(centimes / 100, centimes % 100)\n\nfun ligneCsv(champs: List<String>) = champs.joinToString(\";\") { champ ->\n    if (';' in champ || '\"' in champ) \"\\\"\" + champ.replace(\"\\\"\", \"\\\"\\\"\") + \"\\\"\" else champ\n}\n\nfun main() {\n    println(0.1 + 0.2 == 0.3)\n    println(euros(10L + 20L))\n    println(ligneCsv(listOf(\"Repas; midi\", \"1250\")))\n}",
+    "output": "false\n0,30 €\n\"Repas; midi\";1250"
+   },
+   "testIntro": "La première ligne montre pourquoi on évite `Double` pour l'argent.",
+   "criteria": [
+    "Les totaux sont calculés en SQL.",
+    "Les montants sont des entiers.",
+    "Le CSV s'ouvre dans un tableur.",
+    "La migration conserve les données."
+   ],
+   "quiz": [
+    {
+     "prompt": "Pourquoi des centimes entiers ?",
+     "options": [
+      "Pour éviter les erreurs d'arrondi",
+      "Pour économiser l'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "0.1 + 0.2 ne vaut pas 0.3 en Double."
+    },
+    {
+     "prompt": "Que stocker dans DataStore ?",
+     "options": [
+      "De petits réglages",
+      "Des milliers de lignes"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Room convient aux données structurées."
+    }
+   ]
+  },
+  {
+   "id": "authentification",
+   "level": "avance",
+   "title": "Application avec authentification",
+   "stack": "Kotlin, Keystore et OkHttp",
+   "objective": "Se connecter à votre propre serveur de démonstration, conserver le jeton chiffré et le renouveler proprement.",
+   "prerequisites": [
+    "Keystore et chiffrement.",
+    "Protection des API."
+   ],
+   "modules": [
+    "securite",
+    "donnees-reseaux"
+   ],
+   "steps": [
+    {
+     "title": "Préparer un serveur de démonstration",
+     "text": "Écrivez un petit serveur local, avec un compte fictif. N'utilisez ni vrai mot de passe, ni service tiers. Il renvoie un jeton court et un jeton de rafraîchissement.",
+     "verify": "Le serveur répond sur votre machine, et rien n'est exposé sur Internet."
+    },
+    {
+     "title": "Modéliser la session",
+     "text": "L'état de session guide tout l'écran. L'application ne stocke jamais le mot de passe.",
+     "verify": "Le mot de passe n'est conservé nulle part.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class Session(val jeton: String, val expireLe: Long, val rafraichissement: String)\n\nsealed interface EtatAuth {\n    data object Deconnecte : EtatAuth\n    data object Connexion : EtatAuth\n    data class Connecte(val session: Session) : EtatAuth\n    data class Erreur(val message: String) : EtatAuth\n}\n\nfun aRenouveler(session: Session, maintenant: Long, marge: Long = 30_000) =\n    session.expireLe - marge <= maintenant"
+     }
+    },
+    {
+     "title": "Chiffrer la session",
+     "text": "Le jeton est chiffré avec une clé du Keystore, puis écrit dans le stockage interne. Ces fichiers sont exclus des sauvegardes.",
+     "verify": "Le fichier enregistré ne contient pas le jeton en clair.",
+     "code": {
+      "language": "kotlin",
+      "code": "private const val ALIAS_SESSION = \"cle_session\"\n\nfun cleSession(): SecretKey {\n    val magasin = KeyStore.getInstance(\"AndroidKeyStore\").apply { load(null) }\n    (magasin.getKey(ALIAS_SESSION, null) as? SecretKey)?.let { return it }\n    val generateur = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, \"AndroidKeyStore\")\n    generateur.init(\n        KeyGenParameterSpec.Builder(\n            ALIAS_SESSION,\n            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,\n        )\n            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)\n            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)\n            .build()\n    )\n    return generateur.generateKey()\n}\n\nfun enregistrer(fichier: File, jeton: String) {\n    val cipher = Cipher.getInstance(\"AES/GCM/NoPadding\")\n    cipher.init(Cipher.ENCRYPT_MODE, cleSession())\n    fichier.writeBytes(cipher.iv + cipher.doFinal(jeton.toByteArray()))\n}"
+     }
+    },
+    {
+     "title": "Renouveler automatiquement",
+     "text": "Un `Authenticator` d'OkHttp réagit à un 401. Limitez les essais pour éviter une boucle sans fin.",
+     "verify": "Un jeton expiré est renouvelé sans que l'utilisateur le voie.",
+     "code": {
+      "language": "kotlin",
+      "code": "class Renouvellement(\n    private val renouveler: () -> String?,\n) : Authenticator {\n    override fun authenticate(route: Route?, response: okhttp3.Response): Request? {\n        if (response.priorResponse != null) return null\n        val jeton = renouveler() ?: return null\n        return response.request.newBuilder()\n            .header(\"Authorization\", \"Bearer $jeton\")\n            .build()\n    }\n}"
+     }
+    },
+    {
+     "title": "Se déconnecter vraiment",
+     "text": "La déconnexion efface le jeton local et le révoque sur le serveur.",
+     "verify": "Après déconnexion, l'ancien jeton est refusé par le serveur."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "data class Session(val jeton: String, val expireLe: Long)\n\nfun aRenouveler(session: Session, maintenant: Long, marge: Long = 30_000) =\n    session.expireLe - marge <= maintenant\n\nfun main() {\n    val session = Session(\"j\", expireLe = 100_000)\n    println(aRenouveler(session, maintenant = 10_000))\n    println(aRenouveler(session, maintenant = 70_000))\n    println(aRenouveler(session, maintenant = 200_000))\n}",
+    "output": "false\ntrue\ntrue"
+   },
+   "testIntro": "Le cas limite vérifie que le renouvellement arrive avant l'expiration.",
+   "criteria": [
+    "Le mot de passe n'est jamais stocké.",
+    "Le jeton est chiffré sur l'appareil.",
+    "Un 401 renouvelle la session sans boucle.",
+    "La déconnexion révoque le jeton."
+   ],
+   "quiz": [
+    {
+     "prompt": "Où conserver le mot de passe sur l'appareil ?",
+     "options": [
+      "Nulle part",
+      "Dans DataStore"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "On garde un jeton, pas le mot de passe."
+    },
+    {
+     "prompt": "Pourquoi vérifier priorResponse ?",
+     "options": [
+      "Pour éviter une boucle de renouvellement",
+      "Pour lire le corps"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un second échec doit s'arrêter."
+    }
+   ]
+  },
+  {
+   "id": "synchronisation",
+   "level": "avance",
+   "title": "Application avec synchronisation",
+   "stack": "Kotlin, Room et WorkManager",
+   "objective": "Modifier des données hors ligne, puis les synchroniser avec un serveur, sans perte ni doublon.",
+   "prerequisites": [
+    "Room et WorkManager.",
+    "Conflits de synchronisation."
+   ],
+   "modules": [
+    "donnees-reseaux",
+    "avance",
+    "expert"
+   ],
+   "steps": [
+    {
+     "title": "Écrire d'abord en local",
+     "text": "L'écran lit et écrit uniquement dans Room. La modification rejoint aussi une file d'attente, dans la même transaction.",
+     "verify": "L'application fonctionne entièrement en mode avion.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Entity(tableName = \"fiches\")\ndata class Fiche(\n    @PrimaryKey val id: String,\n    val texte: String,\n    val version: Int,\n)\n\n@Entity(tableName = \"envois\")\ndata class Envoi(\n    @PrimaryKey(autoGenerate = true) val numero: Long = 0,\n    val ficheId: String,\n)\n\n@Dao\ninterface SyncDao {\n    @Upsert\n    suspend fun enregistrer(fiche: Fiche)\n\n    @Insert\n    suspend fun ajouterEnvoi(envoi: Envoi)\n\n    @Query(\"SELECT * FROM envois ORDER BY numero LIMIT 50\")\n    suspend fun aEnvoyer(): List<Envoi>\n\n    @Query(\"DELETE FROM envois WHERE numero = :numero\")\n    suspend fun retirer(numero: Long)\n\n    @Transaction\n    suspend fun modifier(fiche: Fiche) {\n        enregistrer(fiche)\n        ajouterEnvoi(Envoi(ficheId = fiche.id))\n    }\n}"
+     }
+    },
+    {
+     "title": "Envoyer en arrière-plan",
+     "text": "WorkManager attend le réseau et relance après un échec. Un élément ne quitte la file qu'après la confirmation du serveur.",
+     "verify": "Couper le réseau pendant un envoi ne perd rien.",
+     "code": {
+      "language": "kotlin",
+      "code": "class SyncWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result = try {\n        envoyerFile()\n        Result.success()\n    } catch (e: IOException) {\n        Result.retry()\n    }\n\n    private suspend fun envoyerFile() {\n        // Pour chaque envoi : appel du serveur, puis retrait de la file.\n    }\n}\n\nfun demanderSynchronisation(context: Context) {\n    val requete = OneTimeWorkRequestBuilder<SyncWorker>()\n        .setConstraints(\n            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()\n        )\n        .build()\n    WorkManager.getInstance(context).enqueueUniqueWork(\n        \"sync\",\n        ExistingWorkPolicy.KEEP,\n        requete,\n    )\n}"
+     }
+    },
+    {
+     "title": "Détecter les conflits",
+     "text": "Le serveur refuse une écriture dont la version est dépassée, avec un code 409. Choisissez une règle claire, et notez-la dans un ADR.",
+     "verify": "Deux appareils modifiant la même fiche ne perdent rien en silence."
+    },
+    {
+     "title": "Montrer l'état",
+     "text": "Affichez clairement ce qui attend d'être envoyé. Un utilisateur doit savoir si ses données sont en sécurité.",
+     "verify": "Un indicateur montre les éléments en attente."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "enum class Decision { ENVOYER, RECUPERER, CONFLIT, RIEN }\n\nfun decider(localModifie: Boolean, versionLocale: Int, versionServeur: Int) = when {\n    versionLocale == versionServeur && localModifie -> Decision.ENVOYER\n    versionLocale == versionServeur -> Decision.RIEN\n    localModifie -> Decision.CONFLIT\n    else -> Decision.RECUPERER\n}\n\nfun main() {\n    println(decider(localModifie = true, versionLocale = 3, versionServeur = 3))\n    println(decider(localModifie = false, versionLocale = 3, versionServeur = 4))\n    println(decider(localModifie = true, versionLocale = 3, versionServeur = 4))\n    println(decider(localModifie = false, versionLocale = 3, versionServeur = 3))\n}",
+    "output": "ENVOYER\nRECUPERER\nCONFLIT\nRIEN"
+   },
+   "testIntro": "Cette table de décision couvre les quatre situations possibles.",
+   "criteria": [
+    "L'application fonctionne hors ligne.",
+    "Une coupure pendant l'envoi ne perd rien.",
+    "Un renvoi ne crée pas de doublon.",
+    "Un conflit est traité par une règle explicite."
+   ],
+   "quiz": [
+    {
+     "prompt": "Quand retirer un élément de la file ?",
+     "options": [
+      "Après la confirmation du serveur",
+      "Avant l'envoi"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Sinon une coupure le perd."
+    },
+    {
+     "prompt": "Que signale un code 409 ?",
+     "options": [
+      "Un conflit de version",
+      "Une clé invalide"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Le client doit le résoudre."
+    }
+   ]
+  },
+  {
+   "id": "flutter-natif",
+   "level": "avance",
+   "title": "Application Flutter avec fonctions natives",
+   "stack": "Flutter, Dart et Kotlin",
+   "objective": "Appeler du code Android depuis Flutter par un canal de plateforme, avec une solution de repli.",
+   "prerequisites": [
+    "Bases de Flutter.",
+    "Canaux de plateforme."
+   ],
+   "modules": [
+    "flutter"
+   ],
+   "steps": [
+    {
+     "title": "Écrire l'appel en Dart",
+     "text": "Le nom du canal doit être identique des deux côtés. Prévoyez toujours l'absence d'implémentation.",
+     "verify": "Sur une plateforme sans implémentation, l'écran affiche « Inconnu ».",
+     "code": {
+      "language": "dart",
+      "code": "import 'package:flutter/services.dart';\n\nconst _canal = MethodChannel('com.exemple.preuve/batterie');\n\nFuture<int?> niveauBatterie() async {\n  try {\n    return await _canal.invokeMethod<int>('niveau');\n  } on MissingPluginException {\n    return null;\n  } on PlatformException {\n    return null;\n  }\n}"
+     }
+    },
+    {
+     "title": "Écrire le côté Kotlin",
+     "text": "`MainActivity` reçoit l'appel, et répond avec `success`, `error` ou `notImplemented`.",
+     "verify": "Le niveau affiché correspond à celui du téléphone.",
+     "code": {
+      "language": "kotlin",
+      "code": "class MainActivity : FlutterActivity() {\n    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {\n        super.configureFlutterEngine(flutterEngine)\n        MethodChannel(\n            flutterEngine.dartExecutor.binaryMessenger,\n            \"com.exemple.preuve/batterie\",\n        ).setMethodCallHandler { appel, reponse ->\n            if (appel.method == \"niveau\") {\n                val batterie = getSystemService(Context.BATTERY_SERVICE) as BatteryManager\n                reponse.success(batterie.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))\n            } else {\n                reponse.notImplemented()\n            }\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Afficher le résultat",
+     "text": "Un `FutureBuilder` gère l'attente. Le rechargement à chaud ne suffit pas pour le code natif : relancez l'application.",
+     "verify": "L'écran passe de l'attente au résultat.",
+     "code": {
+      "language": "dart",
+      "code": "import 'package:flutter/material.dart';\n\nclass Batterie extends StatelessWidget {\n  const Batterie({required this.lecture, super.key});\n\n  final Future<int?> lecture;\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder<int?>(\n      future: lecture,\n      builder: (context, etat) => Text(\n        etat.connectionState == ConnectionState.done\n            ? decrire(etat.data)\n            : 'Lecture…',\n      ),\n    );\n  }\n}\n\nString decrire(int? niveau) => niveau == null ? 'Inconnu' : '$niveau %';"
+     }
+    },
+    {
+     "title": "Tester sur Linux",
+     "text": "Lancez aussi sur Linux : le canal n'y existe pas. L'application doit rester utilisable.",
+     "verify": "Sur Linux, aucun plantage ne se produit."
+    }
+   ],
+   "test": {
+    "language": "dart",
+    "code": "String decrire(int? niveau) => niveau == null ? 'Inconnu' : '$niveau %';\n\nvoid main() {\n  print(decrire(80));\n  print(decrire(null));\n}",
+    "output": "80 %\nInconnu"
+   },
+   "testIntro": "La logique d'affichage se teste sans téléphone.",
+   "criteria": [
+    "Le niveau réel s'affiche sur Android.",
+    "Une plateforme sans implémentation reste utilisable.",
+    "Les noms du canal sont identiques.",
+    "Une méthode inconnue répond `notImplemented`."
+   ],
+   "quiz": [
+    {
+     "prompt": "Le rechargement à chaud met-il à jour le code Kotlin ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut relancer l'application."
+    },
+    {
+     "prompt": "Que signale MissingPluginException ?",
+     "options": [
+      "Aucune implémentation native",
+      "Une erreur de syntaxe"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il faut la gérer."
+    }
+   ]
+  },
+  {
+   "id": "ia",
+   "level": "avance",
+   "title": "Application utilisant une IA",
+   "stack": "Kotlin, Retrofit et Compose",
+   "objective": "Créer un assistant de révision, avec fournisseur interchangeable, sans clé dans l'application.",
+   "prerequisites": [
+    "API d'IA et sécurité des clés.",
+    "États d'écran."
+   ],
+   "modules": [
+    "ia",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Isoler le fournisseur",
+     "text": "L'application dépend d'une interface. En développement, un assistant factice évite tout frais.",
+     "verify": "L'interface fonctionne sans aucun appel réseau.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class MessageIa(val role: String, val texte: String)\n\ninterface AssistantIa {\n    suspend fun repondre(historique: List<MessageIa>): String\n}\n\nclass AssistantFactice : AssistantIa {\n    override suspend fun repondre(historique: List<MessageIa>) =\n        \"Réponse de test : ${historique.size} message(s) reçus\"\n}"
+     }
+    },
+    {
+     "title": "Choisir l'architecture de la clé",
+     "text": "Pour une application publique, la clé reste sur votre serveur. Pour ce projet, utilisez Ollama sur votre machine : il n'y a alors aucune clé.",
+     "verify": "Aucune clé ne se trouve dans l'APK."
+    },
+    {
+     "title": "Relier Ollama",
+     "text": "Sur émulateur, l'hôte se trouve à `10.0.2.2`. Sur téléphone, utilisez `adb reverse`. Limitez le trafic en clair à cette adresse.",
+     "verify": "Une vraie réponse s'affiche.",
+     "code": {
+      "language": "kotlin",
+      "code": "@Serializable\ndata class MessageOllama(val role: String, val content: String)\n\n@Serializable\ndata class RequeteOllama(\n    val model: String,\n    val messages: List<MessageOllama>,\n    val stream: Boolean = false,\n)\n\n@Serializable\ndata class ReponseOllama(val message: MessageOllama)\n\ninterface OllamaApi {\n    @POST(\"api/chat\")\n    suspend fun discuter(@Body requete: RequeteOllama): ReponseOllama\n}\n\nclass AssistantOllama(private val api: OllamaApi, private val modele: String) : AssistantIa {\n    override suspend fun repondre(historique: List<MessageIa>): String {\n        val messages = historique.map { MessageOllama(it.role, it.texte) }\n        return api.discuter(RequeteOllama(modele, messages)).message.content\n    }\n}"
+     }
+    },
+    {
+     "title": "Limiter l'historique",
+     "text": "Chaque question renvoie tout l'historique. Coupez-le, sans commencer par une réponse de l'assistant.",
+     "verify": "Une longue conversation reste possible."
+    },
+    {
+     "title": "Rester honnête",
+     "text": "Indiquez qu'une IA répond et qu'elle peut se tromper. Demandez un accord avant d'envoyer des données à un service externe.",
+     "verify": "L'écran mentionne l'IA."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "data class MessageIa(val role: String, val texte: String)\n\nfun couper(messages: List<MessageIa>, garder: Int): List<MessageIa> {\n    val fin = messages.takeLast(garder)\n    return fin.dropWhile { it.role != \"user\" }\n}\n\nfun main() {\n    val messages = listOf(\n        MessageIa(\"user\", \"a\"),\n        MessageIa(\"assistant\", \"b\"),\n        MessageIa(\"user\", \"c\"),\n        MessageIa(\"assistant\", \"d\"),\n    )\n    println(couper(messages, 3).map { it.texte })\n    println(couper(messages, 10).map { it.texte })\n}",
+    "output": "[c, d]\n[a, b, c, d]"
+   },
+   "testIntro": "Le premier cas retire une réponse orpheline au début de l'historique.",
+   "criteria": [
+    "Le fournisseur se remplace sans toucher à l'écran.",
+    "Aucune clé ne se trouve dans l'APK.",
+    "Les erreurs réseau sont gérées.",
+    "L'écran indique qu'une IA répond."
+   ],
+   "quiz": [
+    {
+     "prompt": "Où mettre la clé d'une application publique ?",
+     "options": [
+      "Sur un serveur",
+      "Dans BuildConfig"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'APK peut être décompilé."
+    },
+    {
+     "prompt": "À quoi sert l'assistant factice ?",
+     "options": [
+      "Développer sans frais",
+      "Tromper l'utilisateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il ne doit jamais passer pour une vraie IA."
+    }
+   ]
+  },
+  {
+   "id": "notifications",
+   "level": "avance",
+   "title": "Application avec notifications avancées",
+   "stack": "Kotlin et WorkManager",
+   "objective": "Envoyer des rappels planifiés, avec canaux, permission et actions.",
+   "prerequisites": [
+    "Permissions.",
+    "WorkManager."
+   ],
+   "modules": [
+    "avance",
+    "fondations"
+   ],
+   "steps": [
+    {
+     "title": "Créer un canal",
+     "text": "Depuis Android 8, toute notification passe par un canal, que l'utilisateur peut régler.",
+     "verify": "Le canal apparaît dans les réglages de l'application.",
+     "code": {
+      "language": "kotlin",
+      "code": "const val CANAL_RAPPELS = \"rappels\"\n\nfun creerCanal(context: Context) {\n    val canal = NotificationChannel(\n        CANAL_RAPPELS,\n        \"Rappels\",\n        NotificationManager.IMPORTANCE_DEFAULT,\n    )\n    context.getSystemService(NotificationManager::class.java)\n        .createNotificationChannel(canal)\n}"
+     }
+    },
+    {
+     "title": "Demander la permission",
+     "text": "Depuis Android 13, `POST_NOTIFICATIONS` se demande à l'exécution. Demandez-la quand l'utilisateur active un rappel, et gérez le refus.",
+     "verify": "Sans permission, l'application reste utilisable."
+    },
+    {
+     "title": "Ajouter une action",
+     "text": "Un `PendingIntent` immuable relie un bouton à votre code.",
+     "verify": "Le bouton Terminer retire la notification.",
+     "code": {
+      "language": "kotlin",
+      "code": "class ActionReceiver : BroadcastReceiver() {\n    override fun onReceive(context: Context, intent: Intent) {\n        val id = intent.getIntExtra(\"id\", 0)\n        context.getSystemService(NotificationManager::class.java).cancel(id)\n    }\n}\n\nfun notification(context: Context, id: Int, texte: String): Notification {\n    val action = Intent(context, ActionReceiver::class.java).putExtra(\"id\", id)\n    val terminer = PendingIntent.getBroadcast(\n        context,\n        id,\n        action,\n        PendingIntent.FLAG_IMMUTABLE,\n    )\n    return NotificationCompat.Builder(context, CANAL_RAPPELS)\n        .setSmallIcon(android.R.drawable.ic_popup_reminder)\n        .setContentTitle(\"Rappel\")\n        .setContentText(texte)\n        .addAction(0, \"Terminer\", terminer)\n        .setAutoCancel(true)\n        .build()\n}"
+     }
+    },
+    {
+     "title": "Planifier",
+     "text": "WorkManager déclenche un travail après un délai. L'heure n'est pas exacte : pour une heure précise, c'est le rôle d'une alarme.",
+     "verify": "Le rappel arrive après le délai, même application fermée.",
+     "code": {
+      "language": "kotlin",
+      "code": "class RappelWorker(\n    context: Context,\n    parametres: WorkerParameters,\n) : CoroutineWorker(context, parametres) {\n    override suspend fun doWork(): Result {\n        val texte = inputData.getString(\"texte\") ?: return Result.failure()\n        val gestionnaire = applicationContext.getSystemService(NotificationManager::class.java)\n        if (gestionnaire.areNotificationsEnabled()) {\n            gestionnaire.notify(id.hashCode(), notification(applicationContext, id.hashCode(), texte))\n        }\n        return Result.success()\n    }\n}\n\nfun planifier(context: Context, texte: String, minutes: Long) {\n    val requete = OneTimeWorkRequestBuilder<RappelWorker>()\n        .setInitialDelay(minutes, TimeUnit.MINUTES)\n        .setInputData(workDataOf(\"texte\" to texte))\n        .build()\n    WorkManager.getInstance(context).enqueue(requete)\n}"
+     }
+    },
+    {
+     "title": "Respecter l'utilisateur",
+     "text": "Une notification doit être utile. Laissez désactiver les rappels depuis l'application.",
+     "verify": "Un réglage désactive tous les rappels."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun minutesAvant(heureCible: Int, minuteCible: Int, heure: Int, minute: Int): Int {\n    val cible = heureCible * 60 + minuteCible\n    val maintenant = heure * 60 + minute\n    return if (cible > maintenant) cible - maintenant else cible - maintenant + 24 * 60\n}\n\nfun main() {\n    println(minutesAvant(9, 0, 8, 30))\n    println(minutesAvant(9, 0, 9, 0))\n    println(minutesAvant(9, 0, 23, 0))\n}",
+    "output": "30\n1440\n600"
+   },
+   "testIntro": "Le passage au lendemain est le cas le plus souvent raté.",
+   "criteria": [
+    "Un canal réglable existe.",
+    "Un refus de permission ne casse rien.",
+    "L'action fonctionne.",
+    "Le rappel arrive application fermée."
+   ],
+   "quiz": [
+    {
+     "prompt": "Depuis quelle version POST_NOTIFICATIONS se demande-t-elle ?",
+     "options": [
+      "Android 13",
+      "Android 8"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Android 8 a introduit les canaux."
+    },
+    {
+     "prompt": "WorkManager garantit-il une heure exacte ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il regroupe les travaux."
+    }
+   ]
+  },
+  {
+   "id": "publication",
+   "level": "expert",
+   "title": "Application complète prête à publier",
+   "stack": "Kotlin ou Flutter",
+   "objective": "Amener l'une de vos applications jusqu'à une version signée, testée et prête pour un test fermé.",
+   "prerequisites": [
+    "Module Publication et maintenance."
+   ],
+   "modules": [
+    "publication"
+   ],
+   "steps": [
+    {
+     "title": "Choisir l'application",
+     "text": "Reprenez votre meilleur projet. Listez ce qui manque à une vraie version 1.0.",
+     "verify": "La liste des manques est écrite."
+    },
+    {
+     "title": "Optimiser et signer",
+     "text": "Activez R8, créez votre clé d'envoi, et gardez les secrets hors de Git.",
+     "verify": "`keystore.properties` et `*.jks` sont ignorés par Git.",
+     "code": {
+      "language": "shell",
+      "code": "keytool -genkeypair -v -keystore upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000"
+     }
+    },
+    {
+     "title": "Automatiser les contrôles",
+     "text": "Créez une CI qui lance Lint, les tests et la compilation sur chaque demande de fusion.",
+     "verify": "Une demande de fusion ne passe pas si un test échoue."
+    },
+    {
+     "title": "Tester la vraie version",
+     "text": "Installez la version de release. Testez une mise à jour depuis la version précédente, puis un appareil modeste.",
+     "verify": "`aapt2 dump badging` ne signale pas `application-debuggable`.",
+     "code": {
+      "language": "shell",
+      "code": "aapt2 dump badging app-release.apk | grep debuggable"
+     }
+    },
+    {
+     "title": "Préparer la fiche",
+     "text": "Rédigez la description, les captures, la politique de confidentialité et la Sécurité des données.",
+     "verify": "Chaque déclaration correspond à ce que fait l'application."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun versionCode(majeur: Int, mineur: Int, correctif: Int): Int {\n    require(mineur in 0..99 && correctif in 0..99)\n    return majeur * 10_000 + mineur * 100 + correctif\n}\n\nfun main() {\n    println(versionCode(1, 0, 0))\n    println(versionCode(1, 0, 1) > versionCode(1, 0, 0))\n    println(versionCode(1, 10, 0) > versionCode(1, 9, 9))\n}",
+    "output": "10000\ntrue\ntrue"
+   },
+   "testIntro": "Chaque version publiée doit avoir un `versionCode` supérieur.",
+   "criteria": [
+    "La release est signée avec votre clé.",
+    "R8 est actif, et l'application fonctionne.",
+    "La CI bloque une erreur.",
+    "Une mise à jour conserve les données."
+   ],
+   "quiz": [
+    {
+     "prompt": "Que faut-il tester avant de publier ?",
+     "options": [
+      "La version de release elle-même",
+      "Seulement le debug"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "R8 peut changer le comportement."
+    },
+    {
+     "prompt": "Que garder hors de Git ?",
+     "options": [
+      "La clé et ses mots de passe",
+      "Le manifeste"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un secret commité reste dans l'historique."
+    }
+   ]
+  },
+  {
+   "id": "architecture",
+   "level": "expert",
+   "title": "Application Android native avec architecture avancée",
+   "stack": "Kotlin, Compose et Room",
+   "objective": "Structurer une application en couches testables, avec une source de vérité unique et des modules.",
+   "prerequisites": [
+    "Architecture recommandée.",
+    "Tests."
+   ],
+   "modules": [
+    "expert",
+    "interfaces"
+   ],
+   "steps": [
+    {
+     "title": "Tracer les couches",
+     "text": "Dessinez l'interface, le domaine si nécessaire, et les données. Notez vos choix dans un ADR.",
+     "verify": "Un ADR explique la structure."
+    },
+    {
+     "title": "Isoler les règles",
+     "text": "Un cas d'usage réunit une règle réutilisée par plusieurs écrans. Il ne dépend pas d'Android.",
+     "verify": "Le cas d'usage se teste sans émulateur.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class Article(val id: Long, val titre: String, val lu: Boolean)\n\ninterface ArticlesDepot {\n    fun articles(): Flow<List<Article>>\n    suspend fun actualiser()\n}\n\nclass ArticlesNonLus(private val depot: ArticlesDepot) {\n    operator fun invoke(): Flow<List<Article>> =\n        depot.articles().map { liste -> liste.filterNot { it.lu } }\n}"
+     }
+    },
+    {
+     "title": "Exposer un état unique",
+     "text": "Un seul `uiState` par écran. L'état contient aussi le chargement et l'erreur.",
+     "verify": "L'écran ne lit qu'une seule propriété.",
+     "code": {
+      "language": "kotlin",
+      "code": "data class ArticlesUiState(\n    val articles: List<Article> = emptyList(),\n    val chargement: Boolean = false,\n    val erreur: String? = null,\n)\n\nclass ArticlesViewModel(\n    nonLus: ArticlesNonLus,\n    private val depot: ArticlesDepot,\n) : ViewModel() {\n    private val etatReseau = MutableStateFlow(ArticlesUiState())\n\n    val uiState: StateFlow<ArticlesUiState> =\n        combine(nonLus(), etatReseau) { articles, etat -> etat.copy(articles = articles) }\n            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ArticlesUiState())\n\n    fun actualiser() {\n        etatReseau.update { it.copy(chargement = true, erreur = null) }\n        viewModelScope.launch {\n            try {\n                depot.actualiser()\n                etatReseau.update { it.copy(chargement = false) }\n            } catch (e: IOException) {\n                etatReseau.update { it.copy(chargement = false, erreur = \"Connexion impossible\") }\n            }\n        }\n    }\n}"
+     }
+    },
+    {
+     "title": "Découper en modules",
+     "text": "Séparez `:app`, `:feature:articles`, `:core:data`. Les fonctionnalités ne dépendent pas l'une de l'autre.",
+     "verify": "Une fonctionnalité compile sans l'autre."
+    },
+    {
+     "title": "Injecter les dépendances",
+     "text": "Commencez par une injection manuelle. Passez à Hilt si le projet grandit.",
+     "verify": "Le test remplace le dépôt par un fake."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "data class Article(val id: Long, val titre: String, val lu: Boolean)\n\nfun interface Depot {\n    fun articles(): List<Article>\n}\n\nclass ArticlesNonLus(private val depot: Depot) {\n    operator fun invoke() = depot.articles().filterNot { it.lu }.map { it.titre }\n}\n\nfun main() {\n    val faux = Depot { listOf(Article(1, \"Lu\", true), Article(2, \"Nouveau\", false)) }\n    println(ArticlesNonLus(faux)())\n}",
+    "output": "[Nouveau]"
+   },
+   "testIntro": "Le fake remplace la base et le réseau : ce test tourne partout.",
+   "criteria": [
+    "L'interface ne parle jamais à une source de données.",
+    "Chaque écran a un seul état.",
+    "La logique se teste avec des fakes.",
+    "Les choix sont notés dans des ADR."
+   ],
+   "quiz": [
+    {
+     "prompt": "Le domaine doit-il dépendre d'Android ?",
+     "options": [
+      "Non",
+      "Oui"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il reste testable partout."
+    },
+    {
+     "prompt": "Qui possède la source de vérité ?",
+     "options": [
+      "La couche de données",
+      "L'écran"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "L'interface l'observe."
+    }
+   ]
+  },
+  {
+   "id": "multiplateforme",
+   "level": "expert",
+   "title": "Application multiplateforme",
+   "stack": "Flutter",
+   "objective": "Livrer une même application Flutter sur Android et Linux, adaptée à chaque écran.",
+   "prerequisites": [
+    "Flutter.",
+    "Publication."
+   ],
+   "modules": [
+    "flutter",
+    "publication"
+   ],
+   "steps": [
+    {
+     "title": "Séparer ce qui diffère",
+     "text": "Cachez les différences de plateforme derrière une interface, plutôt que de répéter des tests partout.",
+     "verify": "Aucun widget ne teste directement la plateforme.",
+     "code": {
+      "language": "dart",
+      "code": "abstract interface class Stockage {\n  Future<String> dossierDonnees();\n}\n\nclass StockageFactice implements Stockage {\n  @override\n  Future<String> dossierDonnees() async => '/tmp/test';\n}"
+     }
+    },
+    {
+     "title": "Adapter la mise en page",
+     "text": "Décidez selon la largeur disponible, pas selon l'appareil : une fenêtre Linux peut être étroite.",
+     "verify": "Redimensionner la fenêtre change la navigation.",
+     "code": {
+      "language": "dart",
+      "code": "import 'package:flutter/material.dart';\n\nenum Disposition { compacte, large }\n\nDisposition dispositionPour(double largeur) =>\n    largeur < 700 ? Disposition.compacte : Disposition.large;\n\nclass Accueil extends StatelessWidget {\n  const Accueil({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return LayoutBuilder(\n      builder: (context, contraintes) =>\n          switch (dispositionPour(contraintes.maxWidth)) {\n            Disposition.compacte => const Text('Navigation en bas'),\n            Disposition.large => const Text('Navigation latérale'),\n          },\n    );\n  }\n}"
+     }
+    },
+    {
+     "title": "Respecter chaque plateforme",
+     "text": "Sur Linux, gérez le clavier et le survol de la souris. Sur Android, gérez le bouton Retour et les encoches.",
+     "verify": "Toutes les actions marchent au clavier sur Linux."
+    },
+    {
+     "title": "Compiler les deux cibles",
+     "text": "Faites-le dans la CI, pour détecter tout de suite ce qui casse sur une seule plateforme.",
+     "verify": "La CI compile Android et Linux.",
+     "code": {
+      "language": "shell",
+      "code": "flutter build apk --release\nflutter build linux --release"
+     }
+    },
+    {
+     "title": "Livrer",
+     "text": "Publiez un APK ou un AAB pour Android, et un paquet pour Linux.",
+     "verify": "Les deux versions s'installent sur une machine propre."
+    }
+   ],
+   "test": {
+    "language": "dart",
+    "code": "enum Disposition { compacte, large }\n\nDisposition dispositionPour(double largeur) =>\n    largeur < 700 ? Disposition.compacte : Disposition.large;\n\nvoid main() {\n  print(dispositionPour(390).name);\n  print(dispositionPour(699).name);\n  print(dispositionPour(700).name);\n}",
+    "output": "compacte\ncompacte\nlarge"
+   },
+   "testIntro": "Testez la limite exacte : 699 et 700.",
+   "criteria": [
+    "L'application fonctionne sur Android et Linux.",
+    "La mise en page dépend de la largeur.",
+    "Le clavier fonctionne sur Linux.",
+    "La CI compile les deux cibles."
+   ],
+   "quiz": [
+    {
+     "prompt": "Sur quoi fonder la mise en page ?",
+     "options": [
+      "La largeur disponible",
+      "Le nom de la plateforme"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une fenêtre peut être étroite."
+    },
+    {
+     "prompt": "Où détecter une panne propre à une plateforme ?",
+     "options": [
+      "Dans la CI, sur chaque cible",
+      "Chez l'utilisateur"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Compilez les deux."
+    }
+   ]
+  },
+  {
+   "id": "tests",
+   "level": "expert",
+   "title": "Application avec tests automatisés",
+   "stack": "Kotlin",
+   "objective": "Couvrir une application par des tests utiles, du calcul à l'écran, exécutés à chaque modification.",
+   "prerequisites": [
+    "Stratégie de tests."
+   ],
+   "modules": [
+    "expert",
+    "publication"
+   ],
+   "steps": [
+    {
+     "title": "Lister les risques",
+     "text": "Notez ce qui perdrait des données, de l'argent ou la confiance. Testez cela en premier.",
+     "verify": "La liste des risques est écrite."
+    },
+    {
+     "title": "Tester les règles",
+     "text": "Testez les valeurs limites et les cas d'erreur, pas seulement le cas normal.",
+     "verify": "Chaque règle a ses cas limites.",
+     "code": {
+      "language": "kotlin",
+      "code": "class TestRemise {\n    @Test\n    fun `le seuil exact donne la remise`() {\n        check(remise(montant = 100) == 10)\n    }\n\n    @Test\n    fun `juste sous le seuil, aucune remise`() {\n        check(remise(montant = 99) == 0)\n    }\n}\n\nfun remise(montant: Int) = if (montant >= 100) 10 else 0"
+     }
+    },
+    {
+     "title": "Tester un ViewModel",
+     "text": "Un fake remplace la donnée réelle. Vérifiez l'état exposé, pas les appels internes.",
+     "verify": "Le test échoue si l'erreur n'est plus affichée.",
+     "code": {
+      "language": "kotlin",
+      "code": "class FauxDepot(var enPanne: Boolean = false) {\n    suspend fun charger(): String {\n        if (enPanne) throw IOException(\"Coupure\")\n        return \"Données\"\n    }\n}"
+     }
+    },
+    {
+     "title": "Tester la base et l'écran",
+     "text": "Testez chaque migration Room. Testez ensuite un parcours principal avec `createComposeRule`.",
+     "verify": "Une migration est testée depuis l'ancienne version."
+    },
+    {
+     "title": "Automatiser",
+     "text": "Faites tourner tous les tests dans la CI. Cassez volontairement le code une fois, pour vérifier qu'un test le voit.",
+     "verify": "Une erreur volontaire fait échouer la CI."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun remise(montant: Int) = if (montant >= 100) 10 else 0\n\nfun verifier(nom: String, condition: Boolean) = println(\"${if (condition) \"OK\" else \"ÉCHEC\"} : $nom\")\n\nfun main() {\n    verifier(\"sous le seuil\", remise(99) == 0)\n    verifier(\"au seuil\", remise(100) == 10)\n    verifier(\"au-dessus\", remise(101) == 10)\n}",
+    "output": "OK : sous le seuil\nOK : au seuil\nOK : au-dessus"
+   },
+   "testIntro": "Trois valeurs suffisent pour encadrer un seuil.",
+   "criteria": [
+    "Les risques principaux sont couverts.",
+    "Les cas limites sont testés.",
+    "La CI lance tous les tests.",
+    "Une panne volontaire est détectée."
+   ],
+   "quiz": [
+    {
+     "prompt": "Quoi tester en premier ?",
+     "options": [
+      "Ce qui présente le plus de risque",
+      "Les couleurs"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "On choisit selon le risque."
+    },
+    {
+     "prompt": "Comment savoir qu'un test sert à quelque chose ?",
+     "options": [
+      "Casser le code et le voir échouer",
+      "Il passe toujours"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Un test qui ne peut échouer ne prouve rien."
+    }
+   ]
+  },
+  {
+   "id": "documentation",
+   "level": "expert",
+   "title": "Projet professionnel documenté",
+   "stack": "Au choix",
+   "objective": "Rendre un projet compréhensible et reprenable par quelqu'un d'autre, sans votre aide.",
+   "prerequisites": [
+    "Documenter un projet."
+   ],
+   "modules": [
+    "expert"
+   ],
+   "steps": [
+    {
+     "title": "Écrire le README",
+     "text": "Il explique le but, la compilation, les tests et la licence. Vérifiez-le sur une copie neuve du dépôt.",
+     "verify": "Une autre personne compile le projet sans aide.",
+     "code": {
+      "language": "text",
+      "code": "# Mon application\n\nCe que fait l'application, en une phrase.\n\n## Compiler\n    ./gradlew assembleDebug\n\n## Tester\n    ./gradlew testDebugUnitTest\n\n## Licence\nApache 2.0"
+     }
+    },
+    {
+     "title": "Noter les décisions",
+     "text": "Rédigez au moins trois ADR : le contexte, la décision, les conséquences.",
+     "verify": "Trois décisions sont documentées."
+    },
+    {
+     "title": "Tenir le journal",
+     "text": "Un `CHANGELOG.md` par version, écrit pour des humains.",
+     "verify": "Chaque version a ses notes."
+    },
+    {
+     "title": "Rendre compte honnêtement",
+     "text": "Distinguez ce qui est testé, ce qui est relu, et ce qui reste supposé. Écrivez les limites connues.",
+     "verify": "Le rapport liste ce qui n'a pas été vérifié."
+    },
+    {
+     "title": "Faire relire",
+     "text": "Demandez à quelqu'un de suivre votre documentation, et notez où cette personne bloque.",
+     "verify": "Les blocages sont corrigés."
+    }
+   ],
+   "test": {
+    "language": "kotlin",
+    "code": "fun plusRecente(a: String, b: String): Boolean {\n    val x = a.split(\".\").map { it.toInt() }\n    val y = b.split(\".\").map { it.toInt() }\n    for (i in x.indices) {\n        if (x[i] != y[i]) return x[i] > y[i]\n    }\n    return false\n}\n\nfun main() {\n    println(plusRecente(\"1.10.0\", \"1.9.9\"))\n    println(plusRecente(\"1.2.0\", \"1.2.0\"))\n    println(\"1.10.0\" > \"1.9.9\")\n}",
+    "output": "true\nfalse\nfalse"
+   },
+   "testIntro": "La dernière ligne montre pourquoi on ne compare pas des versions comme du texte.",
+   "criteria": [
+    "Une tierce personne compile et teste le projet avec le README.",
+    "Trois décisions sont notées.",
+    "Le journal suit les versions.",
+    "Les limites connues sont écrites."
+   ],
+   "quiz": [
+    {
+     "prompt": "Comment tester un README ?",
+     "options": [
+      "Le suivre sur une copie neuve",
+      "Le relire une fois"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Une étape manquante apparaît tout de suite."
+    },
+    {
+     "prompt": "Que contient un ADR ?",
+     "options": [
+      "Contexte, décision, conséquences",
+      "Un mot de passe"
+     ],
+     "answers": [
+      0
+     ],
+     "explanation": "Il garde la raison d'un choix."
+    }
+   ]
+  }
+ ]
+}

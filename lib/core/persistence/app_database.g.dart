@@ -4460,6 +4460,794 @@ class BugCasesCompanion extends UpdateCompanion<BugCaseRow> {
   }
 }
 
+class $ProjectProgressTable extends ProjectProgress
+    with TableInfo<$ProjectProgressTable, ProjectProgressData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProjectProgressTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _doneStepsMeta = const VerificationMeta(
+    'doneSteps',
+  );
+  @override
+  late final GeneratedColumn<String> doneSteps = GeneratedColumn<String>(
+    'done_steps',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _doneCriteriaMeta = const VerificationMeta(
+    'doneCriteria',
+  );
+  @override
+  late final GeneratedColumn<String> doneCriteria = GeneratedColumn<String>(
+    'done_criteria',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _quizPassedMeta = const VerificationMeta(
+    'quizPassed',
+  );
+  @override
+  late final GeneratedColumn<bool> quizPassed = GeneratedColumn<bool>(
+    'quiz_passed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("quiz_passed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _proofMeta = const VerificationMeta('proof');
+  @override
+  late final GeneratedColumn<String> proof = GeneratedColumn<String>(
+    'proof',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    projectId,
+    doneSteps,
+    doneCriteria,
+    quizPassed,
+    proof,
+    completedAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'project_progress';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProjectProgressData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('done_steps')) {
+      context.handle(
+        _doneStepsMeta,
+        doneSteps.isAcceptableOrUnknown(data['done_steps']!, _doneStepsMeta),
+      );
+    }
+    if (data.containsKey('done_criteria')) {
+      context.handle(
+        _doneCriteriaMeta,
+        doneCriteria.isAcceptableOrUnknown(
+          data['done_criteria']!,
+          _doneCriteriaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quiz_passed')) {
+      context.handle(
+        _quizPassedMeta,
+        quizPassed.isAcceptableOrUnknown(data['quiz_passed']!, _quizPassedMeta),
+      );
+    }
+    if (data.containsKey('proof')) {
+      context.handle(
+        _proofMeta,
+        proof.isAcceptableOrUnknown(data['proof']!, _proofMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {projectId};
+  @override
+  ProjectProgressData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProjectProgressData(
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      doneSteps: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}done_steps'],
+      )!,
+      doneCriteria: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}done_criteria'],
+      )!,
+      quizPassed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}quiz_passed'],
+      )!,
+      proof: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proof'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ProjectProgressTable createAlias(String alias) {
+    return $ProjectProgressTable(attachedDatabase, alias);
+  }
+}
+
+class ProjectProgressData extends DataClass
+    implements Insertable<ProjectProgressData> {
+  final String projectId;
+  final String doneSteps;
+  final String doneCriteria;
+  final bool quizPassed;
+  final String proof;
+  final DateTime? completedAt;
+  final DateTime updatedAt;
+  const ProjectProgressData({
+    required this.projectId,
+    required this.doneSteps,
+    required this.doneCriteria,
+    required this.quizPassed,
+    required this.proof,
+    this.completedAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['project_id'] = Variable<String>(projectId);
+    map['done_steps'] = Variable<String>(doneSteps);
+    map['done_criteria'] = Variable<String>(doneCriteria);
+    map['quiz_passed'] = Variable<bool>(quizPassed);
+    map['proof'] = Variable<String>(proof);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<DateTime>(completedAt);
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ProjectProgressCompanion toCompanion(bool nullToAbsent) {
+    return ProjectProgressCompanion(
+      projectId: Value(projectId),
+      doneSteps: Value(doneSteps),
+      doneCriteria: Value(doneCriteria),
+      quizPassed: Value(quizPassed),
+      proof: Value(proof),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ProjectProgressData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProjectProgressData(
+      projectId: serializer.fromJson<String>(json['projectId']),
+      doneSteps: serializer.fromJson<String>(json['doneSteps']),
+      doneCriteria: serializer.fromJson<String>(json['doneCriteria']),
+      quizPassed: serializer.fromJson<bool>(json['quizPassed']),
+      proof: serializer.fromJson<String>(json['proof']),
+      completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'projectId': serializer.toJson<String>(projectId),
+      'doneSteps': serializer.toJson<String>(doneSteps),
+      'doneCriteria': serializer.toJson<String>(doneCriteria),
+      'quizPassed': serializer.toJson<bool>(quizPassed),
+      'proof': serializer.toJson<String>(proof),
+      'completedAt': serializer.toJson<DateTime?>(completedAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ProjectProgressData copyWith({
+    String? projectId,
+    String? doneSteps,
+    String? doneCriteria,
+    bool? quizPassed,
+    String? proof,
+    Value<DateTime?> completedAt = const Value.absent(),
+    DateTime? updatedAt,
+  }) => ProjectProgressData(
+    projectId: projectId ?? this.projectId,
+    doneSteps: doneSteps ?? this.doneSteps,
+    doneCriteria: doneCriteria ?? this.doneCriteria,
+    quizPassed: quizPassed ?? this.quizPassed,
+    proof: proof ?? this.proof,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ProjectProgressData copyWithCompanion(ProjectProgressCompanion data) {
+    return ProjectProgressData(
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      doneSteps: data.doneSteps.present ? data.doneSteps.value : this.doneSteps,
+      doneCriteria: data.doneCriteria.present
+          ? data.doneCriteria.value
+          : this.doneCriteria,
+      quizPassed: data.quizPassed.present
+          ? data.quizPassed.value
+          : this.quizPassed,
+      proof: data.proof.present ? data.proof.value : this.proof,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectProgressData(')
+          ..write('projectId: $projectId, ')
+          ..write('doneSteps: $doneSteps, ')
+          ..write('doneCriteria: $doneCriteria, ')
+          ..write('quizPassed: $quizPassed, ')
+          ..write('proof: $proof, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    projectId,
+    doneSteps,
+    doneCriteria,
+    quizPassed,
+    proof,
+    completedAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProjectProgressData &&
+          other.projectId == this.projectId &&
+          other.doneSteps == this.doneSteps &&
+          other.doneCriteria == this.doneCriteria &&
+          other.quizPassed == this.quizPassed &&
+          other.proof == this.proof &&
+          other.completedAt == this.completedAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ProjectProgressCompanion extends UpdateCompanion<ProjectProgressData> {
+  final Value<String> projectId;
+  final Value<String> doneSteps;
+  final Value<String> doneCriteria;
+  final Value<bool> quizPassed;
+  final Value<String> proof;
+  final Value<DateTime?> completedAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ProjectProgressCompanion({
+    this.projectId = const Value.absent(),
+    this.doneSteps = const Value.absent(),
+    this.doneCriteria = const Value.absent(),
+    this.quizPassed = const Value.absent(),
+    this.proof = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProjectProgressCompanion.insert({
+    required String projectId,
+    this.doneSteps = const Value.absent(),
+    this.doneCriteria = const Value.absent(),
+    this.quizPassed = const Value.absent(),
+    this.proof = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : projectId = Value(projectId),
+       updatedAt = Value(updatedAt);
+  static Insertable<ProjectProgressData> custom({
+    Expression<String>? projectId,
+    Expression<String>? doneSteps,
+    Expression<String>? doneCriteria,
+    Expression<bool>? quizPassed,
+    Expression<String>? proof,
+    Expression<DateTime>? completedAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (projectId != null) 'project_id': projectId,
+      if (doneSteps != null) 'done_steps': doneSteps,
+      if (doneCriteria != null) 'done_criteria': doneCriteria,
+      if (quizPassed != null) 'quiz_passed': quizPassed,
+      if (proof != null) 'proof': proof,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProjectProgressCompanion copyWith({
+    Value<String>? projectId,
+    Value<String>? doneSteps,
+    Value<String>? doneCriteria,
+    Value<bool>? quizPassed,
+    Value<String>? proof,
+    Value<DateTime?>? completedAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ProjectProgressCompanion(
+      projectId: projectId ?? this.projectId,
+      doneSteps: doneSteps ?? this.doneSteps,
+      doneCriteria: doneCriteria ?? this.doneCriteria,
+      quizPassed: quizPassed ?? this.quizPassed,
+      proof: proof ?? this.proof,
+      completedAt: completedAt ?? this.completedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (doneSteps.present) {
+      map['done_steps'] = Variable<String>(doneSteps.value);
+    }
+    if (doneCriteria.present) {
+      map['done_criteria'] = Variable<String>(doneCriteria.value);
+    }
+    if (quizPassed.present) {
+      map['quiz_passed'] = Variable<bool>(quizPassed.value);
+    }
+    if (proof.present) {
+      map['proof'] = Variable<String>(proof.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectProgressCompanion(')
+          ..write('projectId: $projectId, ')
+          ..write('doneSteps: $doneSteps, ')
+          ..write('doneCriteria: $doneCriteria, ')
+          ..write('quizPassed: $quizPassed, ')
+          ..write('proof: $proof, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FinalProjectScoresTable extends FinalProjectScores
+    with TableInfo<$FinalProjectScoresTable, FinalProjectScore> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FinalProjectScoresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _criterionMeta = const VerificationMeta(
+    'criterion',
+  );
+  @override
+  late final GeneratedColumn<String> criterion = GeneratedColumn<String>(
+    'criterion',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scoreMeta = const VerificationMeta('score');
+  @override
+  late final GeneratedColumn<int> score = GeneratedColumn<int>(
+    'score',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _proofMeta = const VerificationMeta('proof');
+  @override
+  late final GeneratedColumn<String> proof = GeneratedColumn<String>(
+    'proof',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [criterion, score, proof, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'final_project_scores';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FinalProjectScore> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('criterion')) {
+      context.handle(
+        _criterionMeta,
+        criterion.isAcceptableOrUnknown(data['criterion']!, _criterionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_criterionMeta);
+    }
+    if (data.containsKey('score')) {
+      context.handle(
+        _scoreMeta,
+        score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scoreMeta);
+    }
+    if (data.containsKey('proof')) {
+      context.handle(
+        _proofMeta,
+        proof.isAcceptableOrUnknown(data['proof']!, _proofMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_proofMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {criterion};
+  @override
+  FinalProjectScore map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FinalProjectScore(
+      criterion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}criterion'],
+      )!,
+      score: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}score'],
+      )!,
+      proof: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proof'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FinalProjectScoresTable createAlias(String alias) {
+    return $FinalProjectScoresTable(attachedDatabase, alias);
+  }
+}
+
+class FinalProjectScore extends DataClass
+    implements Insertable<FinalProjectScore> {
+  final String criterion;
+  final int score;
+  final String proof;
+  final DateTime updatedAt;
+  const FinalProjectScore({
+    required this.criterion,
+    required this.score,
+    required this.proof,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['criterion'] = Variable<String>(criterion);
+    map['score'] = Variable<int>(score);
+    map['proof'] = Variable<String>(proof);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  FinalProjectScoresCompanion toCompanion(bool nullToAbsent) {
+    return FinalProjectScoresCompanion(
+      criterion: Value(criterion),
+      score: Value(score),
+      proof: Value(proof),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory FinalProjectScore.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FinalProjectScore(
+      criterion: serializer.fromJson<String>(json['criterion']),
+      score: serializer.fromJson<int>(json['score']),
+      proof: serializer.fromJson<String>(json['proof']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'criterion': serializer.toJson<String>(criterion),
+      'score': serializer.toJson<int>(score),
+      'proof': serializer.toJson<String>(proof),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  FinalProjectScore copyWith({
+    String? criterion,
+    int? score,
+    String? proof,
+    DateTime? updatedAt,
+  }) => FinalProjectScore(
+    criterion: criterion ?? this.criterion,
+    score: score ?? this.score,
+    proof: proof ?? this.proof,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  FinalProjectScore copyWithCompanion(FinalProjectScoresCompanion data) {
+    return FinalProjectScore(
+      criterion: data.criterion.present ? data.criterion.value : this.criterion,
+      score: data.score.present ? data.score.value : this.score,
+      proof: data.proof.present ? data.proof.value : this.proof,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinalProjectScore(')
+          ..write('criterion: $criterion, ')
+          ..write('score: $score, ')
+          ..write('proof: $proof, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(criterion, score, proof, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FinalProjectScore &&
+          other.criterion == this.criterion &&
+          other.score == this.score &&
+          other.proof == this.proof &&
+          other.updatedAt == this.updatedAt);
+}
+
+class FinalProjectScoresCompanion extends UpdateCompanion<FinalProjectScore> {
+  final Value<String> criterion;
+  final Value<int> score;
+  final Value<String> proof;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const FinalProjectScoresCompanion({
+    this.criterion = const Value.absent(),
+    this.score = const Value.absent(),
+    this.proof = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FinalProjectScoresCompanion.insert({
+    required String criterion,
+    required int score,
+    required String proof,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : criterion = Value(criterion),
+       score = Value(score),
+       proof = Value(proof),
+       updatedAt = Value(updatedAt);
+  static Insertable<FinalProjectScore> custom({
+    Expression<String>? criterion,
+    Expression<int>? score,
+    Expression<String>? proof,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (criterion != null) 'criterion': criterion,
+      if (score != null) 'score': score,
+      if (proof != null) 'proof': proof,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FinalProjectScoresCompanion copyWith({
+    Value<String>? criterion,
+    Value<int>? score,
+    Value<String>? proof,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return FinalProjectScoresCompanion(
+      criterion: criterion ?? this.criterion,
+      score: score ?? this.score,
+      proof: proof ?? this.proof,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (criterion.present) {
+      map['criterion'] = Variable<String>(criterion.value);
+    }
+    if (score.present) {
+      map['score'] = Variable<int>(score.value);
+    }
+    if (proof.present) {
+      map['proof'] = Variable<String>(proof.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinalProjectScoresCompanion(')
+          ..write('criterion: $criterion, ')
+          ..write('score: $score, ')
+          ..write('proof: $proof, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4479,6 +5267,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $LabDraftsTable labDrafts = $LabDraftsTable(this);
   late final $LabRevisionsTable labRevisions = $LabRevisionsTable(this);
   late final $BugCasesTable bugCases = $BugCasesTable(this);
+  late final $ProjectProgressTable projectProgress = $ProjectProgressTable(
+    this,
+  );
+  late final $FinalProjectScoresTable finalProjectScores =
+      $FinalProjectScoresTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4496,6 +5289,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     labDrafts,
     labRevisions,
     bugCases,
+    projectProgress,
+    finalProjectScores,
   ];
 }
 
@@ -7214,6 +8009,476 @@ typedef $$BugCasesTableProcessedTableManager =
       BugCaseRow,
       PrefetchHooks Function()
     >;
+typedef $$ProjectProgressTableCreateCompanionBuilder =
+    ProjectProgressCompanion Function({
+      required String projectId,
+      Value<String> doneSteps,
+      Value<String> doneCriteria,
+      Value<bool> quizPassed,
+      Value<String> proof,
+      Value<DateTime?> completedAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ProjectProgressTableUpdateCompanionBuilder =
+    ProjectProgressCompanion Function({
+      Value<String> projectId,
+      Value<String> doneSteps,
+      Value<String> doneCriteria,
+      Value<bool> quizPassed,
+      Value<String> proof,
+      Value<DateTime?> completedAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ProjectProgressTableFilterComposer
+    extends Composer<_$AppDatabase, $ProjectProgressTable> {
+  $$ProjectProgressTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get projectId => $composableBuilder(
+    column: $table.projectId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get doneSteps => $composableBuilder(
+    column: $table.doneSteps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get doneCriteria => $composableBuilder(
+    column: $table.doneCriteria,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get quizPassed => $composableBuilder(
+    column: $table.quizPassed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proof => $composableBuilder(
+    column: $table.proof,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ProjectProgressTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProjectProgressTable> {
+  $$ProjectProgressTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get projectId => $composableBuilder(
+    column: $table.projectId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get doneSteps => $composableBuilder(
+    column: $table.doneSteps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get doneCriteria => $composableBuilder(
+    column: $table.doneCriteria,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get quizPassed => $composableBuilder(
+    column: $table.quizPassed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proof => $composableBuilder(
+    column: $table.proof,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ProjectProgressTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProjectProgressTable> {
+  $$ProjectProgressTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get projectId =>
+      $composableBuilder(column: $table.projectId, builder: (column) => column);
+
+  GeneratedColumn<String> get doneSteps =>
+      $composableBuilder(column: $table.doneSteps, builder: (column) => column);
+
+  GeneratedColumn<String> get doneCriteria => $composableBuilder(
+    column: $table.doneCriteria,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get quizPassed => $composableBuilder(
+    column: $table.quizPassed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get proof =>
+      $composableBuilder(column: $table.proof, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ProjectProgressTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProjectProgressTable,
+          ProjectProgressData,
+          $$ProjectProgressTableFilterComposer,
+          $$ProjectProgressTableOrderingComposer,
+          $$ProjectProgressTableAnnotationComposer,
+          $$ProjectProgressTableCreateCompanionBuilder,
+          $$ProjectProgressTableUpdateCompanionBuilder,
+          (
+            ProjectProgressData,
+            BaseReferences<
+              _$AppDatabase,
+              $ProjectProgressTable,
+              ProjectProgressData
+            >,
+          ),
+          ProjectProgressData,
+          PrefetchHooks Function()
+        > {
+  $$ProjectProgressTableTableManager(
+    _$AppDatabase db,
+    $ProjectProgressTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProjectProgressTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProjectProgressTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProjectProgressTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> projectId = const Value.absent(),
+                Value<String> doneSteps = const Value.absent(),
+                Value<String> doneCriteria = const Value.absent(),
+                Value<bool> quizPassed = const Value.absent(),
+                Value<String> proof = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectProgressCompanion(
+                projectId: projectId,
+                doneSteps: doneSteps,
+                doneCriteria: doneCriteria,
+                quizPassed: quizPassed,
+                proof: proof,
+                completedAt: completedAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String projectId,
+                Value<String> doneSteps = const Value.absent(),
+                Value<String> doneCriteria = const Value.absent(),
+                Value<bool> quizPassed = const Value.absent(),
+                Value<String> proof = const Value.absent(),
+                Value<DateTime?> completedAt = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectProgressCompanion.insert(
+                projectId: projectId,
+                doneSteps: doneSteps,
+                doneCriteria: doneCriteria,
+                quizPassed: quizPassed,
+                proof: proof,
+                completedAt: completedAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ProjectProgressTable, ProjectProgressData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ProjectProgressTable,
+                    ProjectProgressData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ProjectProgressTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ProjectProgressTable,
+      ProjectProgressData,
+      $$ProjectProgressTableFilterComposer,
+      $$ProjectProgressTableOrderingComposer,
+      $$ProjectProgressTableAnnotationComposer,
+      $$ProjectProgressTableCreateCompanionBuilder,
+      $$ProjectProgressTableUpdateCompanionBuilder,
+      (
+        ProjectProgressData,
+        BaseReferences<
+          _$AppDatabase,
+          $ProjectProgressTable,
+          ProjectProgressData
+        >,
+      ),
+      ProjectProgressData,
+      PrefetchHooks Function()
+    >;
+typedef $$FinalProjectScoresTableCreateCompanionBuilder =
+    FinalProjectScoresCompanion Function({
+      required String criterion,
+      required int score,
+      required String proof,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$FinalProjectScoresTableUpdateCompanionBuilder =
+    FinalProjectScoresCompanion Function({
+      Value<String> criterion,
+      Value<int> score,
+      Value<String> proof,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$FinalProjectScoresTableFilterComposer
+    extends Composer<_$AppDatabase, $FinalProjectScoresTable> {
+  $$FinalProjectScoresTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get criterion => $composableBuilder(
+    column: $table.criterion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get proof => $composableBuilder(
+    column: $table.proof,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FinalProjectScoresTableOrderingComposer
+    extends Composer<_$AppDatabase, $FinalProjectScoresTable> {
+  $$FinalProjectScoresTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get criterion => $composableBuilder(
+    column: $table.criterion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get proof => $composableBuilder(
+    column: $table.proof,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FinalProjectScoresTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FinalProjectScoresTable> {
+  $$FinalProjectScoresTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get criterion =>
+      $composableBuilder(column: $table.criterion, builder: (column) => column);
+
+  GeneratedColumn<int> get score =>
+      $composableBuilder(column: $table.score, builder: (column) => column);
+
+  GeneratedColumn<String> get proof =>
+      $composableBuilder(column: $table.proof, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$FinalProjectScoresTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FinalProjectScoresTable,
+          FinalProjectScore,
+          $$FinalProjectScoresTableFilterComposer,
+          $$FinalProjectScoresTableOrderingComposer,
+          $$FinalProjectScoresTableAnnotationComposer,
+          $$FinalProjectScoresTableCreateCompanionBuilder,
+          $$FinalProjectScoresTableUpdateCompanionBuilder,
+          (
+            FinalProjectScore,
+            BaseReferences<
+              _$AppDatabase,
+              $FinalProjectScoresTable,
+              FinalProjectScore
+            >,
+          ),
+          FinalProjectScore,
+          PrefetchHooks Function()
+        > {
+  $$FinalProjectScoresTableTableManager(
+    _$AppDatabase db,
+    $FinalProjectScoresTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FinalProjectScoresTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FinalProjectScoresTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FinalProjectScoresTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> criterion = const Value.absent(),
+                Value<int> score = const Value.absent(),
+                Value<String> proof = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinalProjectScoresCompanion(
+                criterion: criterion,
+                score: score,
+                proof: proof,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String criterion,
+                required int score,
+                required String proof,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => FinalProjectScoresCompanion.insert(
+                criterion: criterion,
+                score: score,
+                proof: proof,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FinalProjectScoresTable, FinalProjectScore>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $FinalProjectScoresTable,
+                    FinalProjectScore
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FinalProjectScoresTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FinalProjectScoresTable,
+      FinalProjectScore,
+      $$FinalProjectScoresTableFilterComposer,
+      $$FinalProjectScoresTableOrderingComposer,
+      $$FinalProjectScoresTableAnnotationComposer,
+      $$FinalProjectScoresTableCreateCompanionBuilder,
+      $$FinalProjectScoresTableUpdateCompanionBuilder,
+      (
+        FinalProjectScore,
+        BaseReferences<
+          _$AppDatabase,
+          $FinalProjectScoresTable,
+          FinalProjectScore
+        >,
+      ),
+      FinalProjectScore,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7242,4 +8507,8 @@ class $AppDatabaseManager {
       $$LabRevisionsTableTableManager(_db, _db.labRevisions);
   $$BugCasesTableTableManager get bugCases =>
       $$BugCasesTableTableManager(_db, _db.bugCases);
+  $$ProjectProgressTableTableManager get projectProgress =>
+      $$ProjectProgressTableTableManager(_db, _db.projectProgress);
+  $$FinalProjectScoresTableTableManager get finalProjectScores =>
+      $$FinalProjectScoresTableTableManager(_db, _db.finalProjectScores);
 }

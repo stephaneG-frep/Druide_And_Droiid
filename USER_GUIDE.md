@@ -109,3 +109,13 @@ Collez une erreur, importez un fichier de journal, décrivez le problème et ajo
 **Analyse IA** : avec un fournisseur configuré, le Maître répond en six parties. Avant l'envoi, vous relisez exactement ce qui part. Les clés, mots de passe, courriels et noms d'utilisateur repérés sont masqués, mais ce filtre est imparfait. La qualité de l'analyse dépend du modèle : un petit modèle local peut se tromper franchement.
 
 **Vérification** : un dossier reste **Non vérifié** tant que vous n'avez pas noté le résultat d'un essai. Ni une fiche ni une IA ne peut déclarer un problème résolu.
+
+## Suivre un projet
+
+**Plus**, **Projets** propose vingt projets, du débutant à l'expert. Chacun donne un objectif, des prérequis, des étapes avec du code, un test, un questionnaire et des critères de réussite.
+
+Les projets se réalisent dans Android Studio ou votre éditeur : le code fourni guide votre travail, et ne forme pas toujours une application complète. Cochez une étape quand vous avez observé ce qu'elle demande.
+
+**Valider le projet** exige toutes les étapes, le questionnaire, tous les critères et une preuve écrite, comme l'adresse de votre dépôt. Décocher un élément annule la validation. C'est une autoévaluation : l'application ne lit pas votre code.
+
+**Évaluation finale** : la grille du module Expert Android, notée sur 100. Une note sans preuve compte pour zéro. La validation demande 70 points, avec au moins 10 en sécurité et 10 en tests.

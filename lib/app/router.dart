@@ -24,6 +24,8 @@ import '../features/notes/presentation/note_editor_page.dart';
 import '../features/notes/presentation/notes_page.dart';
 import '../features/parametres/presentation/parametres_page.dart';
 import '../features/progression/presentation/progression_page.dart';
+import '../features/projets/presentation/final_project_page.dart';
+import '../features/projets/presentation/project_page.dart';
 import '../features/projets/presentation/projets_page.dart';
 import 'sections.dart';
 import 'shell/app_shell.dart';
@@ -166,6 +168,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                                   ? NotFoundPage(uri: state.uri)
                                   : BugGuidePage(family: family);
                             },
+                          ),
+                        ],
+                        if (section == AppSection.projets) ...[
+                          GoRoute(
+                            path: 'fiche/:projectId',
+                            builder: (context, state) => ProjectPage(
+                              projectId: state.pathParameters['projectId']!,
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'evaluation-finale',
+                            builder: (context, state) =>
+                                const FinalProjectPage(),
                           ),
                         ],
                         if (section == AppSection.parametres)
