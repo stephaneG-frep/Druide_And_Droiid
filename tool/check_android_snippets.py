@@ -20,7 +20,7 @@ import subprocess
 import sys
 
 PROJECT = pathlib.Path("build/android_snippets")
-COURSES = pathlib.Path("assets/courses")
+COURSES = pathlib.Path(os.environ.get("COURSES_DIR", "assets/courses"))
 GRADLE_DSL = re.compile(r"^(plugins|android|dependencies|defaultConfig)\s*\{", re.M)
 
 # Extraits écrits comme des instructions : ils se compilent dans une activité.
@@ -57,6 +57,7 @@ IMPORTS = """
 import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Application
@@ -67,11 +68,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.os.StrictMode
+import android.os.SystemClock
 import android.provider.ContactsContract
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
@@ -88,6 +91,7 @@ import android.view.WindowManager
 import android.webkit.WebView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -135,9 +139,12 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -151,6 +158,7 @@ import androidx.room3.Insert
 import androidx.room3.PrimaryKey
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
+import androidx.room3.Transaction
 import androidx.room3.Update
 import androidx.room3.Upsert
 import androidx.room3.migration.Migration
@@ -171,9 +179,12 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
@@ -270,6 +281,7 @@ dependencies {{
     implementation("com.squareup.retrofit2:retrofit:{retrofit}")
     implementation("com.squareup.retrofit2:converter-kotlinx-serialization:{retrofit}")
     implementation("androidx.benchmark:benchmark-macro-junit4:1.5.0")
+    implementation("androidx.media3:media3-exoplayer:1.11.1")
     implementation("junit:junit:4.13.2")
     implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
     implementation("com.google.firebase:firebase-crashlytics")
@@ -365,7 +377,12 @@ plugins {{
                     continue
                 code = block["code"]
                 if block["language"] == "kotlin":
-                    if "fun main" in code or GRADLE_DSL.search(code):
+                    # L'activité Flutter se compile avec check_flutter_snippets.py.
+                    if (
+                        "fun main" in code
+                        or "FlutterActivity" in code
+                        or GRADLE_DSL.search(code)
+                    ):
                         continue
                     kotlin.append(code)
                 elif block["language"] == "xml" and "<LinearLayout" in code:

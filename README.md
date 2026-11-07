@@ -4,7 +4,7 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 8 (Chaudron des Bugs) terminée.** Les douze modules sont rédigés, et le Professeur IA est validé avec Ollama et Anthropic. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : phase 9 (Projets pratiques) terminée.** Les douze modules sont rédigés, et le Professeur IA est validé avec Ollama et Anthropic. Le détail est dans [ROADMAP.md](ROADMAP.md).
 
 ## Prérequis
 
@@ -40,6 +40,7 @@ Après toute modification d'un cours, contrôlez les exemples Kotlin et Java (`k
 ```bash
 python3 tool/check_course_code.py
 python3 tool/check_lab_exercises.py
+python3 tool/check_projects.py
 ```
 
 Pour compiler les extraits Android d'un module dans un vrai projet Gradle (le premier lancement télécharge plusieurs gigaoctets) :

@@ -78,6 +78,7 @@ flutter:
     - assets/courses/
     - assets/lab/
     - assets/bugs/
+    - assets/projects/
 
   fonts:
     - family: ChakraPetch

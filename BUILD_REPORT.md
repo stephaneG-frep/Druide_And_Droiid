@@ -1,5 +1,13 @@
 # Rapport de compilation
 
+## Phase 9 — 2026-11-07
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | `flutter build linux --debug` | Réussi |
+| Projets | `python3 tool/check_projects.py` | 20 tests exécutés, 40 extraits Android compilés, 4 extraits Flutter analysés |
+
 ## Phase 8 — 2026-11-07
 
 | Cible | Commande | Résultat |

@@ -1,5 +1,31 @@
 # Rapport de tests
 
+## Phase 9 — 2026-11-07
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 348 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| Tests des 20 projets | 20 sur 20 exécutés, sorties conformes |
+| Extraits Android des projets | 40 compilés |
+| Extraits Flutter et activité Kotlin hôte | 4 analysés, APK de preuve compilé |
+| Open-Meteo et API GitHub | Réponses réelles relues avant la rédaction |
+| Règles de validation et grille finale | Vérifiées, dont l'exemple de la leçon (69 points, à reprendre) |
+| Intégration Linux | Socle 5 sur 5, Maître 1 sur 1, Lab 3 sur 3 |
+| Migration de la version 6 à la version 7 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base migrée en version 7, données identiques, lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+Vérifié sur des rendus de test : une fiche de projet et la grille finale.
+
+### Non vérifié
+
+- **Les vingt applications** : je n'ai réalisé aucun projet de bout en bout. Le code fourni compile ou s'exécute par extraits, mais son assemblage et son comportement sur un appareil ne sont pas prouvés.
+- **Lecture de médias, notifications, Keystore, Ollama depuis Android** : ce code compile, sans avoir tourné.
+- **Conditions d'Open-Meteo** : l'usage non commercial sans clé vient de mes connaissances. La leçon invite à les vérifier.
+- **Validation** : l'application ne lit ni le code ni les preuves. Une preuve écrite n'est pas contrôlée.
+- **Lecteur d'écran** : ces écrans n'ont pas été parcourus avec TalkBack.
+
 ## Correctifs du Maître — 2026-11-07
 
 Deux problèmes signalés par l'utilisateur après la phase 8.

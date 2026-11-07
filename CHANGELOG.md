@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Phase 9 — 2026-11-07
+
+- Vingt projets progressifs, avec objectif, prérequis, étapes, code, test, questionnaire et critères de réussite.
+- Suivi par étape, validation avec preuve, annulée si un élément est décoché.
+- Évaluation finale du module 12 : grille notée, note sans preuve à zéro.
+- Aide du Maître depuis un projet.
+- Base en version 7.
+- Nouvel outil `tool/check_projects.py`.
+
 ## Correctifs du Maître — 2026-11-07
 
 - Les réglages affichent le fournisseur actif, et préviennent si celui de la liste ne l'est pas.

@@ -41,7 +41,7 @@ CLASSPATH = [
     gradle_jar("org.jetbrains.kotlinx", "kotlinx-serialization-core-jvm", "1.8.1"),
     gradle_jar("org.jetbrains.kotlinx", "kotlinx-serialization-json-jvm", "1.8.1"),
 ]
-COURSES = pathlib.Path("assets/courses")
+COURSES = pathlib.Path(os.environ.get("COURSES_DIR", "assets/courses"))
 LANGUAGES = ("kotlin", "java", "dart", "cpp")
 
 

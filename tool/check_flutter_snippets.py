@@ -8,6 +8,7 @@ exécuté : l'outil prouve que le code se type, pas qu'il se comporte comme anno
     python3 tool/check_flutter_snippets.py flutter
 """
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -15,7 +16,7 @@ import subprocess
 import sys
 
 PROJECT = pathlib.Path("build/flutter_snippets")
-COURSES = pathlib.Path("assets/courses")
+COURSES = pathlib.Path(os.environ.get("COURSES_DIR", "assets/courses"))
 PACKAGES = [
     "flutter_riverpod",
     "go_router",
@@ -101,7 +102,9 @@ def collect(modules):
                 if "language" in exercise
             ]
             for language, code in sources:
-                if language == "dart" and "package:" in code:
+                if language == "dart" and (
+                    "package:" in code or " main(" not in code
+                ):
                     dart.append(code)
                 elif language == "kotlin" and "FlutterActivity" in code:
                     activity = code

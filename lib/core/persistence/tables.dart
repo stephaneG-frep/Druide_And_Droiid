@@ -133,3 +133,28 @@ class BugCases extends Table {
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 }
+
+/// Avancement d'un projet pratique. Les listes sont des indices, en JSON.
+class ProjectProgress extends Table {
+  TextColumn get projectId => text()();
+  TextColumn get doneSteps => text().withDefault(const Constant('[]'))();
+  TextColumn get doneCriteria => text().withDefault(const Constant('[]'))();
+  BoolColumn get quizPassed => boolean().withDefault(const Constant(false))();
+  TextColumn get proof => text().withDefault(const Constant(''))();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {projectId};
+}
+
+/// Une ligne de la grille du projet final, avec sa preuve.
+class FinalProjectScores extends Table {
+  TextColumn get criterion => text()();
+  IntColumn get score => integer()();
+  TextColumn get proof => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {criterion};
+}

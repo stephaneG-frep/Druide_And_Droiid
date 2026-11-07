@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:druide_and_droiid/core/persistence/app_database.dart';
 import 'package:druide_and_droiid/features/notes/data/notes_repository.dart';
 import 'package:druide_and_droiid/features/progression/data/progress_repository.dart';
+import 'package:druide_and_droiid/features/projets/data/project_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
@@ -111,6 +112,65 @@ void main() {
       ..execute('PRAGMA user_version = 2');
     database.close();
   }
+
+  test('la version 6 passe en version 7 sans perte', () async {
+    createV2Database();
+    final raw = sqlite3.open(file.path);
+    raw
+      ..execute(
+        'CREATE TABLE "exercise_answers" ("exercise_id" TEXT NOT NULL, '
+        '"module_id" TEXT NOT NULL, "answer" TEXT NOT NULL, "status" TEXT NOT '
+        'NULL, "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "ai_conversations" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "title" TEXT NOT NULL, "provider_kind" TEXT NOT NULL, '
+        '"model" TEXT NOT NULL, "mode" TEXT NOT NULL, "created_at" INTEGER NOT '
+        'NULL, "updated_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "ai_messages" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "conversation_id" INTEGER NOT NULL REFERENCES '
+        'ai_conversations (id), "role" TEXT NOT NULL, "content" TEXT NOT NULL, '
+        '"input_tokens" INTEGER NULL, "output_tokens" INTEGER NULL, '
+        '"stop_reason" TEXT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "lab_drafts" ("exercise_id" TEXT NOT NULL, "code" TEXT '
+        'NOT NULL, "solved" INTEGER NOT NULL DEFAULT 0 CHECK ("solved" IN (0, '
+        '1)), "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "lab_revisions" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "exercise_id" TEXT NOT NULL, "code" TEXT NOT NULL, '
+        '"label" TEXT NOT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "bug_cases" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "title" TEXT NOT NULL, "error_text" TEXT NOT NULL, '
+        '"description" TEXT NOT NULL, "code" TEXT NOT NULL, "conversation_id" '
+        'INTEGER NULL, "status" TEXT NOT NULL, "verification" TEXT NULL, '
+        '"created_at" INTEGER NOT NULL, "updated_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        "INSERT INTO bug_cases (title, error_text, description, code, status, "
+        "created_at, updated_at) VALUES ('Dossier', 'e', '', '', 'open', 1, 1)",
+      )
+      ..execute('PRAGMA user_version = 6');
+    raw.close();
+
+    final database = AppDatabase(NativeDatabase(file));
+    final cases = await database.select(database.bugCases).get();
+    expect(cases.single.title, 'Dossier');
+
+    await ProjectRepository(
+      database,
+      DateTime.now,
+    ).toggleStep('calculatrice', 0);
+    final rows = await database.select(database.projectProgress).get();
+    expect(rows.single.doneSteps, '[0]');
+    await database.close();
+  });
 
   test('la version 5 passe en version 6 sans perte', () async {
     createV2Database();

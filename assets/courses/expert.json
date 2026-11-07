@@ -1703,6 +1703,10 @@
      "output": "100\n69 / 100 : à reprendre"
     },
     {
+     "type": "info",
+     "text": "Remplissez cette grille dans **Plus**, **Projets**, **Évaluation finale**. L'application calcule votre total, et une note sans preuve y compte pour zéro."
+    },
+    {
      "type": "heading",
      "text": "Ce que vous devez fournir"
     },

@@ -173,3 +173,11 @@ Règles à respecter :
 - La **vérification** : `BugStatus` ne change que par une action de l'utilisateur, et `recordVerification` refuse une réussite sans résultat noté. Aucun code ne doit passer un dossier à `verified` à partir d'une réponse d'IA.
 
 Le texte d'origine reste en clair dans la base locale : seul l'envoi est filtré.
+
+## Projets pratiques
+
+Les projets vivent dans `assets/projects/projects.json`. `tool/check_projects.py` les convertit en un cours temporaire, puis réutilise les contrôles des cours grâce à la variable `COURSES_DIR`. Lancez-le après toute modification.
+
+Chaque test de projet doit être un programme autonome, avec sa sortie exacte dans `output`.
+
+`ProjectRepository.complete` refuse un projet incomplet, et toute modification efface `completedAt` : une validation doit rester vraie. La grille finale se calcule dans `final_grid.dart`, qui doit rester alignée sur la leçon `exp-11-final`.
