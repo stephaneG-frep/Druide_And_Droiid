@@ -10,7 +10,7 @@ QuizQuestion flashQuestionFor(DateTime date) {
   return flashQuestions[dayNumber % flashQuestions.length];
 }
 
-/// Expérience gagnée par une bonne réponse. Valeur provisoire, voir la phase 10.
+/// Expérience gagnée par une bonne réponse.
 const flashQuizXp = 10;
 
 /// Identifiant du quiz du jour : la question flash compte une fois par date.

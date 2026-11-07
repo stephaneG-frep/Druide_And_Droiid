@@ -2,6 +2,16 @@ import 'package:druide_and_droiid/app/router.dart';
 import 'package:druide_and_droiid/app/sections.dart';
 import 'package:druide_and_droiid/features/academie/domain/module_catalog.dart';
 import 'package:druide_and_droiid/features/academie/presentation/paths.dart';
+import 'package:druide_and_droiid/app/shell/not_found_page.dart';
+import 'package:druide_and_droiid/features/chaudron/domain/bug_rule.dart';
+import 'package:druide_and_droiid/features/chaudron/presentation/chaudron_paths.dart';
+import 'package:druide_and_droiid/features/grimoire/domain/grimoire_topics.dart';
+import 'package:druide_and_droiid/features/grimoire/presentation/help_button.dart';
+import 'package:druide_and_droiid/features/lab/presentation/lab_paths.dart';
+import 'package:druide_and_droiid/features/maitre/presentation/ai_paths.dart';
+import 'package:druide_and_droiid/features/progression/presentation/progression_paths.dart';
+import 'package:druide_and_droiid/features/projets/presentation/project_paths.dart';
+import 'package:druide_and_droiid/features/sauvegarde/presentation/backup_paths.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +33,17 @@ final _routes = [
   '${AppSection.academie.path}/${academyModules.first.id}',
   lessonPath(academyModules.first.id, 'fondations-03-architecture'),
   evaluationPath(academyModules.first.id),
+  aiSettingsPath,
+  backupPath,
+  labEditorPath('java-flux'),
+  labEditorPath('xml-reseau'),
+  labToolsPath,
+  bugGuidePath(BugFamily.gradle),
+  projectPath('meteo'),
+  finalProjectPath,
+  progressionHistoryPath,
+  certificatePath('kotlin'),
+  grimoirePath(GrimoireTopic.restaurer),
 ];
 
 void main() {
@@ -43,6 +64,7 @@ void main() {
           for (final route in _routes) {
             await goTo(tester, container, route);
             expect(tester.takeException(), isNull, reason: route);
+            expect(find.byType(NotFoundPage), findsNothing, reason: route);
           }
         });
       }

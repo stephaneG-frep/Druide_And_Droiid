@@ -11,6 +11,7 @@ import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
 import '../../maitre/presentation/ai_paths.dart';
 import '../../sauvegarde/presentation/backup_paths.dart';
+import '../../../app/licenses.dart';
 import 'appearance_controller.dart';
 
 class ParametresPage extends ConsumerWidget {
@@ -121,6 +122,30 @@ class ParametresPage extends ConsumerWidget {
                 icon: Icons.save_outlined,
                 secondary: true,
                 onPressed: () => context.go(backupPath),
+              ),
+            ],
+          ),
+        ),
+        const SectionTitle('À propos'),
+        TechnoCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+              Text(
+                'Druide And-Droiīd $appVersion. Licences des bibliothèques et '
+                'des polices utilisées.',
+                style: context.text.bodyMedium,
+              ),
+              ArcaneButton(
+                label: 'Licences',
+                icon: Icons.gavel_outlined,
+                secondary: true,
+                onPressed: () => showLicensePage(
+                  context: context,
+                  applicationName: 'Druide And-Droiīd',
+                  applicationVersion: appVersion,
+                ),
               ),
             ],
           ),

@@ -21,7 +21,7 @@ Toucher à nouveau l'onglet actif ramène à sa page de départ.
 - **Projets** : vingt projets pratiques et l'évaluation finale.
 - **Progression** : grades, badges, défis, statistiques et certificats internes.
 - **Grimoire** : le mode d'emploi complet.
-- **Paramètres** : le thème, les animations, le Maître et les sauvegardes.
+- **Paramètres** : le thème, les animations, le Maître, les sauvegardes et les licences.
 
 Toutes vos données restent sur cet appareil, et s'enregistrent automatiquement. Pour les garder en cas de désinstallation ou de changement d'appareil, exportez une sauvegarde : voir plus bas.
 
