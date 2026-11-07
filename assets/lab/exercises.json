@@ -1,0 +1,199 @@
+{
+ "exercises": [
+  {
+   "id": "kt-niveau",
+   "language": "kotlin",
+   "title": "Le niveau de l'apprenti",
+   "level": "Débutant",
+   "statement": "Complétez `niveau` : elle renvoie `\"Niveau 1\"` sous 100 points, `\"Niveau 2\"` de 100 à 299, et `\"Niveau 3\"` à partir de 300.",
+   "starter": "fun niveau(points: Int): String {\n    // À vous de jouer\n    return \"Niveau 1\"\n}\n\nfun main() {\n    println(niveau(50))\n    println(niveau(100))\n    println(niveau(350))\n}",
+   "solution": "fun niveau(points: Int): String {\n    return when {\n        points >= 300 -> \"Niveau 3\"\n        points >= 100 -> \"Niveau 2\"\n        else -> \"Niveau 1\"\n    }\n}\n\nfun main() {\n    println(niveau(50))\n    println(niveau(100))\n    println(niveau(350))\n}",
+   "expectedOutput": "Niveau 1\nNiveau 2\nNiveau 3"
+  },
+  {
+   "id": "kt-null",
+   "language": "kotlin",
+   "title": "Dompter la nullité",
+   "level": "Débutant",
+   "statement": "Complétez `longueur` : elle renvoie la longueur du texte, ou 0 s'il vaut `null`. Utilisez `?.` et `?:`.",
+   "starter": "fun longueur(texte: String?): Int {\n    // À vous de jouer\n    return -1\n}\n\nfun main() {\n    println(longueur(\"Druide\"))\n    println(longueur(null))\n}",
+   "solution": "fun longueur(texte: String?): Int {\n    return texte?.length ?: 0\n}\n\nfun main() {\n    println(longueur(\"Druide\"))\n    println(longueur(null))\n}",
+   "expectedOutput": "6\n0"
+  },
+  {
+   "id": "kt-filtre",
+   "language": "kotlin",
+   "title": "Filtrer les sorts",
+   "level": "Intermédiaire",
+   "statement": "Complétez `sortsFavoris` : gardez les sorts favoris, puis renvoyez leurs noms triés par ordre alphabétique.",
+   "starter": "data class Sort(val nom: String, val favori: Boolean)\n\nfun sortsFavoris(sorts: List<Sort>): List<String> {\n    // À vous de jouer\n    return emptyList()\n}\n\nfun main() {\n    val sorts = listOf(\n        Sort(\"Zéphyr\", true),\n        Sort(\"Lumière\", false),\n        Sort(\"Brume\", true),\n    )\n    println(sortsFavoris(sorts))\n}",
+   "solution": "data class Sort(val nom: String, val favori: Boolean)\n\nfun sortsFavoris(sorts: List<Sort>): List<String> {\n    return sorts.filter { it.favori }.map { it.nom }.sorted()\n}\n\nfun main() {\n    val sorts = listOf(\n        Sort(\"Zéphyr\", true),\n        Sort(\"Lumière\", false),\n        Sort(\"Brume\", true),\n    )\n    println(sortsFavoris(sorts))\n}",
+   "expectedOutput": "[Brume, Zéphyr]"
+  },
+  {
+   "id": "kt-sealed",
+   "language": "kotlin",
+   "title": "Un état d'écran",
+   "level": "Intermédiaire",
+   "statement": "Complétez `afficher` avec un `when` sur l'état scellé : `\"Chargement\"`, `\"Données : <texte>\"` ou `\"Erreur : <message>\"`.",
+   "starter": "sealed interface Etat {\n    data object Chargement : Etat\n    data class Pret(val texte: String) : Etat\n    data class Erreur(val message: String) : Etat\n}\n\nfun afficher(etat: Etat): String {\n    // À vous de jouer\n    return \"\"\n}\n\nfun main() {\n    println(afficher(Etat.Chargement))\n    println(afficher(Etat.Pret(\"Notes\")))\n    println(afficher(Etat.Erreur(\"Réseau\")))\n}",
+   "solution": "sealed interface Etat {\n    data object Chargement : Etat\n    data class Pret(val texte: String) : Etat\n    data class Erreur(val message: String) : Etat\n}\n\nfun afficher(etat: Etat): String = when (etat) {\n    Etat.Chargement -> \"Chargement\"\n    is Etat.Pret -> \"Données : ${etat.texte}\"\n    is Etat.Erreur -> \"Erreur : ${etat.message}\"\n}\n\nfun main() {\n    println(afficher(Etat.Chargement))\n    println(afficher(Etat.Pret(\"Notes\")))\n    println(afficher(Etat.Erreur(\"Réseau\")))\n}",
+   "expectedOutput": "Chargement\nDonnées : Notes\nErreur : Réseau"
+  },
+  {
+   "id": "kt-groupes",
+   "language": "kotlin",
+   "title": "Compter par étiquette",
+   "level": "Avancé",
+   "statement": "Complétez `compter` : renvoyez une `Map` qui associe chaque étiquette à son nombre d'apparitions, triée par étiquette.",
+   "starter": "fun compter(etiquettes: List<String>): Map<String, Int> {\n    // À vous de jouer\n    return emptyMap()\n}\n\nfun main() {\n    println(compter(listOf(\"ui\", \"data\", \"ui\", \"ui\", \"data\", \"test\")))\n}",
+   "solution": "fun compter(etiquettes: List<String>): Map<String, Int> {\n    return etiquettes.groupingBy { it }.eachCount().toSortedMap()\n}\n\nfun main() {\n    println(compter(listOf(\"ui\", \"data\", \"ui\", \"ui\", \"data\", \"test\")))\n}",
+   "expectedOutput": "{data=2, test=1, ui=3}"
+  },
+  {
+   "id": "java-somme",
+   "language": "java",
+   "title": "Additionner une liste",
+   "level": "Débutant",
+   "statement": "Complétez `somme` : additionnez toutes les valeurs du tableau avec une boucle.",
+   "starter": "public class Main {\n    static int somme(int[] valeurs) {\n        // À vous de jouer\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(somme(new int[] {4, 8, 15}));\n        System.out.println(somme(new int[] {}));\n    }\n}",
+   "solution": "public class Main {\n    static int somme(int[] valeurs) {\n        int total = 0;\n        for (int valeur : valeurs) {\n            total += valeur;\n        }\n        return total;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(somme(new int[] {4, 8, 15}));\n        System.out.println(somme(new int[] {}));\n    }\n}",
+   "expectedOutput": "27\n0"
+  },
+  {
+   "id": "java-classe",
+   "language": "java",
+   "title": "Une classe bien gardée",
+   "level": "Débutant",
+   "statement": "Complétez `Compte` : `deposer` ajoute le montant seulement s'il est positif, et `solde` le renvoie. Le champ reste privé.",
+   "starter": "public class Main {\n    static class Compte {\n        private int solde = 0;\n\n        void deposer(int montant) {\n            // À vous de jouer\n        }\n\n        int solde() {\n            return solde;\n        }\n    }\n\n    public static void main(String[] args) {\n        Compte compte = new Compte();\n        compte.deposer(50);\n        compte.deposer(-20);\n        System.out.println(compte.solde());\n    }\n}",
+   "solution": "public class Main {\n    static class Compte {\n        private int solde = 0;\n\n        void deposer(int montant) {\n            if (montant > 0) {\n                solde += montant;\n            }\n        }\n\n        int solde() {\n            return solde;\n        }\n    }\n\n    public static void main(String[] args) {\n        Compte compte = new Compte();\n        compte.deposer(50);\n        compte.deposer(-20);\n        System.out.println(compte.solde());\n    }\n}",
+   "expectedOutput": "50"
+  },
+  {
+   "id": "java-interface",
+   "language": "java",
+   "title": "Une interface et deux classes",
+   "level": "Intermédiaire",
+   "statement": "Complétez `Chat` et `Robot` : chacune implémente `Parleur` et renvoie respectivement `\"Miaou\"` et `\"Bip\"`.",
+   "starter": "import java.util.List;\n\npublic class Main {\n    interface Parleur {\n        String parler();\n    }\n\n    // À vous de jouer : ajoutez les classes Chat et Robot\n    static class Chat implements Parleur {\n        public String parler() {\n            return \"\";\n        }\n    }\n\n    static class Robot implements Parleur {\n        public String parler() {\n            return \"\";\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Parleur parleur : List.of(new Chat(), new Robot())) {\n            System.out.println(parleur.parler());\n        }\n    }\n}",
+   "solution": "import java.util.List;\n\npublic class Main {\n    interface Parleur {\n        String parler();\n    }\n\n    static class Chat implements Parleur {\n        public String parler() {\n            return \"Miaou\";\n        }\n    }\n\n    static class Robot implements Parleur {\n        public String parler() {\n            return \"Bip\";\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Parleur parleur : List.of(new Chat(), new Robot())) {\n            System.out.println(parleur.parler());\n        }\n    }\n}",
+   "expectedOutput": "Miaou\nBip"
+  },
+  {
+   "id": "java-flux",
+   "language": "java",
+   "title": "Un flux de données",
+   "level": "Avancé",
+   "statement": "Complétez `grandsNoms` avec un `Stream` : gardez les noms de plus de 4 lettres, passez-les en majuscules et triez-les.",
+   "starter": "import java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    static List<String> grandsNoms(List<String> noms) {\n        // À vous de jouer\n        return List.of();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(grandsNoms(List.of(\"Room\", \"Gradle\", \"Hilt\", \"Compose\")));\n    }\n}",
+   "solution": "import java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    static List<String> grandsNoms(List<String> noms) {\n        return noms.stream()\n            .filter(nom -> nom.length() > 4)\n            .map(String::toUpperCase)\n            .sorted()\n            .collect(Collectors.toList());\n    }\n\n    public static void main(String[] args) {\n        System.out.println(grandsNoms(List.of(\"Room\", \"Gradle\", \"Hilt\", \"Compose\")));\n    }\n}",
+   "expectedOutput": "[COMPOSE, GRADLE]"
+  },
+  {
+   "id": "dart-salut",
+   "language": "dart",
+   "title": "Saluer sans se tromper",
+   "level": "Débutant",
+   "statement": "Complétez `saluer` : le paramètre `nom` peut être `null`. Sans nom, renvoyez `\"Bonjour, apprenti\"`.",
+   "starter": "String saluer(String? nom) {\n  // À vous de jouer\n  return '';\n}\n\nvoid main() {\n  print(saluer('Ana'));\n  print(saluer(null));\n}",
+   "solution": "String saluer(String? nom) {\n  return 'Bonjour, ${nom ?? 'apprenti'}';\n}\n\nvoid main() {\n  print(saluer('Ana'));\n  print(saluer(null));\n}",
+   "expectedOutput": "Bonjour, Ana\nBonjour, apprenti"
+  },
+  {
+   "id": "dart-liste",
+   "language": "dart",
+   "title": "Transformer une liste",
+   "level": "Débutant",
+   "statement": "Complétez `doubles` : renvoyez une nouvelle liste contenant le double de chaque valeur.",
+   "starter": "List<int> doubles(List<int> valeurs) {\n  // À vous de jouer\n  return [];\n}\n\nvoid main() {\n  print(doubles([1, 2, 3]));\n}",
+   "solution": "List<int> doubles(List<int> valeurs) {\n  return valeurs.map((valeur) => valeur * 2).toList();\n}\n\nvoid main() {\n  print(doubles([1, 2, 3]));\n}",
+   "expectedOutput": "[2, 4, 6]"
+  },
+  {
+   "id": "dart-classe",
+   "language": "dart",
+   "title": "Une classe immuable",
+   "level": "Intermédiaire",
+   "statement": "Complétez `avecNiveau` : renvoyez une copie de la quête avec le nouveau niveau, sans modifier l'originale.",
+   "starter": "class Quete {\n  const Quete(this.titre, this.niveau);\n\n  final String titre;\n  final int niveau;\n\n  Quete avecNiveau(int niveau) {\n    // À vous de jouer\n    return this;\n  }\n}\n\nvoid main() {\n  const quete = Quete('Dragon', 1);\n  final suite = quete.avecNiveau(2);\n  print('${quete.titre} ${quete.niveau}');\n  print('${suite.titre} ${suite.niveau}');\n}",
+   "solution": "class Quete {\n  const Quete(this.titre, this.niveau);\n\n  final String titre;\n  final int niveau;\n\n  Quete avecNiveau(int niveau) {\n    return Quete(titre, niveau);\n  }\n}\n\nvoid main() {\n  const quete = Quete('Dragon', 1);\n  final suite = quete.avecNiveau(2);\n  print('${quete.titre} ${quete.niveau}');\n  print('${suite.titre} ${suite.niveau}');\n}",
+   "expectedOutput": "Dragon 1\nDragon 2"
+  },
+  {
+   "id": "dart-async",
+   "language": "dart",
+   "title": "Attendre un résultat",
+   "level": "Intermédiaire",
+   "statement": "Complétez `main` : attendez `charger()` avec `await`, puis affichez le résultat. Corrigez aussi la signature de `main`.",
+   "starter": "Future<String> charger() async {\n  await Future<void>.delayed(const Duration(milliseconds: 10));\n  return 'Grimoire chargé';\n}\n\nvoid main() {\n  // À vous de jouer\n  print('Début');\n}",
+   "solution": "Future<String> charger() async {\n  await Future<void>.delayed(const Duration(milliseconds: 10));\n  return 'Grimoire chargé';\n}\n\nFuture<void> main() async {\n  print('Début');\n  final resultat = await charger();\n  print(resultat);\n}",
+   "expectedOutput": "Début\nGrimoire chargé"
+  },
+  {
+   "id": "dart-sealed",
+   "language": "dart",
+   "title": "Le motif d'un état",
+   "level": "Avancé",
+   "statement": "Complétez `decrire` avec une expression `switch` sur la classe scellée.",
+   "starter": "sealed class Reponse {}\n\nclass Succes extends Reponse {\n  Succes(this.valeur);\n\n  final int valeur;\n}\n\nclass Echec extends Reponse {\n  Echec(this.message);\n\n  final String message;\n}\n\nString decrire(Reponse reponse) {\n  // À vous de jouer\n  return '';\n}\n\nvoid main() {\n  print(decrire(Succes(42)));\n  print(decrire(Echec('Délai dépassé')));\n}",
+   "solution": "sealed class Reponse {}\n\nclass Succes extends Reponse {\n  Succes(this.valeur);\n\n  final int valeur;\n}\n\nclass Echec extends Reponse {\n  Echec(this.message);\n\n  final String message;\n}\n\nString decrire(Reponse reponse) => switch (reponse) {\n  Succes(:final valeur) => 'Valeur : $valeur',\n  Echec(:final message) => 'Erreur : $message',\n};\n\nvoid main() {\n  print(decrire(Succes(42)));\n  print(decrire(Echec('Délai dépassé')));\n}",
+   "expectedOutput": "Valeur : 42\nErreur : Délai dépassé"
+  },
+  {
+   "id": "xml-texte",
+   "language": "xml",
+   "title": "Un écran de bienvenue",
+   "level": "Débutant",
+   "statement": "Ajoutez un `TextView` dans ce `LinearLayout`, avec l'identifiant `@+id/titre` et le texte `@string/bienvenue`.",
+   "starter": "<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:orientation=\"vertical\">\n\n    <!-- À vous de jouer -->\n\n</LinearLayout>",
+   "solution": "<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:orientation=\"vertical\">\n\n    <TextView\n        android:id=\"@+id/titre\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"@string/bienvenue\" />\n\n</LinearLayout>",
+   "required": [
+    "<TextView",
+    "@+id/titre",
+    "@string/bienvenue",
+    "android:layout_width=\"wrap_content\""
+   ]
+  },
+  {
+   "id": "xml-permission",
+   "language": "xml",
+   "title": "Déclarer une permission",
+   "level": "Débutant",
+   "statement": "Déclarez la permission `android.permission.CAMERA` dans ce manifeste, avant la balise `application`.",
+   "starter": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <!-- À vous de jouer -->\n\n    <application android:label=\"@string/app_name\" />\n\n</manifest>",
+   "solution": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <uses-permission android:name=\"android.permission.CAMERA\" />\n\n    <application android:label=\"@string/app_name\" />\n\n</manifest>",
+   "required": [
+    "<uses-permission",
+    "android.permission.CAMERA"
+   ]
+  },
+  {
+   "id": "xml-activite",
+   "language": "xml",
+   "title": "Fermer une activité",
+   "level": "Intermédiaire",
+   "statement": "Déclarez `.ReglagesActivity` avec `android:exported=\"false\"` : elle ne doit pas s'ouvrir depuis une autre application.",
+   "starter": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <application android:label=\"@string/app_name\">\n\n        <!-- À vous de jouer -->\n\n    </application>\n\n</manifest>",
+   "solution": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <application android:label=\"@string/app_name\">\n\n        <activity\n            android:name=\".ReglagesActivity\"\n            android:exported=\"false\" />\n\n    </application>\n\n</manifest>",
+   "required": [
+    "<activity",
+    ".ReglagesActivity",
+    "android:exported=\"false\""
+   ]
+  },
+  {
+   "id": "xml-reseau",
+   "language": "xml",
+   "title": "Interdire le trafic en clair",
+   "level": "Avancé",
+   "statement": "Complétez cette configuration : le trafic en clair doit être refusé pour toute l'application.",
+   "starter": "<network-security-config>\n\n    <!-- À vous de jouer -->\n\n</network-security-config>",
+   "solution": "<network-security-config>\n\n    <base-config cleartextTrafficPermitted=\"false\" />\n\n</network-security-config>",
+   "required": [
+    "<base-config",
+    "cleartextTrafficPermitted=\"false\""
+   ]
+  }
+ ]
+}

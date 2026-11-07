@@ -1,5 +1,37 @@
 # Rapport de tests
 
+## Phase 7 — 2026-11-06
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 293 tests réussis, 5 ignorés (Ollama réel, à la demande) |
+| Limites d'exécution avec le vrai Dart | Boucle sans fin, sortie sans fin, arrêt, environnement minimal, dossier supprimé |
+| Corrigés et codes de départ des 18 exercices | Exécutés avec les vrais compilateurs : `tool/check_lab_exercises.py` |
+| Intégration Linux, Lab | 3 tests sur 3 : Kotlin, Java et Dart depuis l'application, erreur Kotlin, export réel |
+| Intégration Linux, socle et Maître | 5 sur 5, 1 sur 1 |
+| Migration de la version 4 à la version 5 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base migrée en version 5, données identiques (45 XP, conversation et réglages IA), lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+Vérifié sur des rendus de test : la liste du Lab et l'éditeur.
+
+### Limites propres aux plateformes
+
+- **Android** : aucune exécution de Kotlin, Java ou Dart. L'écran l'annonce et ne simule rien. Le XML est analysé pour de vrai. **Je valide moi-même** reste une autoévaluation.
+- **Linux** : le code garde les droits de l'utilisateur. Ce n'est pas un bac à sable, et l'application le dit avant la première exécution. Les limites arrêtent les accidents, pas un code malveillant.
+- **Analyse du XML** : elle vérifie la syntaxe et les éléments attendus, pas la validité pour Android.
+- **Sortie des programmes** : elle s'affiche à la fin de l'exécution, pas en direct. Aucune saisie au clavier n'est possible.
+
+### Non vérifié
+
+- **Export sur Android** : le sélecteur de fichiers du système n'a pas été ouvert sur le Honor.
+- **Éditeur sur le Honor** : la saisie au clavier tactile n'a pas été essayée.
+- **Boutons Android Studio et émulateur** : ils n'ont été testés qu'avec un faux lanceur. Le lancement réel n'a pas été fait, et aucun appareil virtuel n'existe forcément sur cette machine.
+- **Commandes `sudo` des procédures d'installation** : elles viennent de mes connaissances et n'ont pas été lancées.
+- **Commandes Gradle et Flutter du panneau** : la détection est testée, mais leur exécution réelle n'a été prouvée que par les tests avec un faux outil.
+- **Lecteur d'écran** : l'éditeur n'a pas été parcouru avec TalkBack.
+
 ## Phase 6 — 2026-11-06
 
 Phase terminée : Ollama et Anthropic ont répondu pour de vrai. OpenAI et Gemini n'ont pas été essayés.

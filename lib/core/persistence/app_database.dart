@@ -20,6 +20,8 @@ part 'app_database.g.dart';
     ExerciseAnswers,
     AiConversations,
     AiMessages,
+    LabDrafts,
+    LabRevisions,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -28,7 +30,7 @@ class AppDatabase extends _$AppDatabase {
   /// Toute hausse de version exige une étape dans [migration] et un test sur
   /// une base réelle de l'ancienne version.
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -47,6 +49,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 4) {
         await migrator.createTable(aiConversations);
         await migrator.createTable(aiMessages);
+      }
+      if (from < 5) {
+        await migrator.createTable(labDrafts);
+        await migrator.createTable(labRevisions);
       }
     },
   );

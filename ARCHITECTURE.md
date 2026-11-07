@@ -153,3 +153,13 @@ Règles à respecter :
 - L'historique envoyé à Claude ne contient que du texte. Les blocs de réflexion ne sont pas conservés, ce que l'API accepte sans usage d'outils.
 - Dans `AiHttp.lines`, n'utilisez pas `yield*` : ses erreurs échappent au `try`. Pour arrêter une réponse, appelez `abort`.
 - Les tests n'appellent aucun service payant. `aiClientBuilderProvider` remplace le client dans les tests d'écran.
+
+## Android Lab
+
+`lib/features/lab` suit le même découpage que le Maître. Les exercices vivent dans `assets/lab/exercises.json` : après une modification, lancez `tool/check_lab_exercises.py`, qui exécute les corrigés et les codes de départ.
+
+- `LabCapabilities` décrit ce que la plateforme sait vraiment faire. L'interface s'y fie, sans tester la plateforme elle-même.
+- `CodeRunner` exécute le code. `LocalCodeRunner` passe par `/bin/sh` pour poser `ulimit`, dans un dossier temporaire, avec un environnement minimal. Le texte du code n'entre jamais dans une commande.
+- `ToolCommands` n'accepte que les valeurs de `LabCommand`, sans shell. N'ajoutez jamais de terminal libre.
+- `ToolDetector` reçoit son environnement et sa fonction `exists`, ce qui le rend testable sans les outils.
+- `SystemCodeExporter` écrit directement sur Linux, car la boîte de dialogue de `file_picker` y dépend d'outils souvent absents, et il n'écrase jamais un fichier.

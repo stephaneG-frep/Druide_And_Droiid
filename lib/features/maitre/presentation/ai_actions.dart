@@ -109,3 +109,25 @@ Future<void> askForCorrection(
   if (context.mounted) context.go(conversationPath(id));
   await sending;
 }
+
+/// Demande une relecture de code libre, après l'accord de l'utilisateur.
+Future<void> askForReview(
+  BuildContext context,
+  WidgetRef ref, {
+  required String language,
+  required String code,
+}) async {
+  final settings = await ref.read(aiSettingsRepositoryProvider).read();
+  final config = settings.activeConfig;
+  if (config == null || !context.mounted) return;
+  if (!await ensureConsent(context, ref, settings, config)) return;
+
+  final id = await _startConversation(ref, config, TeachingMode.improve);
+  final controller = ref.read(chatControllerProvider(id).notifier);
+  final sending = controller.send(
+    'Relis ce code $language et propose des améliorations.\n\n'
+    '```$language\n$code\n```',
+  );
+  if (context.mounted) context.go(conversationPath(id));
+  await sending;
+}

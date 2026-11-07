@@ -10,7 +10,10 @@ import '../features/academie/presentation/module_page.dart';
 import '../features/accueil/presentation/accueil_page.dart';
 import '../features/chaudron/presentation/chaudron_page.dart';
 import '../features/grimoire/presentation/grimoire_page.dart';
+import '../features/lab/presentation/lab_editor_page.dart';
 import '../features/lab/presentation/lab_page.dart';
+import '../features/lab/presentation/lab_paths.dart';
+import '../features/lab/presentation/lab_tools_page.dart';
 import '../features/maitre/presentation/ai_settings_page.dart';
 import '../features/maitre/presentation/chat_page.dart';
 import '../features/maitre/presentation/maitre_page.dart';
@@ -59,6 +62,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               : NoteEditorPage(noteId: id);
         },
       ),
+      GoRoute(
+        path: '$labEditorRoot/:exerciseId',
+        builder: (context, state) =>
+            LabEditorPage(exerciseId: state.pathParameters['exerciseId']!),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [
@@ -69,6 +77,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                   path: section.path,
                   builder: (context, state) => _pageFor(section),
                   routes: [
+                    if (section == AppSection.lab)
+                      GoRoute(
+                        path: 'outils',
+                        builder: (context, state) => const LabToolsPage(),
+                      ),
                     if (section == AppSection.maitre)
                       GoRoute(
                         path: 'conversation/:conversationId',

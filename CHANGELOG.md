@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## Phase 7 — 2026-11-06
+
+- Éditeur de code avec coloration, numéros de ligne et sauvegarde automatique.
+- 18 exercices Kotlin, Java, Dart et XML, avec corrigés, et des feuilles libres.
+- Exécution réelle sur Linux, limitée en durée et en sortie, sans les variables d'environnement du parent.
+- Analyse réelle du XML sur Linux et Android.
+- Historique des versions, comparaison au corrigé, retour en arrière.
+- Correction ou relecture par le Maître.
+- Export dans un fichier, et copie.
+- Outils Linux : détection, procédures d'installation et commandes prévues à l'avance.
+- Base en version 5 : brouillons et versions du Lab.
+- Nouvel outil `tool/check_lab_exercises.py`.
+
 ## Phase 6 — 2026-11-06
 
 - Fournisseurs interchangeables : Anthropic Claude, OpenAI, Google Gemini, Ollama et API compatible avec OpenAI.
