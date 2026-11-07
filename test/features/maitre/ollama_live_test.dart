@@ -67,6 +67,32 @@ void main() {
       expect(events.whereType<AiDone>().single.reason, AiStopReason.truncated);
     }, timeout: const Timeout(Duration(minutes: 4)));
 
+    test('la consigne du Chaudron produit une réponse lisible', () async {
+      final events = await client()
+          .chat(
+            AiRequest(
+              model: model!,
+              system: systemPrompt(
+                level: LearnerLevel.debutant,
+                mode: TeachingMode.diagnose,
+              ),
+              messages: const [
+                AiMessage(
+                  AiRole.user,
+                  'Failure [INSTALL_FAILED_NO_MATCHING_ABIS]',
+                ),
+              ],
+              maxOutputTokens: 500,
+            ),
+          )
+          .toList();
+
+      final text = events.whereType<AiTextDelta>().map((e) => e.text).join();
+      // ignore: avoid_print
+      print('Analyse réelle :\n$text');
+      expect(text, isNotEmpty);
+    }, timeout: const Timeout(Duration(minutes: 4)));
+
     test('un modèle absent donne un message clair', () async {
       final absent = AiRequest(
         model: 'modele-inexistant',

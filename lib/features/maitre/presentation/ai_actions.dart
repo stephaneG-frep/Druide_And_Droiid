@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -130,4 +132,21 @@ Future<void> askForReview(
   );
   if (context.mounted) context.go(conversationPath(id));
   await sending;
+}
+
+/// Ouvre une analyse du Chaudron, après l'accord de l'utilisateur. Renvoie la
+/// conversation créée, ou `null` si rien n'a été envoyé.
+Future<int?> askForDiagnosis(
+  BuildContext context,
+  WidgetRef ref, {
+  required String message,
+}) async {
+  final settings = await ref.read(aiSettingsRepositoryProvider).read();
+  final config = settings.activeConfig;
+  if (config == null || !context.mounted) return null;
+  if (!await ensureConsent(context, ref, settings, config)) return null;
+
+  final id = await _startConversation(ref, config, TeachingMode.diagnose);
+  unawaited(ref.read(chatControllerProvider(id).notifier).send(message));
+  return id;
 }

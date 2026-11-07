@@ -117,3 +117,19 @@ class LabRevisions extends Table {
   TextColumn get label => text()();
   DateTimeColumn get createdAt => dateTime()();
 }
+
+/// Dossier du Chaudron des Bugs. [status] reste ouvert tant que l'utilisateur
+/// n'a pas noté le résultat d'une vérification : rien ne se déclare résolu seul.
+@DataClassName('BugCaseRow')
+class BugCases extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  TextColumn get errorText => text()();
+  TextColumn get description => text()();
+  TextColumn get code => text()();
+  IntColumn get conversationId => integer().nullable()();
+  TextColumn get status => text()();
+  TextColumn get verification => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+}

@@ -99,3 +99,13 @@ Votre code s'enregistre tout seul. **Enregistrer une version** le garde dans l'*
 Les fichiers exportés arrivent dans le dossier Téléchargements, sous `Druide And-Droiid`. **Outils Linux** indique ce qui est installé, avec la procédure pour le reste. Le Lab n'installe rien lui-même.
 
 **Sur téléphone**, le code Kotlin, Java et Dart ne s'exécute pas, car aucun compilateur n'y tourne. Le Lab ne simule rien : comparez avec le corrigé, demandez une correction au Maître, ou reprenez le code sur Linux. **Je valide moi-même** marque un exercice comme réussi, sur votre seule appréciation. Le XML est réellement analysé sur les deux plateformes : syntaxe et éléments attendus, sans compilation Android.
+
+## Utiliser le Chaudron des Bugs
+
+Collez une erreur, importez un fichier de journal, décrivez le problème et ajoutez un extrait de code si besoin. Sur Linux, **Lire les plantages (ADB)** récupère le tampon des plantages de l'appareil branché.
+
+**Fiches reconnues** : l'application cherche des mots-clés dans 37 fiches rédigées à l'avance, sans IA. Elle fonctionne sans connexion et peut se tromper. Les **diagnostics guidés** donnent accès aux mêmes fiches, par famille de panne.
+
+**Analyse IA** : avec un fournisseur configuré, le Maître répond en six parties. Avant l'envoi, vous relisez exactement ce qui part. Les clés, mots de passe, courriels et noms d'utilisateur repérés sont masqués, mais ce filtre est imparfait. La qualité de l'analyse dépend du modèle : un petit modèle local peut se tromper franchement.
+
+**Vérification** : un dossier reste **Non vérifié** tant que vous n'avez pas noté le résultat d'un essai. Ni une fiche ni une IA ne peut déclarer un problème résolu.

@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## Phase 8 — 2026-11-07
+
+- Dossiers du Chaudron des Bugs : erreur, journal importé, description et code.
+- 37 fiches de diagnostic préenregistrées, sur dix familles de pannes, avec exemples de corrections.
+- Diagnostics guidés par famille, avec listes de vérifications.
+- Analyse IA en six parties, avec relecture de ce qui part et masquage des secrets.
+- État du dossier : rien n'est résolu sans résultat de vérification noté.
+- Sur Linux, lecture des plantages de l'appareil par ADB.
+- Base en version 6.
+
 ## Phase 7 — 2026-11-06
 
 - Éditeur de code avec coloration, numéros de ligne et sauvegarde automatique.

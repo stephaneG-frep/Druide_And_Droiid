@@ -112,6 +112,64 @@ void main() {
     database.close();
   }
 
+  test('la version 5 passe en version 6 sans perte', () async {
+    createV2Database();
+    final raw = sqlite3.open(file.path);
+    raw
+      ..execute(
+        'CREATE TABLE "exercise_answers" ("exercise_id" TEXT NOT NULL, '
+        '"module_id" TEXT NOT NULL, "answer" TEXT NOT NULL, "status" TEXT NOT '
+        'NULL, "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "ai_conversations" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "title" TEXT NOT NULL, "provider_kind" TEXT NOT NULL, '
+        '"model" TEXT NOT NULL, "mode" TEXT NOT NULL, "created_at" INTEGER NOT '
+        'NULL, "updated_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "ai_messages" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "conversation_id" INTEGER NOT NULL REFERENCES '
+        'ai_conversations (id), "role" TEXT NOT NULL, "content" TEXT NOT NULL, '
+        '"input_tokens" INTEGER NULL, "output_tokens" INTEGER NULL, '
+        '"stop_reason" TEXT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute(
+        'CREATE TABLE "lab_drafts" ("exercise_id" TEXT NOT NULL, "code" TEXT '
+        'NOT NULL, "solved" INTEGER NOT NULL DEFAULT 0 CHECK ("solved" IN (0, '
+        '1)), "updated_at" INTEGER NOT NULL, PRIMARY KEY ("exercise_id"))',
+      )
+      ..execute(
+        'CREATE TABLE "lab_revisions" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "exercise_id" TEXT NOT NULL, "code" TEXT NOT NULL, '
+        '"label" TEXT NOT NULL, "created_at" INTEGER NOT NULL)',
+      )
+      ..execute("INSERT INTO lab_drafts VALUES ('kt-null', 'mon code', 1, 1)")
+      ..execute('PRAGMA user_version = 5');
+    raw.close();
+
+    final database = AppDatabase(NativeDatabase(file));
+    final drafts = await database.select(database.labDrafts).get();
+    expect(drafts.single.code, 'mon code');
+    expect(drafts.single.solved, isTrue);
+
+    final id = await database
+        .into(database.bugCases)
+        .insert(
+          BugCasesCompanion.insert(
+            title: 'Dossier',
+            errorText: 'e',
+            description: '',
+            code: '',
+            status: 'open',
+            createdAt: DateTime(2026),
+            updatedAt: DateTime(2026),
+          ),
+        );
+    expect(id, greaterThan(0));
+    await database.close();
+  });
+
   test('la version 4 passe en version 5 sans perte', () async {
     createV2Database();
     final raw = sqlite3.open(file.path);

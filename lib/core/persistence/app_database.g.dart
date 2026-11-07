@@ -3849,6 +3849,617 @@ class LabRevisionsCompanion extends UpdateCompanion<LabRevisionRow> {
   }
 }
 
+class $BugCasesTable extends BugCases
+    with TableInfo<$BugCasesTable, BugCaseRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BugCasesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _errorTextMeta = const VerificationMeta(
+    'errorText',
+  );
+  @override
+  late final GeneratedColumn<String> errorText = GeneratedColumn<String>(
+    'error_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _conversationIdMeta = const VerificationMeta(
+    'conversationId',
+  );
+  @override
+  late final GeneratedColumn<int> conversationId = GeneratedColumn<int>(
+    'conversation_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _verificationMeta = const VerificationMeta(
+    'verification',
+  );
+  @override
+  late final GeneratedColumn<String> verification = GeneratedColumn<String>(
+    'verification',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    errorText,
+    description,
+    code,
+    conversationId,
+    status,
+    verification,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'bug_cases';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BugCaseRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('error_text')) {
+      context.handle(
+        _errorTextMeta,
+        errorText.isAcceptableOrUnknown(data['error_text']!, _errorTextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_errorTextMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_codeMeta);
+    }
+    if (data.containsKey('conversation_id')) {
+      context.handle(
+        _conversationIdMeta,
+        conversationId.isAcceptableOrUnknown(
+          data['conversation_id']!,
+          _conversationIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('verification')) {
+      context.handle(
+        _verificationMeta,
+        verification.isAcceptableOrUnknown(
+          data['verification']!,
+          _verificationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BugCaseRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BugCaseRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      errorText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}error_text'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      conversationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}conversation_id'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      verification: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}verification'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BugCasesTable createAlias(String alias) {
+    return $BugCasesTable(attachedDatabase, alias);
+  }
+}
+
+class BugCaseRow extends DataClass implements Insertable<BugCaseRow> {
+  final int id;
+  final String title;
+  final String errorText;
+  final String description;
+  final String code;
+  final int? conversationId;
+  final String status;
+  final String? verification;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const BugCaseRow({
+    required this.id,
+    required this.title,
+    required this.errorText,
+    required this.description,
+    required this.code,
+    this.conversationId,
+    required this.status,
+    this.verification,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['title'] = Variable<String>(title);
+    map['error_text'] = Variable<String>(errorText);
+    map['description'] = Variable<String>(description);
+    map['code'] = Variable<String>(code);
+    if (!nullToAbsent || conversationId != null) {
+      map['conversation_id'] = Variable<int>(conversationId);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || verification != null) {
+      map['verification'] = Variable<String>(verification);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  BugCasesCompanion toCompanion(bool nullToAbsent) {
+    return BugCasesCompanion(
+      id: Value(id),
+      title: Value(title),
+      errorText: Value(errorText),
+      description: Value(description),
+      code: Value(code),
+      conversationId: conversationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(conversationId),
+      status: Value(status),
+      verification: verification == null && nullToAbsent
+          ? const Value.absent()
+          : Value(verification),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory BugCaseRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BugCaseRow(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      errorText: serializer.fromJson<String>(json['errorText']),
+      description: serializer.fromJson<String>(json['description']),
+      code: serializer.fromJson<String>(json['code']),
+      conversationId: serializer.fromJson<int?>(json['conversationId']),
+      status: serializer.fromJson<String>(json['status']),
+      verification: serializer.fromJson<String?>(json['verification']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
+      'errorText': serializer.toJson<String>(errorText),
+      'description': serializer.toJson<String>(description),
+      'code': serializer.toJson<String>(code),
+      'conversationId': serializer.toJson<int?>(conversationId),
+      'status': serializer.toJson<String>(status),
+      'verification': serializer.toJson<String?>(verification),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  BugCaseRow copyWith({
+    int? id,
+    String? title,
+    String? errorText,
+    String? description,
+    String? code,
+    Value<int?> conversationId = const Value.absent(),
+    String? status,
+    Value<String?> verification = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => BugCaseRow(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    errorText: errorText ?? this.errorText,
+    description: description ?? this.description,
+    code: code ?? this.code,
+    conversationId: conversationId.present
+        ? conversationId.value
+        : this.conversationId,
+    status: status ?? this.status,
+    verification: verification.present ? verification.value : this.verification,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  BugCaseRow copyWithCompanion(BugCasesCompanion data) {
+    return BugCaseRow(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      errorText: data.errorText.present ? data.errorText.value : this.errorText,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      code: data.code.present ? data.code.value : this.code,
+      conversationId: data.conversationId.present
+          ? data.conversationId.value
+          : this.conversationId,
+      status: data.status.present ? data.status.value : this.status,
+      verification: data.verification.present
+          ? data.verification.value
+          : this.verification,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BugCaseRow(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('errorText: $errorText, ')
+          ..write('description: $description, ')
+          ..write('code: $code, ')
+          ..write('conversationId: $conversationId, ')
+          ..write('status: $status, ')
+          ..write('verification: $verification, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    errorText,
+    description,
+    code,
+    conversationId,
+    status,
+    verification,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BugCaseRow &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.errorText == this.errorText &&
+          other.description == this.description &&
+          other.code == this.code &&
+          other.conversationId == this.conversationId &&
+          other.status == this.status &&
+          other.verification == this.verification &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BugCasesCompanion extends UpdateCompanion<BugCaseRow> {
+  final Value<int> id;
+  final Value<String> title;
+  final Value<String> errorText;
+  final Value<String> description;
+  final Value<String> code;
+  final Value<int?> conversationId;
+  final Value<String> status;
+  final Value<String?> verification;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const BugCasesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.errorText = const Value.absent(),
+    this.description = const Value.absent(),
+    this.code = const Value.absent(),
+    this.conversationId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.verification = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  BugCasesCompanion.insert({
+    this.id = const Value.absent(),
+    required String title,
+    required String errorText,
+    required String description,
+    required String code,
+    this.conversationId = const Value.absent(),
+    required String status,
+    this.verification = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) : title = Value(title),
+       errorText = Value(errorText),
+       description = Value(description),
+       code = Value(code),
+       status = Value(status),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<BugCaseRow> custom({
+    Expression<int>? id,
+    Expression<String>? title,
+    Expression<String>? errorText,
+    Expression<String>? description,
+    Expression<String>? code,
+    Expression<int>? conversationId,
+    Expression<String>? status,
+    Expression<String>? verification,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (errorText != null) 'error_text': errorText,
+      if (description != null) 'description': description,
+      if (code != null) 'code': code,
+      if (conversationId != null) 'conversation_id': conversationId,
+      if (status != null) 'status': status,
+      if (verification != null) 'verification': verification,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  BugCasesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? title,
+    Value<String>? errorText,
+    Value<String>? description,
+    Value<String>? code,
+    Value<int?>? conversationId,
+    Value<String>? status,
+    Value<String?>? verification,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return BugCasesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      errorText: errorText ?? this.errorText,
+      description: description ?? this.description,
+      code: code ?? this.code,
+      conversationId: conversationId ?? this.conversationId,
+      status: status ?? this.status,
+      verification: verification ?? this.verification,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (errorText.present) {
+      map['error_text'] = Variable<String>(errorText.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (conversationId.present) {
+      map['conversation_id'] = Variable<int>(conversationId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (verification.present) {
+      map['verification'] = Variable<String>(verification.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BugCasesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('errorText: $errorText, ')
+          ..write('description: $description, ')
+          ..write('code: $code, ')
+          ..write('conversationId: $conversationId, ')
+          ..write('status: $status, ')
+          ..write('verification: $verification, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3867,6 +4478,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AiMessagesTable aiMessages = $AiMessagesTable(this);
   late final $LabDraftsTable labDrafts = $LabDraftsTable(this);
   late final $LabRevisionsTable labRevisions = $LabRevisionsTable(this);
+  late final $BugCasesTable bugCases = $BugCasesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3883,6 +4495,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     aiMessages,
     labDrafts,
     labRevisions,
+    bugCases,
   ];
 }
 
@@ -6302,6 +6915,305 @@ typedef $$LabRevisionsTableProcessedTableManager =
       LabRevisionRow,
       PrefetchHooks Function()
     >;
+typedef $$BugCasesTableCreateCompanionBuilder = BugCasesCompanion Function({
+  Value<int> id,
+  required String title,
+  required String errorText,
+  required String description,
+  required String code,
+  Value<int?> conversationId,
+  required String status,
+  Value<String?> verification,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+});
+typedef $$BugCasesTableUpdateCompanionBuilder = BugCasesCompanion Function({
+  Value<int> id,
+  Value<String> title,
+  Value<String> errorText,
+  Value<String> description,
+  Value<String> code,
+  Value<int?> conversationId,
+  Value<String> status,
+  Value<String?> verification,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+class $$BugCasesTableFilterComposer
+    extends Composer<_$AppDatabase, $BugCasesTable> {
+  $$BugCasesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get errorText => $composableBuilder(
+    column: $table.errorText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get conversationId => $composableBuilder(
+    column: $table.conversationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get verification => $composableBuilder(
+    column: $table.verification,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BugCasesTableOrderingComposer
+    extends Composer<_$AppDatabase, $BugCasesTable> {
+  $$BugCasesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get errorText => $composableBuilder(
+    column: $table.errorText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get conversationId => $composableBuilder(
+    column: $table.conversationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get verification => $composableBuilder(
+    column: $table.verification,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BugCasesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BugCasesTable> {
+  $$BugCasesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get errorText =>
+      $composableBuilder(column: $table.errorText, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<int> get conversationId => $composableBuilder(
+    column: $table.conversationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get verification => $composableBuilder(
+    column: $table.verification,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$BugCasesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BugCasesTable,
+          BugCaseRow,
+          $$BugCasesTableFilterComposer,
+          $$BugCasesTableOrderingComposer,
+          $$BugCasesTableAnnotationComposer,
+          $$BugCasesTableCreateCompanionBuilder,
+          $$BugCasesTableUpdateCompanionBuilder,
+          (
+            BugCaseRow,
+            BaseReferences<_$AppDatabase, $BugCasesTable, BugCaseRow>,
+          ),
+          BugCaseRow,
+          PrefetchHooks Function()
+        > {
+  $$BugCasesTableTableManager(_$AppDatabase db, $BugCasesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BugCasesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BugCasesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BugCasesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> errorText = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<String> code = const Value.absent(),
+                Value<int?> conversationId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> verification = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => BugCasesCompanion(
+                id: id,
+                title: title,
+                errorText: errorText,
+                description: description,
+                code: code,
+                conversationId: conversationId,
+                status: status,
+                verification: verification,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String title,
+                required String errorText,
+                required String description,
+                required String code,
+                Value<int?> conversationId = const Value.absent(),
+                required String status,
+                Value<String?> verification = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+              }) => BugCasesCompanion.insert(
+                id: id,
+                title: title,
+                errorText: errorText,
+                description: description,
+                code: code,
+                conversationId: conversationId,
+                status: status,
+                verification: verification,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BugCasesTable, BugCaseRow>(table),
+                  BaseReferences<_$AppDatabase, $BugCasesTable, BugCaseRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BugCasesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BugCasesTable,
+      BugCaseRow,
+      $$BugCasesTableFilterComposer,
+      $$BugCasesTableOrderingComposer,
+      $$BugCasesTableAnnotationComposer,
+      $$BugCasesTableCreateCompanionBuilder,
+      $$BugCasesTableUpdateCompanionBuilder,
+      (BugCaseRow, BaseReferences<_$AppDatabase, $BugCasesTable, BugCaseRow>),
+      BugCaseRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6328,4 +7240,6 @@ class $AppDatabaseManager {
       $$LabDraftsTableTableManager(_db, _db.labDrafts);
   $$LabRevisionsTableTableManager get labRevisions =>
       $$LabRevisionsTableTableManager(_db, _db.labRevisions);
+  $$BugCasesTableTableManager get bugCases =>
+      $$BugCasesTableTableManager(_db, _db.bugCases);
 }

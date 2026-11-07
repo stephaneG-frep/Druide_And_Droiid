@@ -1,5 +1,14 @@
 # Rapport de compilation
 
+## Phase 8 — 2026-11-07
+
+| Cible | Commande | Résultat |
+| --- | --- | --- |
+| Android debug | `flutter build apk --debug` | Réussi, installé par-dessus sur Honor MTN-NX1M |
+| Linux debug | Les trois fichiers d'intégration, un par un | Réussi |
+
+Nouvelle dépendance : `file_selector`, dont la boîte de dialogue native ne dépend pas d'outils externes sur Linux.
+
 ## Phase 7 — 2026-11-06
 
 | Cible | Commande | Résultat |

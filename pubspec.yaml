@@ -45,6 +45,7 @@ dependencies:
   http: ^1.6.0
   file_picker: ^13.3.2
   xml: ^7.1.0
+  file_selector: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,7 @@ flutter:
   assets:
     - assets/courses/
     - assets/lab/
+    - assets/bugs/
 
   fonts:
     - family: ChakraPetch
