@@ -155,10 +155,7 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 12,
             children: [
-              Text(
-                '${widget.config.kind.label} · ${widget.config.model}',
-                style: context.text.titleSmall,
-              ),
+              _ProviderSwitch(active: widget.config),
               DropdownButtonFormField<TeachingMode>(
                 initialValue: _mode,
                 isExpanded: true,
@@ -222,6 +219,53 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
           _ => const Center(child: CircularProgressIndicator()),
         },
       ],
+    );
+  }
+}
+
+/// Change de fournisseur d'un geste, parmi ceux déjà configurés.
+class _ProviderSwitch extends ConsumerWidget {
+  const _ProviderSwitch({required this.active});
+
+  final AiProviderConfig active;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(aiSettingsProvider).value;
+    final ready = [
+      for (final kind in AiProviderKind.values)
+        if (settings?.isUsable(kind) ?? false) kind,
+    ];
+
+    if (ready.length < 2) {
+      return Text(
+        '${active.kind.label} · ${active.model}',
+        style: context.text.titleSmall,
+      );
+    }
+    return DropdownButtonFormField<AiProviderKind>(
+      key: ValueKey(active.kind),
+      initialValue: active.kind,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Fournisseur actif',
+        border: OutlineInputBorder(),
+      ),
+      items: [
+        for (final kind in ready)
+          DropdownMenuItem(
+            value: kind,
+            child: Text(
+              '${kind.label} · ${settings!.configOf(kind).model}',
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (kind) {
+        if (kind != null) {
+          ref.read(aiSettingsRepositoryProvider).setActive(kind);
+        }
+      },
     );
   }
 }

@@ -70,6 +70,14 @@ enum LabTool {
 enum LabCommand {
   adbDevices(LabTool.adb, 'Appareils connectés', ['devices', '-l']),
   adbVersion(LabTool.adb, 'Version d\'ADB', ['version']),
+  adbCrashLog(LabTool.adb, 'Derniers plantages', [
+    'logcat',
+    '-b',
+    'crash',
+    '-d',
+    '-t',
+    '500',
+  ]),
   listAvds(LabTool.emulator, 'Appareils virtuels', ['-list-avds']),
   gradleVersion(LabTool.gradle, 'Version de Gradle', ['--version']),
   javaVersion(LabTool.java, 'Version du JDK', ['-version']),

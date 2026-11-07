@@ -1,0 +1,1228 @@
+{
+ "rules": [
+  {
+   "id": "gradle-version",
+   "family": "gradle",
+   "title": "Version de Gradle trop ancienne",
+   "patterns": [
+    "Minimum supported Gradle version is"
+   ],
+   "samples": [
+    "Minimum supported Gradle version is 9.6.0. Current version is 9.3.1."
+   ],
+   "summary": "Le plugin Android exige une version de Gradle plus récente que celle du projet.",
+   "causes": [
+    "Le plugin Android a été mis à jour, pas le Gradle Wrapper.",
+    "Le projet a été ouvert avec un Android Studio plus récent."
+   ],
+   "checks": [
+    "Lisez la version demandée dans le message.",
+    "Ouvrez `gradle/wrapper/gradle-wrapper.properties`."
+   ],
+   "fixes": [
+    "Mettez à jour `distributionUrl` vers la version demandée.",
+    "Relancez la synchronisation du projet."
+   ],
+   "lesson": "Gradle, le plugin Android (AGP), Kotlin et compileSdk forment une chaîne : chaque version en exige d'autres. Lisez les messages dans l'ordre, ils vous guident d'étape en étape.",
+   "validation": [
+    "Lancez `./gradlew --version` et vérifiez le numéro.",
+    "Lancez `./gradlew assembleDebug`."
+   ],
+   "example": {
+    "language": "text",
+    "code": "distributionUrl=https\\://services.gradle.org/distributions/gradle-9.6.0-bin.zip"
+   }
+  },
+  {
+   "id": "gradle-compilesdk",
+   "family": "gradle",
+   "title": "compileSdk trop ancien pour une bibliothèque",
+   "patterns": [
+    "compile against version \\d+",
+    "requires libraries and applications that\\s+depend on it to compile against",
+    "compileSdk.*(?:at least|higher)"
+   ],
+   "samples": [
+    "Dependency ':permission_handler_android' requires libraries and applications that depend on it to compile against version 37 or later of the Android APIs."
+   ],
+   "summary": "Une bibliothèque exige un compileSdk supérieur à celui du projet.",
+   "causes": [
+    "Une dépendance a été mise à jour.",
+    "Un plugin Flutter réclame une plateforme récente."
+   ],
+   "checks": [
+    "Repérez la version demandée.",
+    "Vérifiez que cette plateforme est installée dans le SDK Manager.",
+    "Vérifiez qu'AGP prend en charge ce compileSdk."
+   ],
+   "fixes": [
+    "Augmentez `compileSdk` dans `app/build.gradle.kts`.",
+    "Si le message suivant l'exige, mettez à jour AGP, puis Gradle.",
+    "Ne changez pas `targetSdk` en même temps."
+   ],
+   "lesson": "`compileSdk` donne accès aux API à la compilation, sans changer le comportement de l'application. C'est `targetSdk` qui active les nouveaux comportements.",
+   "validation": [
+    "Lancez `./gradlew assembleDebug`.",
+    "Lancez l'application sur un appareil."
+   ],
+   "example": {
+    "language": "kotlin",
+    "code": "android {\n    compileSdk = 37\n}"
+   }
+  },
+  {
+   "id": "gradle-desugaring",
+   "family": "gradle",
+   "title": "Désucration de la bibliothèque Java requise",
+   "patterns": [
+    "requires core library desugaring"
+   ],
+   "samples": [
+    "Dependency ':flutter_local_notifications' requires core library desugaring to be enabled for :app."
+   ],
+   "summary": "Une bibliothèque utilise des API Java récentes, que d'anciens Android n'ont pas.",
+   "causes": [
+    "Un plugin a besoin de `java.time` ou d'API proches, sur un minSdk bas."
+   ],
+   "checks": [
+    "Ouvrez `app/build.gradle.kts` et cherchez `compileOptions`."
+   ],
+   "fixes": [
+    "Activez `isCoreLibraryDesugaringEnabled`.",
+    "Ajoutez la dépendance `coreLibraryDesugaring`."
+   ],
+   "lesson": "La désucration réécrit à la compilation des API récentes pour qu'elles fonctionnent sur d'anciennes versions d'Android.",
+   "validation": [
+    "Lancez `./gradlew assembleDebug`.",
+    "Essayez la fonction concernée sur l'appareil le plus ancien visé."
+   ],
+   "example": {
+    "language": "kotlin",
+    "code": "android {\n    compileOptions {\n        isCoreLibraryDesugaringEnabled = true\n    }\n}\n\ndependencies {\n    coreLibraryDesugaring(\"com.android.tools:desugar_jdk_libs:2.1.5\")\n}"
+   }
+  },
+  {
+   "id": "gradle-jdk",
+   "family": "gradle",
+   "title": "Mauvaise version du JDK",
+   "patterns": [
+    "Unsupported class file major version",
+    "requires Java \\d+ to run",
+    "Android Gradle plugin requires Java"
+   ],
+   "samples": [
+    "Android Gradle plugin requires Java 17 to run. You are currently using Java 11."
+   ],
+   "summary": "Gradle tourne avec un JDK que l'outil ne prend pas en charge.",
+   "causes": [
+    "`JAVA_HOME` pointe vers un ancien JDK, ou un JDK trop récent pour ce Gradle.",
+    "Android Studio et le terminal n'utilisent pas le même JDK."
+   ],
+   "checks": [
+    "Lancez `./gradlew --version` et lisez la ligne JVM.",
+    "Vérifiez `echo $JAVA_HOME`."
+   ],
+   "fixes": [
+    "Pointez `JAVA_HOME` vers un JDK compatible, par exemple celui d'Android Studio.",
+    "Dans Android Studio, choisissez le JDK dans les réglages Gradle."
+   ],
+   "lesson": "Le JDK qui exécute Gradle n'est pas forcément celui que vous croyez : le terminal et l'éditeur peuvent en utiliser deux différents.",
+   "validation": [
+    "Relancez `./gradlew --version`.",
+    "Relancez la compilation."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "export JAVA_HOME=/opt/android-studio/jbr"
+   }
+  },
+  {
+   "id": "gradle-resolve",
+   "family": "gradle",
+   "title": "Dépendance introuvable",
+   "patterns": [
+    "Could not resolve (?:all|[\\w.-]+:)",
+    "Could not find [\\w.-]+:[\\w.-]+"
+   ],
+   "samples": [
+    "Could not find com.example:absent:9.9.9.",
+    "Could not resolve androidx.core:core-ktx:9.9.9."
+   ],
+   "summary": "Gradle ne trouve pas une bibliothèque dans les dépôts déclarés.",
+   "causes": [
+    "La version n'existe pas.",
+    "Le dépôt n'est pas déclaré dans `settings.gradle.kts`.",
+    "Il n'y a pas de réseau, ou Gradle est en mode hors ligne."
+   ],
+   "checks": [
+    "Vérifiez le nom et la version sur le dépôt.",
+    "Lisez la liste « Searched in the following locations » du message.",
+    "Vérifiez `repositories`."
+   ],
+   "fixes": [
+    "Corrigez la version.",
+    "Ajoutez le dépôt manquant, comme `google()` ou `mavenCentral()`."
+   ],
+   "lesson": "Gradle ne télécharge que depuis les dépôts que vous déclarez, et dans l'ordre où ils sont écrits.",
+   "validation": [
+    "Lancez `./gradlew :app:dependencies`.",
+    "Relancez la compilation."
+   ],
+   "example": {
+    "language": "kotlin",
+    "code": "dependencyResolutionManagement {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}"
+   }
+  },
+  {
+   "id": "kotlin-unresolved",
+   "family": "gradle",
+   "title": "Référence Kotlin non résolue",
+   "patterns": [
+    "Unresolved reference"
+   ],
+   "samples": [
+    "e: file:///projet/app/src/main/java/Main.kt:12:5 Unresolved reference 'Foo'."
+   ],
+   "summary": "Le compilateur ne connaît pas ce nom.",
+   "causes": [
+    "Un import manque.",
+    "La dépendance n'est pas déclarée.",
+    "Le code généré n'existe pas encore, par exemple après un changement dans Room ou KSP.",
+    "Une faute de frappe."
+   ],
+   "checks": [
+    "Allez à la ligne indiquée.",
+    "Cherchez où ce nom est censé être défini.",
+    "Vérifiez `build.gradle.kts`."
+   ],
+   "fixes": [
+    "Ajoutez l'import ou la dépendance.",
+    "Corrigez le nom."
+   ],
+   "lesson": "Corrigez toujours la première erreur : une seule référence manquante peut en provoquer cinquante.",
+   "validation": [
+    "Lancez `./gradlew assembleDebug`."
+   ]
+  },
+  {
+   "id": "sdk-location",
+   "family": "sdk",
+   "title": "Emplacement du SDK inconnu",
+   "patterns": [
+    "SDK location not found",
+    "ANDROID_HOME.*(?:not set|invalid)",
+    "sdk\\.dir"
+   ],
+   "samples": [
+    "SDK location not found. Define a valid SDK location with an ANDROID_HOME environment variable or by setting the sdk.dir path in your project's local properties file."
+   ],
+   "summary": "Gradle ne sait pas où se trouve le SDK Android.",
+   "causes": [
+    "Le fichier `local.properties` manque, ce qui est normal après un clonage.",
+    "`ANDROID_HOME` n'est pas défini."
+   ],
+   "checks": [
+    "Vérifiez la présence de `local.properties` à la racine.",
+    "Vérifiez que le dossier du SDK existe."
+   ],
+   "fixes": [
+    "Ouvrez le projet dans Android Studio, ou créez `local.properties`.",
+    "Ne commitez pas ce fichier : il dépend de chaque machine."
+   ],
+   "lesson": "`local.properties` décrit votre machine, pas votre projet. C'est pour cela qu'il reste hors de Git.",
+   "validation": [
+    "Relancez la compilation."
+   ],
+   "example": {
+    "language": "text",
+    "code": "sdk.dir=/home/vous/Android/Sdk"
+   }
+  },
+  {
+   "id": "sdk-license",
+   "family": "sdk",
+   "title": "Licences du SDK non acceptées",
+   "patterns": [
+    "licen[cs]es? (?:agreements? )?(?:have|has) not been accepted",
+    "not accepted the license",
+    "Failed to install the following Android SDK packages"
+   ],
+   "samples": [
+    "You have not accepted the license agreements of the following SDK components: [Android SDK Platform 37]."
+   ],
+   "summary": "Le SDK refuse d'utiliser un composant sans l'acceptation de sa licence.",
+   "causes": [
+    "Une nouvelle plateforme est demandée.",
+    "La machine est neuve, ou c'est une CI."
+   ],
+   "checks": [
+    "Lisez la liste des composants dans le message."
+   ],
+   "fixes": [
+    "Lancez `sdkmanager --licenses`, puis lisez et acceptez les licences."
+   ],
+   "lesson": "Accepter une licence est une décision : lisez ce que vous acceptez, surtout dans un contexte professionnel.",
+   "validation": [
+    "Relancez la compilation."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "sdkmanager --licenses"
+   }
+  },
+  {
+   "id": "sdk-missing",
+   "family": "sdk",
+   "title": "Composant du SDK absent",
+   "patterns": [
+    "Failed to find (?:target with hash string|Build Tools)",
+    "failed to find target",
+    "NDK (?:is )?not (?:configured|installed)",
+    "No version of NDK matched"
+   ],
+   "samples": [
+    "Failed to find target with hash string 'android-37' in: /home/vous/Android/Sdk"
+   ],
+   "summary": "Le projet demande une plateforme, des Build Tools ou un NDK non installés.",
+   "causes": [
+    "Le SDK Manager n'a pas ce composant.",
+    "Le projet vient d'une autre machine."
+   ],
+   "checks": [
+    "Ouvrez le SDK Manager.",
+    "Comparez avec `compileSdk` et `ndkVersion`."
+   ],
+   "fixes": [
+    "Installez le composant demandé."
+   ],
+   "lesson": "Chaque projet déclare ce dont il a besoin : le SDK est une collection de versions, pas une seule installation.",
+   "validation": [
+    "Relancez la compilation."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "sdkmanager \"platforms;android-37\""
+   }
+  },
+  {
+   "id": "adb-unauthorized",
+   "family": "adb",
+   "title": "Appareil non autorisé",
+   "patterns": [
+    "device unauthorized",
+    "\\bunauthorized\\b"
+   ],
+   "samples": [
+    "error: device unauthorized.\nThis adb server's $ADB_VENDOR_KEYS is not set",
+    "ABC123\tunauthorized"
+   ],
+   "summary": "Le téléphone n'a pas accepté cet ordinateur.",
+   "causes": [
+    "La fenêtre d'autorisation n'a pas été validée.",
+    "Les autorisations ont été révoquées."
+   ],
+   "checks": [
+    "Déverrouillez le téléphone et regardez s'il affiche une demande."
+   ],
+   "fixes": [
+    "Acceptez la clé RSA, sur un ordinateur de confiance.",
+    "Sinon, révoquez les autorisations, débranchez, rebranchez."
+   ],
+   "lesson": "ADB exige que le téléphone approuve chaque ordinateur : c'est ce qui empêche un inconnu de brancher votre appareil et d'y accéder.",
+   "validation": [
+    "Lancez `adb devices` : l'état doit être `device`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb devices"
+   }
+  },
+  {
+   "id": "adb-no-device",
+   "family": "adb",
+   "title": "Aucun appareil trouvé",
+   "patterns": [
+    "no devices/emulators found",
+    "device '.*' not found",
+    "No connected devices"
+   ],
+   "samples": [
+    "adb: no devices/emulators found",
+    "adb: device 'nope' not found"
+   ],
+   "summary": "ADB ne voit aucun appareil, ou pas celui demandé.",
+   "causes": [
+    "Le câble ne transporte que du courant.",
+    "Le débogage USB est désactivé.",
+    "Le mode USB est seulement en charge.",
+    "Sur Linux, une règle udev manque."
+   ],
+   "checks": [
+    "Lancez `adb devices`.",
+    "Essayez un autre câble ou un autre port.",
+    "Vérifiez le numéro de série de `-s`."
+   ],
+   "fixes": [
+    "Activez le débogage USB.",
+    "Sur Linux, installez le paquet `android-sdk-platform-tools-common`, ou ajoutez une règle udev."
+   ],
+   "lesson": "Procédez par couches : matériel, système, puis ADB. Beaucoup de pannes viennent simplement du câble.",
+   "validation": [
+    "Lancez `adb devices` : l'appareil doit apparaître en `device`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb devices -l"
+   }
+  },
+  {
+   "id": "adb-multiple",
+   "family": "adb",
+   "title": "Plusieurs appareils connectés",
+   "patterns": [
+    "more than one device"
+   ],
+   "samples": [
+    "adb: more than one device/emulator"
+   ],
+   "summary": "ADB ne sait pas quel appareil viser.",
+   "causes": [
+    "Un téléphone et un émulateur sont branchés ensemble."
+   ],
+   "checks": [
+    "Lancez `adb devices`."
+   ],
+   "fixes": [
+    "Indiquez l'appareil avec `-s`."
+   ],
+   "lesson": "ADB préfère refuser plutôt que d'agir sur le mauvais appareil. C'est une protection.",
+   "validation": [
+    "Relancez la commande avec `-s`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb -s NUMERO_DE_SERIE install -r app-debug.apk"
+   }
+  },
+  {
+   "id": "adb-offline",
+   "family": "adb",
+   "title": "Appareil hors ligne ou serveur bloqué",
+   "patterns": [
+    "device offline",
+    "\\boffline\\b.*adb",
+    "cannot connect to daemon",
+    "protocol fault",
+    "adb server version .* doesn't match"
+   ],
+   "samples": [
+    "error: device offline",
+    "adb server version (41) doesn't match this client (42); killing..."
+   ],
+   "summary": "La liaison entre le serveur ADB et l'appareil est cassée.",
+   "causes": [
+    "Plusieurs versions d'ADB cohabitent.",
+    "La connexion USB a sauté."
+   ],
+   "checks": [
+    "Lancez `which -a adb`.",
+    "Lancez `adb version`."
+   ],
+   "fixes": [
+    "Relancez le serveur.",
+    "Rebranchez l'appareil.",
+    "Utilisez une seule installation d'ADB."
+   ],
+   "lesson": "ADB comporte un client, un serveur et un démon sur l'appareil. Relancer le serveur règle bien des blocages.",
+   "validation": [
+    "Lancez `adb devices`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb kill-server\nadb start-server"
+   }
+  },
+  {
+   "id": "apk-signature",
+   "family": "apk",
+   "title": "Signature différente de l'application installée",
+   "patterns": [
+    "INSTALL_FAILED_UPDATE_INCOMPATIBLE",
+    "signatures do not match"
+   ],
+   "samples": [
+    "Failure [INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package com.exemple signatures do not match previously installed version]"
+   ],
+   "summary": "Une application de même nom est déjà installée, signée avec une autre clé.",
+   "causes": [
+    "Passage d'une version de debug à une release, ou d'une machine à une autre.",
+    "Application installée depuis une autre source."
+   ],
+   "checks": [
+    "Lancez `adb shell pm path com.exemple.notes`.",
+    "Comparez les certificats avec `apksigner verify --print-certs`."
+   ],
+   "fixes": [
+    "Réinstallez avec la bonne clé.",
+    "Si vous acceptez de perdre les données de l'application, désinstallez-la d'abord."
+   ],
+   "lesson": "Android compare la signature à chaque mise à jour : c'est ce qui empêche un tiers de remplacer votre application.",
+   "validation": [
+    "Installez l'APK.",
+    "Vérifiez que l'application démarre et que ses données sont présentes."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "# ATTENTION : efface les données de l'application\nadb uninstall com.exemple.notes"
+   }
+  },
+  {
+   "id": "apk-downgrade",
+   "family": "apk",
+   "title": "Version plus ancienne que celle installée",
+   "patterns": [
+    "INSTALL_FAILED_VERSION_DOWNGRADE"
+   ],
+   "samples": [
+    "Failure [INSTALL_FAILED_VERSION_DOWNGRADE]"
+   ],
+   "summary": "Le `versionCode` de l'APK est inférieur à celui de l'application installée.",
+   "causes": [
+    "Vous réinstallez une ancienne version.",
+    "`versionCode` n'a pas été augmenté."
+   ],
+   "checks": [
+    "Comparez les deux `versionCode` avec `aapt2 dump badging`."
+   ],
+   "fixes": [
+    "Augmentez `versionCode`."
+   ],
+   "lesson": "`versionCode` ne redescend jamais : c'est lui, pas `versionName`, que le système compare.",
+   "validation": [
+    "Installez avec `adb install -r`."
+   ]
+  },
+  {
+   "id": "apk-older-sdk",
+   "family": "apk",
+   "title": "Appareil trop ancien pour cet APK",
+   "patterns": [
+    "INSTALL_FAILED_OLDER_SDK",
+    "requires newer sdk version"
+   ],
+   "samples": [
+    "Failure [INSTALL_FAILED_OLDER_SDK: Requires newer sdk version #26 (current version is #24)]"
+   ],
+   "summary": "L'appareil a une version d'Android inférieure au `minSdk`.",
+   "causes": [
+    "`minSdk` a été augmenté, parfois par une bibliothèque."
+   ],
+   "checks": [
+    "Lisez `minSdk` dans `aapt2 dump badging`.",
+    "Lancez `adb shell getprop ro.build.version.sdk`."
+   ],
+   "fixes": [
+    "Testez sur un appareil plus récent.",
+    "Baissez `minSdk` si les bibliothèques l'acceptent."
+   ],
+   "lesson": "`minSdk` fixe qui peut installer votre application. Le monter retire des utilisateurs : c'est un choix, pas un détail.",
+   "validation": [
+    "Installez l'APK sur l'appareil visé."
+   ]
+  },
+  {
+   "id": "apk-storage",
+   "family": "apk",
+   "title": "Espace insuffisant",
+   "patterns": [
+    "INSTALL_FAILED_INSUFFICIENT_STORAGE"
+   ],
+   "samples": [
+    "Failure [INSTALL_FAILED_INSUFFICIENT_STORAGE]"
+   ],
+   "summary": "L'appareil manque de place.",
+   "causes": [
+    "Stockage plein, fréquent sur émulateur.",
+    "APK de debug volumineux."
+   ],
+   "checks": [
+    "Lancez `adb shell df -h /data`."
+   ],
+   "fixes": [
+    "Libérez de l'espace.",
+    "Sur émulateur, augmentez le stockage de l'appareil virtuel."
+   ],
+   "lesson": "Un APK de debug contient toutes les architectures, et il est bien plus lourd qu'une application publiée.",
+   "validation": [
+    "Réinstallez l'APK."
+   ]
+  },
+  {
+   "id": "apk-unsigned",
+   "family": "apk",
+   "title": "APK non signé",
+   "patterns": [
+    "INSTALL_PARSE_FAILED_NO_CERTIFICATES",
+    "Failed to collect certificates",
+    "INSTALL_PARSE_FAILED_"
+   ],
+   "samples": [
+    "Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES: Failed to collect certificates]"
+   ],
+   "summary": "L'APK n'a pas de signature valide, ou il est mal formé.",
+   "causes": [
+    "Un APK de release sans configuration de signature.",
+    "Un APK modifié après sa signature."
+   ],
+   "checks": [
+    "Lancez `apksigner verify --print-certs app.apk`."
+   ],
+   "fixes": [
+    "Configurez `signingConfig`, ou signez avec `apksigner`."
+   ],
+   "lesson": "Android refuse tout APK non signé. En debug, Android Studio signe pour vous, ce qui cache cette étape.",
+   "validation": [
+    "Relancez `apksigner verify`.",
+    "Installez l'APK."
+   ]
+  },
+  {
+   "id": "abi-nomatch",
+   "family": "abi",
+   "title": "Aucune architecture compatible",
+   "patterns": [
+    "INSTALL_FAILED_NO_MATCHING_ABIS"
+   ],
+   "samples": [
+    "Failure [INSTALL_FAILED_NO_MATCHING_ABIS: Failed to extract native libraries, res=-113]"
+   ],
+   "summary": "L'APK ne contient pas de code natif pour le processeur de cet appareil.",
+   "causes": [
+    "`abiFilters` exclut cette architecture.",
+    "Une bibliothèque tierce ne la fournit pas.",
+    "Un émulateur x86_64 reçoit un APK seulement ARM."
+   ],
+   "checks": [
+    "Lancez `adb shell getprop ro.product.cpu.abilist`.",
+    "Lancez `unzip -l app.apk | grep lib/`."
+   ],
+   "fixes": [
+    "Ajoutez l'architecture à `abiFilters`.",
+    "Utilisez une bibliothèque qui la fournit, ou un autre appareil."
+   ],
+   "lesson": "Le code Kotlin tourne partout. Le code natif est compilé pour un processeur précis, et rangé par ABI dans l'APK.",
+   "validation": [
+    "Installez l'APK sur l'appareil."
+   ],
+   "example": {
+    "language": "kotlin",
+    "code": "android {\n    defaultConfig {\n        ndk {\n            abiFilters += listOf(\"arm64-v8a\", \"x86_64\")\n        }\n    }\n}"
+   }
+  },
+  {
+   "id": "abi-link",
+   "family": "abi",
+   "title": "Bibliothèque native introuvable",
+   "patterns": [
+    "UnsatisfiedLinkError",
+    "dlopen failed",
+    "couldn't find \\\"lib[\\w.-]+\\.so\\\""
+   ],
+   "samples": [
+    "java.lang.UnsatisfiedLinkError: dlopen failed: library \"libcalcul.so\" not found"
+   ],
+   "summary": "L'application ne parvient pas à charger une bibliothèque `.so`, ou à trouver une fonction native.",
+   "causes": [
+    "La bibliothèque n'existe pas pour cette ABI.",
+    "Le nom passé à `loadLibrary` est faux.",
+    "Le nom de la fonction JNI ne correspond pas."
+   ],
+   "checks": [
+    "Dans l'ordre : le nom de la bibliothèque, l'ABI, puis le nom exact de la fonction.",
+    "Lancez `unzip -l app.apk | grep .so`."
+   ],
+   "fixes": [
+    "Corrigez le nom ou ajoutez l'ABI.",
+    "Protégez du code natif les classes utiles avec une règle R8."
+   ],
+   "lesson": "JNI relie Kotlin au code natif par le nom : une seule lettre différente, et le lien casse à l'exécution, pas à la compilation.",
+   "validation": [
+    "Lancez l'application et appelez la fonction native."
+   ]
+  },
+  {
+   "id": "abi-16kb",
+   "family": "abi",
+   "title": "Bibliothèque non alignée sur 16 Ko",
+   "patterns": [
+    "not (?:be )?16 ?KB",
+    "16 ?KB[- ](?:page|aligned|alignment)",
+    "LOAD segment.*(?:align|16)"
+   ],
+   "samples": [
+    "This app isn't 16 KB compatible. libfoo.so is not 16 KB aligned."
+   ],
+   "summary": "Une bibliothèque native n'est pas prête pour les appareils à pages de 16 Ko.",
+   "causes": [
+    "Une bibliothèque tierce ancienne.",
+    "Un NDK antérieur à la r28.",
+    "Un AGP antérieur à 8.5.1."
+   ],
+   "checks": [
+    "Lancez `zipalign -c -P 16 -v 4 app.apk`.",
+    "Regardez les segments avec `llvm-objdump -p lib.so`."
+   ],
+   "fixes": [
+    "Mettez à jour AGP et le NDK.",
+    "Mettez à jour la bibliothèque tierce."
+   ],
+   "lesson": "Depuis Android 15, des appareils utilisent des pages de 16 Ko. Google Play l'exige pour les mises à jour à partir du 1er février 2027 : vérifiez la page officielle.",
+   "validation": [
+    "Relancez `zipalign`.",
+    "Testez sur un émulateur à pages de 16 Ko."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "zipalign -c -P 16 -v 4 app-release.apk"
+   }
+  },
+  {
+   "id": "crash-fatal",
+   "family": "crash",
+   "title": "Plantage au démarrage",
+   "patterns": [
+    "FATAL EXCEPTION",
+    "AndroidRuntime.*Shutting down VM"
+   ],
+   "samples": [
+    "FATAL EXCEPTION: main\nProcess: com.exemple.notes, PID: 1234\njava.lang.IllegalStateException: Boom\n\tat com.exemple.notes.MainActivity.onCreate(MainActivity.kt:21)"
+   ],
+   "summary": "Une exception non attrapée a arrêté l'application.",
+   "causes": [
+    "Une initialisation échoue dans `onCreate` ou `Application`.",
+    "Une valeur nulle, ou une ressource absente.",
+    "R8 a retiré une classe, si cela n'arrive qu'en release."
+   ],
+   "checks": [
+    "Cherchez le dernier `Caused by`.",
+    "Cherchez la première ligne de votre propre code.",
+    "Lancez `adb logcat -b crash -d`."
+   ],
+   "fixes": [
+    "Corrigez la cause de la ligne trouvée.",
+    "Reproduisez le problème avec un test."
+   ],
+   "lesson": "Une pile d'appels se lit de bas en haut pour la cause : le dernier `Caused by` est souvent la vraie origine.",
+   "validation": [
+    "Lancez l'application depuis une installation neuve.",
+    "Vérifiez que `adb logcat -b crash -d` reste vide."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb logcat -b crash -d"
+   }
+  },
+  {
+   "id": "crash-classnotfound",
+   "family": "crash",
+   "title": "Classe introuvable",
+   "patterns": [
+    "ClassNotFoundException",
+    "Didn't find class",
+    "NoClassDefFoundError"
+   ],
+   "samples": [
+    "java.lang.ClassNotFoundException: Didn't find class \"com.exemple.notes.Moteur\" on path: DexPathList"
+   ],
+   "summary": "Le système ne trouve pas une classe à l'exécution.",
+   "causes": [
+    "R8 l'a retirée en release.",
+    "Le nom dans le manifeste est faux.",
+    "Une dépendance n'est présente qu'à la compilation."
+   ],
+   "checks": [
+    "Vérifiez si le plantage n'arrive qu'en release.",
+    "Comparez le nom au manifeste."
+   ],
+   "fixes": [
+    "Ajoutez une règle `-keep` pour les classes utilisées par réflexion.",
+    "Corrigez le manifeste ou la dépendance."
+   ],
+   "lesson": "R8 retire ce qu'il ne voit pas utilisé. Une classe appelée par réflexion ou par son nom lui est invisible.",
+   "validation": [
+    "Compilez en release, installez, puis ouvrez le parcours concerné."
+   ],
+   "example": {
+    "language": "text",
+    "code": "-keep class com.exemple.notes.Moteur { *; }"
+   }
+  },
+  {
+   "id": "crash-native",
+   "family": "crash",
+   "title": "Plantage natif",
+   "patterns": [
+    "SIGSEGV",
+    "SIGABRT",
+    "signal \\d+ \\(SIG"
+   ],
+   "samples": [
+    "F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0"
+   ],
+   "summary": "Du code natif a provoqué une erreur mémoire.",
+   "causes": [
+    "Un pointeur nul.",
+    "Une bibliothèque native incompatible.",
+    "Une erreur dans un plugin."
+   ],
+   "checks": [
+    "Lisez `fault addr` : `0x0` indique souvent un pointeur nul.",
+    "Repérez la bibliothèque dans la pile."
+   ],
+   "fixes": [
+    "Traduisez la pile avec `ndk-stack`.",
+    "Mettez à jour la bibliothèque concernée."
+   ],
+   "lesson": "Un plantage natif ne produit pas d'exception Java : il faut lire le tombstone, et le traduire en lignes de code.",
+   "validation": [
+    "Reproduisez le parcours, puis vérifiez qu'aucun tombstone n'apparaît."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb logcat -d | ndk-stack -sym chemin/vers/lib/arm64-v8a"
+   }
+  },
+  {
+   "id": "crash-anr",
+   "family": "crash",
+   "title": "Application qui ne répond plus",
+   "patterns": [
+    "\\bANR in\\b",
+    "Input dispatching timed out",
+    "Application Not Responding"
+   ],
+   "samples": [
+    "ANR in com.exemple.notes (com.exemple.notes/.MainActivity)\nReason: Input dispatching timed out"
+   ],
+   "summary": "Le fil principal est resté bloqué trop longtemps.",
+   "causes": [
+    "Un accès disque ou réseau sur le fil principal.",
+    "Un long calcul.",
+    "Un interblocage."
+   ],
+   "checks": [
+    "Activez `StrictMode` en debug.",
+    "Capturez un rapport avec `adb bugreport`, puis lisez le fil `main`."
+   ],
+   "fixes": [
+    "Déplacez le travail dans une coroutine.",
+    "Affichez un état de chargement."
+   ],
+   "lesson": "Un toucher sans réponse pendant 5 secondes déclenche un ANR. Le fil principal ne sert qu'à l'interface.",
+   "validation": [
+    "Refaites le parcours sur l'appareil le plus modeste visé."
+   ]
+  },
+  {
+   "id": "splash-main-thread",
+   "family": "splash",
+   "title": "Écran de démarrage qui s'éternise",
+   "patterns": [
+    "Skipped \\d+ frames",
+    "doing too much work on its main thread"
+   ],
+   "samples": [
+    "I/Choreographer: Skipped 240 frames! The application may be doing too much work on its main thread."
+   ],
+   "summary": "L'application travaille trop sur le fil principal pendant son lancement.",
+   "causes": [
+    "Une initialisation lourde dans `Application.onCreate`.",
+    "Une lecture disque ou réseau bloquante.",
+    "Une application de debug, plus lente qu'une release."
+   ],
+   "checks": [
+    "Mesurez avec `adb shell am start -W`.",
+    "Comparez avec une version de release."
+   ],
+   "fixes": [
+    "Reportez ce qui peut l'être.",
+    "Déplacez le travail hors du fil principal."
+   ],
+   "lesson": "Tant que la première image n'est pas prête, l'utilisateur reste sur l'écran de démarrage.",
+   "validation": [
+    "Mesurez de nouveau `TotalTime`, en release."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "adb shell am start -W -n com.exemple.notes/.MainActivity"
+   }
+  },
+  {
+   "id": "splash-flutter-binding",
+   "family": "splash",
+   "title": "Flutter bloqué avant le premier écran",
+   "patterns": [
+    "Binding has not yet been initialized",
+    "ensureInitialized\\(\\)",
+    "ServicesBinding\\.defaultBinaryMessenger"
+   ],
+   "samples": [
+    "Null check operator... Binding has not yet been initialized. The \"instance\" getter on the ServicesBinding binding mixin is only available once that binding has been initialized."
+   ],
+   "summary": "Du code utilise Flutter avant que le moteur soit prêt.",
+   "causes": [
+    "Un `await` dans `main` avant `runApp`, qui touche un plugin.",
+    "Une initialisation qui échoue et laisse l'écran de démarrage affiché."
+   ],
+   "checks": [
+    "Lisez `main()`.",
+    "Regardez la console : l'erreur s'y affiche même si l'écran reste figé."
+   ],
+   "fixes": [
+    "Appelez `WidgetsFlutterBinding.ensureInitialized()` en premier.",
+    "Attrapez les erreurs d'initialisation, puis affichez un écran d'erreur."
+   ],
+   "lesson": "Une exception avant `runApp` ne s'affiche jamais à l'écran : l'application semble simplement figée.",
+   "validation": [
+    "Lancez une installation neuve.",
+    "Vérifiez que le premier écran apparaît."
+   ],
+   "example": {
+    "language": "dart",
+    "code": "Future<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await initialiser();\n  runApp(const MonApplication());\n}"
+   }
+  },
+  {
+   "id": "perm-denial",
+   "family": "permissions",
+   "title": "Permission refusée",
+   "patterns": [
+    "Permission Denial",
+    "SecurityException",
+    "requires android\\.permission\\.[A-Z_]+"
+   ],
+   "samples": [
+    "java.lang.SecurityException: Permission Denial: reading com.android.providers.contacts requires android.permission.READ_CONTACTS"
+   ],
+   "summary": "L'application utilise une fonction sans la permission nécessaire.",
+   "causes": [
+    "La permission n'est pas déclarée.",
+    "Elle n'a pas été demandée à l'exécution.",
+    "L'utilisateur l'a refusée."
+   ],
+   "checks": [
+    "Vérifiez le manifeste.",
+    "Lancez `adb shell dumpsys package com.exemple.notes` et cherchez `granted`."
+   ],
+   "fixes": [
+    "Déclarez la permission, puis demandez-la au moment utile.",
+    "Prévoyez le cas du refus."
+   ],
+   "lesson": "Une permission dangereuse se déclare **et** se demande à l'exécution. L'utilisateur peut aussi la retirer à tout moment.",
+   "validation": [
+    "Testez avec la permission accordée, puis refusée."
+   ],
+   "example": {
+    "language": "xml",
+    "code": "<uses-permission android:name=\"android.permission.READ_CONTACTS\" />"
+   }
+  },
+  {
+   "id": "perm-cleartext",
+   "family": "permissions",
+   "title": "Trafic en clair bloqué",
+   "patterns": [
+    "CLEARTEXT communication",
+    "Cleartext HTTP traffic",
+    "cleartext.*not permitted"
+   ],
+   "samples": [
+    "java.net.UnknownServiceException: CLEARTEXT communication to api.exemple.com not permitted by network security policy"
+   ],
+   "summary": "Android refuse une connexion HTTP non chiffrée.",
+   "causes": [
+    "L'adresse commence par `http://`.",
+    "La configuration de sécurité réseau l'interdit, ce qui est le réglage par défaut."
+   ],
+   "checks": [
+    "Vérifiez l'adresse.",
+    "Lisez `network_security_config.xml`."
+   ],
+   "fixes": [
+    "Passez en HTTPS.",
+    "Pour un serveur local de développement, autorisez seulement cette adresse."
+   ],
+   "lesson": "Le trafic en clair est bloqué par défaut. Ne l'autorisez pas pour toute l'application : limitez-le à l'adresse de développement.",
+   "validation": [
+    "Refaites l'appel réseau et regardez le résultat."
+   ],
+   "example": {
+    "language": "xml",
+    "code": "<network-security-config>\n    <domain-config cleartextTrafficPermitted=\"true\">\n        <domain includeSubdomains=\"false\">10.0.2.2</domain>\n    </domain-config>\n</network-security-config>"
+   }
+  },
+  {
+   "id": "perm-internet",
+   "family": "permissions",
+   "title": "Réseau inaccessible",
+   "patterns": [
+    "Failed host lookup",
+    "Unable to resolve host",
+    "missing INTERNET permission",
+    "Permission denied \\(missing INTERNET"
+   ],
+   "samples": [
+    "SocketException: Failed host lookup: 'api.exemple.com'",
+    "java.net.UnknownHostException: Unable to resolve host \"api.exemple.com\": No address associated with hostname"
+   ],
+   "summary": "L'application n'atteint pas le serveur.",
+   "causes": [
+    "La permission `INTERNET` manque en release.",
+    "L'appareil n'a pas de réseau.",
+    "Le nom du serveur est faux."
+   ],
+   "checks": [
+    "Vérifiez que `INTERNET` est dans le manifeste **principal**, pas seulement en debug.",
+    "Ouvrez l'adresse depuis le navigateur de l'appareil."
+   ],
+   "fixes": [
+    "Déclarez la permission dans `src/main/AndroidManifest.xml`.",
+    "Corrigez l'adresse."
+   ],
+   "lesson": "Avec Flutter, `INTERNET` n'est présent par défaut qu'en debug : le réseau marche pendant le développement, puis casse en release.",
+   "validation": [
+    "Testez une version de release, avec et sans réseau."
+   ],
+   "example": {
+    "language": "xml",
+    "code": "<uses-permission android:name=\"android.permission.INTERNET\" />"
+   }
+  },
+  {
+   "id": "deps-manifest",
+   "family": "dependances",
+   "title": "Fusion des manifestes impossible",
+   "patterns": [
+    "Manifest merger failed"
+   ],
+   "samples": [
+    "Manifest merger failed : uses-sdk:minSdkVersion 21 cannot be smaller than version 24 declared in library [androidx.core:core:1.13.0]"
+   ],
+   "summary": "Les manifestes du projet et des bibliothèques entrent en conflit.",
+   "causes": [
+    "Une bibliothèque exige un `minSdk` plus élevé.",
+    "Deux bibliothèques déclarent le même attribut.",
+    "`android:exported` manque sur un composant."
+   ],
+   "checks": [
+    "Lisez la fin du message : elle nomme la bibliothèque.",
+    "Ouvrez l'onglet Merged Manifest d'Android Studio."
+   ],
+   "fixes": [
+    "Augmentez `minSdk`, ou changez de bibliothèque.",
+    "Ajoutez l'attribut manquant."
+   ],
+   "lesson": "Votre manifeste final est une fusion de tous ceux de vos bibliothèques. Une bibliothèque peut donc ajouter une permission à votre insu.",
+   "validation": [
+    "Lancez `./gradlew assembleDebug`.",
+    "Vérifiez le manifeste final avec `apkanalyzer manifest print`."
+   ]
+  },
+  {
+   "id": "deps-duplicate",
+   "family": "dependances",
+   "title": "Classe en double",
+   "patterns": [
+    "Duplicate class"
+   ],
+   "samples": [
+    "Duplicate class kotlin.collections.jdk8.CollectionsJDK8Kt found in modules kotlin-stdlib-1.8.0 and kotlin-stdlib-jdk8-1.6.0"
+   ],
+   "summary": "Deux bibliothèques fournissent la même classe.",
+   "causes": [
+    "Deux versions d'une dépendance.",
+    "Une ancienne bibliothèque entraîne une dépendance dépassée."
+   ],
+   "checks": [
+    "Lancez `./gradlew :app:dependencies`.",
+    "Lancez `dependencyInsight` sur le module cité."
+   ],
+   "fixes": [
+    "Alignez les versions, par exemple avec une nomenclature (BOM).",
+    "Excluez la dépendance fautive."
+   ],
+   "lesson": "Gradle choisit en général la version la plus récente. Mais deux modules de noms différents peuvent contenir la même classe.",
+   "validation": [
+    "Lancez `./gradlew assembleDebug`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "./gradlew :app:dependencyInsight --dependency kotlin-stdlib --configuration debugRuntimeClasspath"
+   }
+  },
+  {
+   "id": "deps-pub",
+   "family": "dependances",
+   "title": "Dépendances Dart incompatibles",
+   "patterns": [
+    "version solving failed",
+    "doesn't match any versions",
+    "could not find package"
+   ],
+   "samples": [
+    "Because a depends on http ^0.1.0 which doesn't match any versions, version solving failed.",
+    "Because a depends on retrofit_x_inexistant any which doesn't exist (could not find package retrofit_x_inexistant at https://pub.dev), version solving failed."
+   ],
+   "summary": "`pub` ne trouve aucune combinaison de versions compatible.",
+   "causes": [
+    "Une contrainte de `pubspec.yaml` est trop stricte.",
+    "Deux paquets exigent des versions opposées.",
+    "Le SDK Dart est trop ancien ou trop récent."
+   ],
+   "checks": [
+    "Lisez le message depuis le début : il explique l'enchaînement.",
+    "Lancez `flutter pub outdated`."
+   ],
+   "fixes": [
+    "Assouplissez ou mettez à jour la contrainte.",
+    "Mettez à jour le paquet en conflit."
+   ],
+   "lesson": "`^1.2.3` accepte les versions compatibles jusqu'à `2.0.0` exclu : la contrainte décrit une plage, pas une version.",
+   "validation": [
+    "Lancez `flutter pub get`.",
+    "Lancez `flutter test`."
+   ],
+   "example": {
+    "language": "shell",
+    "code": "flutter pub outdated"
+   }
+  },
+  {
+   "id": "flutter-plugin",
+   "family": "flutter",
+   "title": "Plugin non relié",
+   "patterns": [
+    "MissingPluginException"
+   ],
+   "samples": [
+    "MissingPluginException(No implementation found for method write on channel plugins.it_nomads.com/flutter_secure_storage)"
+   ],
+   "summary": "Dart appelle un plugin dont la partie native n'est pas chargée.",
+   "causes": [
+    "Le plugin vient d'être ajouté, et un rechargement à chaud ne suffit pas.",
+    "Le plugin ne prend pas en charge cette plateforme.",
+    "R8 a retiré la partie native."
+   ],
+   "checks": [
+    "Arrêtez puis relancez complètement l'application.",
+    "Vérifiez les plateformes prises en charge par le plugin."
+   ],
+   "fixes": [
+    "Relancez l'application.",
+    "Essayez `flutter clean`, puis une nouvelle compilation."
+   ],
+   "lesson": "Le rechargement à chaud ne met à jour que le code Dart. Le code natif d'un plugin demande une nouvelle compilation.",
+   "validation": [
+    "Lancez une compilation complète et appelez la fonction."
+   ]
+  },
+  {
+   "id": "flutter-null",
+   "family": "flutter",
+   "title": "Valeur nulle inattendue",
+   "patterns": [
+    "Null check operator used on a null value",
+    "type 'Null' is not a subtype"
+   ],
+   "samples": [
+    "Null check operator used on a null value"
+   ],
+   "summary": "L'opérateur `!` a rencontré `null`.",
+   "causes": [
+    "Une donnée n'est pas encore chargée.",
+    "Un champ absent d'une réponse."
+   ],
+   "checks": [
+    "Regardez la pile et trouvez le `!` concerné.",
+    "Demandez-vous pourquoi la valeur est nulle à ce moment."
+   ],
+   "fixes": [
+    "Gérez le cas nul avec `?.`, `??` ou un état de chargement."
+   ],
+   "lesson": "`!` est une promesse faite au compilateur. Si elle est fausse, le programme s'arrête à l'exécution.",
+   "validation": [
+    "Testez le cas sans donnée."
+   ],
+   "example": {
+    "language": "dart",
+    "code": "final nom = utilisateur?.nom ?? 'Apprenti';"
+   }
+  },
+  {
+   "id": "flutter-overflow",
+   "family": "flutter",
+   "title": "Débordement de l'interface",
+   "patterns": [
+    "RenderFlex overflowed",
+    "A RenderFlex overflowed by"
+   ],
+   "samples": [
+    "A RenderFlex overflowed by 42 pixels on the right."
+   ],
+   "summary": "Un `Row` ou une `Column` manque de place.",
+   "causes": [
+    "Un texte long, ou un petit écran.",
+    "Un texte agrandi par les réglages d'accessibilité."
+   ],
+   "checks": [
+    "Repérez les bandes jaunes et noires en debug.",
+    "Essayez avec un texte agrandi."
+   ],
+   "fixes": [
+    "Entourez l'élément d'`Expanded` ou de `Flexible`.",
+    "Rendez la zone défilante si le contenu peut grandir."
+   ],
+   "lesson": "Un widget demande une taille à son parent : dans un `Row`, un texte long ne se coupe pas sans `Expanded`.",
+   "validation": [
+    "Testez un petit écran et un texte agrandi."
+   ],
+   "example": {
+    "language": "dart",
+    "code": "Row(\n  children: [\n    const Icon(Icons.star),\n    Expanded(child: Text(titre)),\n  ],\n)"
+   }
+  },
+  {
+   "id": "flutter-setstate",
+   "family": "flutter",
+   "title": "État modifié après la fermeture",
+   "patterns": [
+    "setState\\(\\) called after dispose",
+    "Don't use 'BuildContext's across async gaps",
+    "Looking up a deactivated widget"
+   ],
+   "samples": [
+    "setState() called after dispose(): _NotesState#1a2b3(lifecycle state: defunct, not mounted)"
+   ],
+   "summary": "Un travail asynchrone se termine après la fermeture de l'écran.",
+   "causes": [
+    "Un `await` suivi de `setState` sans vérification.",
+    "Un abonnement non annulé dans `dispose`."
+   ],
+   "checks": [
+    "Cherchez le `await` qui précède."
+   ],
+   "fixes": [
+    "Vérifiez `mounted` après chaque `await`.",
+    "Annulez les abonnements dans `dispose`."
+   ],
+   "lesson": "Pendant un `await`, l'utilisateur peut quitter l'écran. Après chaque attente, le monde a pu changer.",
+   "validation": [
+    "Quittez l'écran pendant le chargement."
+   ],
+   "example": {
+    "language": "dart",
+    "code": "final notes = await charger();\nif (!mounted) return;\nsetState(() => _notes = notes);"
+   }
+  }
+ ]
+}

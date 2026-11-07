@@ -112,7 +112,7 @@ void main() {
   });
 
   test('chaque capacité du programme a un mode', () {
-    expect(TeachingMode.values.length, 12);
+    expect(TeachingMode.values.length, 13);
     for (final mode in TeachingMode.values) {
       final prompt = systemPrompt(level: LearnerLevel.expert, mode: mode);
       expect(prompt, contains(mode.instruction));

@@ -8,6 +8,9 @@ import '../features/academie/presentation/evaluation_page.dart';
 import '../features/academie/presentation/lesson_page.dart';
 import '../features/academie/presentation/module_page.dart';
 import '../features/accueil/presentation/accueil_page.dart';
+import '../features/chaudron/domain/bug_rule.dart';
+import '../features/chaudron/presentation/bug_case_page.dart';
+import '../features/chaudron/presentation/bug_guide_page.dart';
 import '../features/chaudron/presentation/chaudron_page.dart';
 import '../features/grimoire/presentation/grimoire_page.dart';
 import '../features/lab/presentation/lab_editor_page.dart';
@@ -140,6 +143,31 @@ final routerProvider = Provider<GoRouter>((ref) {
                       path: section.path.substring(plusPath.length + 1),
                       builder: (context, state) => _pageFor(section),
                       routes: [
+                        if (section == AppSection.chaudron) ...[
+                          GoRoute(
+                            path: 'dossier/:caseId',
+                            builder: (context, state) {
+                              final id = int.tryParse(
+                                state.pathParameters['caseId']!,
+                              );
+                              return id == null
+                                  ? NotFoundPage(uri: state.uri)
+                                  : BugCasePage(caseId: id);
+                            },
+                          ),
+                          GoRoute(
+                            path: 'guide/:family',
+                            builder: (context, state) {
+                              final name = state.pathParameters['family']!;
+                              final family = BugFamily.values
+                                  .where((item) => item.name == name)
+                                  .firstOrNull;
+                              return family == null
+                                  ? NotFoundPage(uri: state.uri)
+                                  : BugGuidePage(family: family);
+                            },
+                          ),
+                        ],
                         if (section == AppSection.parametres)
                           GoRoute(
                             path: 'ia',

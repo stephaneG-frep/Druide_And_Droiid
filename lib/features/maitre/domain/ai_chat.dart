@@ -84,15 +84,19 @@ enum AiFailureKind {
 }
 
 /// Erreur présentable à l'utilisateur. [detail] vient du service, sans la clé.
+/// [hint] est un conseil de l'application, propre à la situation.
 class AiFailure implements Exception {
-  const AiFailure(this.kind, {this.detail});
+  const AiFailure(this.kind, {this.detail, this.hint});
 
   final AiFailureKind kind;
   final String? detail;
+  final String? hint;
 
-  String get message => detail == null || detail!.isEmpty
-      ? kind.message
-      : '${kind.message}\nDétail du service : $detail';
+  String get message => [
+    kind.message,
+    if (detail != null && detail!.isNotEmpty) 'Détail du service : $detail',
+    ?hint,
+  ].join('\n');
 
   @override
   String toString() => 'AiFailure(${kind.name})';

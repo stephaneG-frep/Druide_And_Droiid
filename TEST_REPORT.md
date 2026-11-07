@@ -1,5 +1,45 @@
 # Rapport de tests
 
+## Correctifs du Maître — 2026-11-07
+
+Deux problèmes signalés par l'utilisateur après la phase 8.
+
+- **« Pas de connexion » sur le Honor** : `adb reverse --list` était vide, donc le téléphone ne joignait plus Ollama. Ollama tournait toujours sur l'ordinateur. Le pont a été rétabli et `curl` répond depuis le téléphone. L'application explique désormais cette cause.
+- **« Ça revient sur Ollama »** : les deux bases contenaient `ai.active = ollama`, avec Anthropic configuré. Seul le bouton **Enregistrer et activer** modifie ce réglage, et choisir dans la liste ne l'activait pas. Un nouveau test montre qu'un fournisseur enregistré survit à la fermeture : le défaut ne venait donc pas de la sauvegarde, mais d'un écran trop peu clair. C'est la cause la plus probable, pas une certitude, car le geste exact de l'utilisateur n'a pas été observé.
+
+Vérifications : `flutter test` et l'intégration du Maître sur Linux réussissent, et la base du Honor reste identique après la mise à jour.
+
+Non vérifié : le nouveau sélecteur et les nouveaux messages n'ont été essayés que dans les tests d'écran, pas à la main sur le Honor.
+
+## Phase 8 — 2026-11-07
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 324 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| 37 fiches : six parties complètes, exemples reconnus, journal sain sans fausse alerte | Vérifié |
+| Messages réels relevés ici (ADB, `pub`, Gradle, plugin) | Reconnus |
+| Masquage des secrets et réduction des longs journaux | Vérifiés |
+| Parcours d'écran : sans IA, avec IA simulée, vérification, suppression | Vérifiés |
+| Consigne du Chaudron face à un vrai Ollama (`gemma3:1b`) | Les six titres sortent, le contenu reste faible : voir ci-dessous |
+| Intégration Linux | Socle 5 sur 5, Maître 1 sur 1, Lab 3 sur 3 |
+| Migration de la version 5 à la version 6 | Testée sur une base de fichier, sans perte |
+| Mise à jour sur Honor | Base migrée en version 6, données identiques, lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+### Qualité observée avec un petit modèle
+
+Sur `INSTALL_FAILED_NO_MATCHING_ABIS`, `gemma3:1b` a respecté la structure, mais n'a pas identifié l'architecture du processeur et a proposé des pistes hors sujet, comme un antivirus. Un petit modèle local peut donc induire en erreur. Dans l'application, les fiches reconnues sont transmises au modèle, ce que cet essai direct ne faisait pas.
+
+### Non vérifié
+
+- **Analyse IA avec Anthropic** : la consigne du Chaudron n'a pas été essayée avec un grand modèle, faute de clé dans cette session.
+- **Import de fichier** : la boîte de dialogue réelle n'a été ouverte ni sur Linux ni sur le Honor. Le test utilise un faux sélecteur.
+- **Bouton ADB** : testé par la ligne de commande équivalente, pas depuis l'écran.
+- **Fiches** : leurs exemples sont en partie rédigés d'après la documentation et mes connaissances. Seuls quelques messages ont été relevés pour de vrai, et leurs conseils n'ont pas été rejoués panne par panne.
+- **Masquage** : il repère des formes connues, pas tous les secrets possibles.
+- **Lecteur d'écran** : ces écrans n'ont pas été parcourus avec TalkBack.
+
 ## Phase 7 — 2026-11-06
 
 | Vérification | Résultat |

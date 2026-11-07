@@ -432,6 +432,50 @@ data: {"candidates":[{"content":{"role":"model","parts":[{"text":"jour"}]},"fini
       );
     });
 
+    test('Ollama injoignable sur téléphone explique le pont USB', () async {
+      final url = fake.url;
+      await fake.server.close(force: true);
+      final client = createAiClient(
+        config: AiProviderConfig(kind: AiProviderKind.ollama, baseUrl: url),
+        apiKey: null,
+        clientFactory: http.Client.new,
+        onAndroid: true,
+      );
+
+      await expectLater(
+        client.listModels(),
+        throwsA(
+          isA<AiFailure>().having(
+            (error) => error.message,
+            'message',
+            contains('adb reverse tcp:11434 tcp:11434'),
+          ),
+        ),
+      );
+    });
+
+    test('Ollama éteint sur Linux invite à le démarrer', () async {
+      final url = fake.url;
+      await fake.server.close(force: true);
+      final client = createAiClient(
+        config: AiProviderConfig(kind: AiProviderKind.ollama, baseUrl: url),
+        apiKey: null,
+        clientFactory: http.Client.new,
+        onAndroid: false,
+      );
+
+      await expectLater(
+        client.listModels(),
+        throwsA(
+          isA<AiFailure>().having(
+            (error) => error.message,
+            'message',
+            contains('ollama serve'),
+          ),
+        ),
+      );
+    });
+
     test('une réponse illisible est signalée', () async {
       fake.reply('data: pas du json\n\n');
       await expectLater(

@@ -163,3 +163,13 @@ Règles à respecter :
 - `ToolCommands` n'accepte que les valeurs de `LabCommand`, sans shell. N'ajoutez jamais de terminal libre.
 - `ToolDetector` reçoit son environnement et sa fonction `exists`, ce qui le rend testable sans les outils.
 - `SystemCodeExporter` écrit directement sur Linux, car la boîte de dialogue de `file_picker` y dépend d'outils souvent absents, et il n'écrase jamais un fichier.
+
+## Chaudron des Bugs
+
+`lib/features/chaudron` sépare trois choses, que l'interface ne doit jamais mélanger :
+
+- Les **fiches** de `assets/bugs/rules.json` : du texte préenregistré, reconnu par des expressions régulières. L'écran dit toujours que ce n'est pas une IA. Pour ajouter une fiche, renseignez ses six parties et au moins un message dans `samples` : `test/features/chaudron/bug_rules_test.dart` vérifie qu'elle le reconnaît.
+- L'**analyse IA** : une conversation normale du Maître en mode `diagnose`. Le message passe par `extractRelevant`, puis `redactSecrets`, puis l'écran de relecture.
+- La **vérification** : `BugStatus` ne change que par une action de l'utilisateur, et `recordVerification` refuse une réussite sans résultat noté. Aucun code ne doit passer un dossier à `verified` à partir d'une réponse d'IA.
+
+Le texte d'origine reste en clair dans la base locale : seul l'envoi est filtré.

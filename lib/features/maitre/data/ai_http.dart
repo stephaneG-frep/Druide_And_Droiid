@@ -10,13 +10,21 @@ typedef HttpClientFactory = http.Client Function();
 
 /// Transport commun : délais, erreurs traduites, lecture ligne par ligne.
 class AiHttp {
-  AiHttp({required this.clientFactory, required this.timeout, this.secret});
+  AiHttp({
+    required this.clientFactory,
+    required this.timeout,
+    this.secret,
+    this.connectionHint,
+  });
 
   final HttpClientFactory clientFactory;
   final Duration timeout;
 
   /// Retiré de tout texte d'erreur affiché ou enregistré.
   final String? secret;
+
+  /// Ajouté aux erreurs de connexion, quand la cause probable est connue.
+  final String? connectionHint;
 
   final _active = <http.Client>{};
 
@@ -49,11 +57,11 @@ class AiHttp {
     } on TimeoutException {
       throw const AiFailure(AiFailureKind.timeout);
     } on SocketException {
-      throw const AiFailure(AiFailureKind.network);
+      throw AiFailure(AiFailureKind.network, hint: connectionHint);
     } on HandshakeException {
-      throw const AiFailure(AiFailureKind.network);
+      throw AiFailure(AiFailureKind.network, hint: connectionHint);
     } on http.ClientException {
-      throw const AiFailure(AiFailureKind.network);
+      throw AiFailure(AiFailureKind.network, hint: connectionHint);
     } finally {
       _active.remove(client);
       client.close();

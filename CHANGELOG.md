@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## Correctifs du Maître — 2026-11-07
+
+- Les réglages affichent le fournisseur actif, et préviennent si celui de la liste ne l'est pas.
+- Le Maître change de fournisseur d'un geste, parmi ceux déjà configurés.
+- Le test de connexion ne choisit plus le premier modèle de la liste, qui pouvait être le plus cher.
+- Une erreur de connexion avec Ollama explique la cause probable : pont USB perdu sur téléphone, Ollama éteint sur Linux.
+
+## Phase 8 — 2026-11-07
+
+- Dossiers du Chaudron des Bugs : erreur, journal importé, description et code.
+- 37 fiches de diagnostic préenregistrées, sur dix familles de pannes, avec exemples de corrections.
+- Diagnostics guidés par famille, avec listes de vérifications.
+- Analyse IA en six parties, avec relecture de ce qui part et masquage des secrets.
+- État du dossier : rien n'est résolu sans résultat de vérification noté.
+- Sur Linux, lecture des plantages de l'appareil par ADB.
+- Base en version 6.
+
 ## Phase 7 — 2026-11-06
 
 - Éditeur de code avec coloration, numéros de ligne et sauvegarde automatique.
