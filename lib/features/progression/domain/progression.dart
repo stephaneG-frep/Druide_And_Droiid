@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// Grades de l'Académie. Les seuils sont provisoires : la phase 10 les ajustera.
+/// Grades de l'Académie. Grand Druide demande d'avoir parcouru presque tout le
+/// programme : `test/features/progression/gamification_test.dart` le vérifie.
 enum Rank {
   apprenti('Apprenti du Droid', 0, Icons.auto_fix_normal),
-  initie('Initié des Circuits', 100, Icons.memory),
-  alchimiste('Alchimiste Kotlin', 300, Icons.science),
-  mage('Mage des Interfaces', 600, Icons.dashboard_customize),
-  gardien('Gardien du SDK', 1000, Icons.shield),
-  maitre('Maître du Débogage', 1500, Icons.bug_report),
-  archimage('Archimage Android', 2200, Icons.auto_awesome),
-  grandDruide('Grand Druide And-Droiīd', 3000, Icons.park);
+  initie('Initié des Circuits', 150, Icons.memory),
+  alchimiste('Alchimiste Kotlin', 500, Icons.science),
+  mage('Mage des Interfaces', 1200, Icons.dashboard_customize),
+  gardien('Gardien du SDK', 2400, Icons.shield),
+  maitre('Maître du Débogage', 4000, Icons.bug_report),
+  archimage('Archimage Android', 6500, Icons.auto_awesome),
+  grandDruide('Grand Druide And-Droiīd', 9000, Icons.park);
 
   const Rank(this.title, this.minXp, this.icon);
 

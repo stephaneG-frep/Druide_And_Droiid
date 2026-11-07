@@ -165,7 +165,7 @@ void main() {
     await repository.completeLesson(
       lessonId: 'grosse-leçon',
       moduleId: 'kotlin',
-      xp: 100,
+      xp: Rank.initie.minXp,
     );
 
     expect((await snapshot()).rank, Rank.initie);

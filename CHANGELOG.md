@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## Phase 10 — 2026-11-07
+
+- Barème définitif, avec expérience pour le Lab, les projets, les bugs vérifiés et l'évaluation finale.
+- Seuils des huit grades fixés : Grand Druide demande 9 000 XP.
+- Vingt badges, conservés une fois gagnés.
+- Défis du jour et de la semaine, à réclamer.
+- Statistiques, avancement par module et série de jours.
+- Parcours personnalisés et objectif hebdomadaire.
+- Historique des récompenses.
+- Certificats internes, présentés comme tels.
+- Base en version 8.
+
 ## Phase 9 — 2026-11-07
 
 - Vingt projets progressifs, avec objectif, prérequis, étapes, code, test, questionnaire et critères de réussite.

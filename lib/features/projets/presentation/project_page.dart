@@ -17,6 +17,7 @@ import '../../academie/presentation/quiz_runner.dart';
 import '../../maitre/data/ai_settings_repository.dart';
 import '../../maitre/domain/teaching.dart';
 import '../../maitre/presentation/ai_actions.dart';
+import '../../progression/presentation/reward_toast.dart';
 import '../data/project_repository.dart';
 import '../domain/project.dart';
 
@@ -91,7 +92,10 @@ class _ProjectContentState extends ConsumerState<_ProjectContent> {
       return;
     }
     await _repository.complete(_project);
-    if (mounted) showDruideToast(context, 'Projet terminé, bravo !');
+    if (mounted) {
+      showDruideToast(context, 'Projet terminé, bravo !');
+      await rewardAndCelebrate(context, ref);
+    }
   }
 
   @override

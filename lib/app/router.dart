@@ -23,6 +23,8 @@ import '../features/maitre/presentation/maitre_page.dart';
 import '../features/notes/presentation/note_editor_page.dart';
 import '../features/notes/presentation/notes_page.dart';
 import '../features/parametres/presentation/parametres_page.dart';
+import '../features/progression/presentation/certificate_page.dart';
+import '../features/progression/presentation/history_page.dart';
 import '../features/progression/presentation/progression_page.dart';
 import '../features/projets/presentation/final_project_page.dart';
 import '../features/projets/presentation/project_page.dart';
@@ -181,6 +183,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                             path: 'evaluation-finale',
                             builder: (context, state) =>
                                 const FinalProjectPage(),
+                          ),
+                        ],
+                        if (section == AppSection.progression) ...[
+                          GoRoute(
+                            path: 'historique',
+                            builder: (context, state) => const HistoryPage(),
+                          ),
+                          GoRoute(
+                            path: 'certificat/:certificateId',
+                            builder: (context, state) => CertificatePage(
+                              certificateId:
+                                  state.pathParameters['certificateId']!,
+                            ),
                           ),
                         ],
                         if (section == AppSection.parametres)

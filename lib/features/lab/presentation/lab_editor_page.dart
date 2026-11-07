@@ -19,6 +19,7 @@ import '../../../design_system/techno_card.dart';
 import '../../academie/presentation/lesson_blocks.dart';
 import '../../maitre/data/ai_settings_repository.dart';
 import '../../maitre/presentation/ai_actions.dart';
+import '../../progression/presentation/reward_toast.dart';
 import '../data/code_runner.dart';
 import '../data/lab_platform.dart';
 import '../data/lab_repository.dart';
@@ -153,7 +154,10 @@ class _EditorState extends ConsumerState<_Editor> with WidgetsBindingObserver {
 
   Future<void> _markSolved() async {
     await _repository.markSolved(_exercise.id, _code.text);
-    if (mounted) showDruideToast(context, 'Exercice réussi !');
+    if (mounted) {
+      showDruideToast(context, 'Exercice réussi !');
+      await rewardAndCelebrate(context, ref);
+    }
   }
 
   Future<void> _checkXml() async {

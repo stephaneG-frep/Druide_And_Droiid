@@ -158,3 +158,12 @@ class FinalProjectScores extends Table {
   @override
   Set<Column<Object>> get primaryKey => {criterion};
 }
+
+/// Badges obtenus. Une fois gagné, un badge n'est jamais retiré.
+class BadgeUnlocks extends Table {
+  TextColumn get badgeId => text()();
+  DateTimeColumn get unlockedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {badgeId};
+}

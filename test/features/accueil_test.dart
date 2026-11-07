@@ -1,3 +1,4 @@
+import 'package:druide_and_droiid/features/progression/domain/progression.dart';
 import 'package:druide_and_droiid/app/sections.dart';
 import 'package:druide_and_droiid/features/accueil/domain/flash_questions.dart';
 import 'package:druide_and_droiid/features/progression/data/progress_repository.dart';
@@ -76,6 +77,6 @@ void main() {
     await answer(tester, correctly: true);
     await goTo(tester, container, AppSection.progression.path);
 
-    expect(find.text('$flashQuizXp / 100 XP'), findsOneWidget);
+    expect(find.text('$flashQuizXp / ${Rank.initie.minXp} XP'), findsOneWidget);
   });
 }
