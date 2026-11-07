@@ -12,6 +12,8 @@ import '../../../design_system/techno_card.dart';
 import '../../academie/domain/module_catalog.dart';
 import '../data/notes_repository.dart';
 import '../domain/note.dart';
+import '../../sauvegarde/presentation/pdf_action.dart';
+import '../../sauvegarde/data/document_exports.dart';
 
 const newNotePath = '/note/nouvelle';
 
@@ -26,6 +28,14 @@ class NotesPage extends ConsumerWidget {
 
     return PageFrame(
       title: AppSection.notes.label,
+      actions: [
+        PdfExportButton(
+          fileName: 'mes-notes.pdf',
+          build: (ref) async => ref
+              .read(pdfExporterProvider)
+              .notes(await ref.read(notesRepositoryProvider).watch().first),
+        ),
+      ],
       children: [
         Align(
           alignment: Alignment.centerLeft,

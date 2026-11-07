@@ -9,6 +9,8 @@ import '../../../design_system/techno_card.dart';
 import '../../progression/presentation/reward_toast.dart';
 import '../data/project_repository.dart';
 import '../domain/final_grid.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class FinalProjectPage extends ConsumerStatefulWidget {
   const FinalProjectPage({super.key});
@@ -68,6 +70,7 @@ class _FinalProjectPageState extends ConsumerState<FinalProjectPage> {
 
     return PageFrame(
       title: 'Évaluation finale',
+      actions: const [HelpButton(GrimoireTopic.projets)],
       children: [
         Text(
           'Votre propre application, utile à au moins une personne réelle. '

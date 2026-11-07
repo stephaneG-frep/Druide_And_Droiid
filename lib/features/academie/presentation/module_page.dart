@@ -18,6 +18,8 @@ import '../domain/module_catalog.dart';
 import '../domain/rewards.dart';
 import 'level_color.dart';
 import 'paths.dart';
+import '../../sauvegarde/presentation/pdf_action.dart';
+import '../../sauvegarde/data/document_exports.dart';
 
 /// Programme d'un module. Les leçons elles-mêmes arrivent en phases 4 et 5.
 class ModulePage extends ConsumerWidget {
@@ -64,6 +66,12 @@ class ModulePage extends ConsumerWidget {
           selectedIcon: Icon(Icons.star, color: techno.orange),
           onPressed: () => _toggleFavorite(context, ref, favorite: !isFavorite),
         ),
+        if (course.value case CourseReady(:final course))
+          PdfExportButton(
+            fileName: 'module-${module.number}-${module.id}.pdf',
+            build: (ref) =>
+                ref.read(pdfExporterProvider).course(module, course),
+          ),
       ],
       children: [
         Text(module.title, style: context.text.headlineSmall),

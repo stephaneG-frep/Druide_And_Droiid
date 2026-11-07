@@ -11,6 +11,8 @@ import '../data/ai_settings_repository.dart';
 import '../domain/ai_chat.dart';
 import '../domain/ai_provider.dart';
 import 'chat_controller.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class AiSettingsPage extends ConsumerWidget {
   const AiSettingsPage({super.key});
@@ -21,6 +23,7 @@ class AiSettingsPage extends ConsumerWidget {
 
     return PageFrame(
       title: 'Réglages du Maître',
+      actions: const [HelpButton(GrimoireTopic.fournisseurs)],
       children: [
         switch (settings) {
           AsyncData(:final value) => _ProviderForm(settings: value),

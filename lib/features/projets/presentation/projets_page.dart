@@ -14,6 +14,8 @@ import '../data/project_repository.dart';
 import '../domain/final_grid.dart';
 import '../domain/project.dart';
 import 'project_paths.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class ProjetsPage extends ConsumerWidget {
   const ProjetsPage({super.key});
@@ -26,6 +28,7 @@ class ProjetsPage extends ConsumerWidget {
 
     return PageFrame(
       title: AppSection.projets.label,
+      actions: const [HelpButton(GrimoireTopic.projets)],
       children: [
         Text(
           'Vingt projets progressifs pour passer de la théorie à de vraies '

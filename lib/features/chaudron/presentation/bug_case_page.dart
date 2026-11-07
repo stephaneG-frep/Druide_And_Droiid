@@ -19,6 +19,8 @@ import '../data/bug_repository.dart';
 import '../domain/bug_rule.dart';
 import '../domain/log_tools.dart';
 import 'bug_rule_view.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class BugCasePage extends ConsumerWidget {
   const BugCasePage({required this.caseId, super.key});
@@ -192,6 +194,7 @@ class _CaseContentState extends ConsumerState<_CaseContent> {
     return PageFrame(
       title: 'Dossier',
       actions: [
+        const HelpButton(GrimoireTopic.logs),
         IconButton(
           tooltip: 'Supprimer le dossier',
           icon: const Icon(Icons.delete_outline),

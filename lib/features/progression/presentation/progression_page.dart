@@ -24,6 +24,8 @@ import '../domain/learning_paths.dart';
 import '../domain/progression.dart';
 import 'progression_paths.dart';
 import 'reward_toast.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class ProgressionPage extends ConsumerStatefulWidget {
   const ProgressionPage({super.key});
@@ -73,6 +75,7 @@ class _ProgressionPageState extends ConsumerState<ProgressionPage> {
 
     return PageFrame(
       title: AppSection.progression.label,
+      actions: const [HelpButton(GrimoireTopic.progression)],
       children: [
         if (statsValue.hasError)
           const ErrorNotice(message: 'Impossible de lire votre progression.'),

@@ -13,6 +13,8 @@ import '../data/lab_platform.dart';
 import '../data/lab_repository.dart';
 import '../domain/lab_exercise.dart';
 import 'lab_paths.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class LabPage extends ConsumerWidget {
   const LabPage({super.key});
@@ -25,6 +27,7 @@ class LabPage extends ConsumerWidget {
 
     return PageFrame(
       title: AppSection.lab.label,
+      actions: const [HelpButton(GrimoireTopic.lab)],
       children: [
         Text(
           canRun

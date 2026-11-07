@@ -27,6 +27,8 @@ import '../domain/lab_checks.dart';
 import '../domain/lab_exercise.dart';
 import 'code_editor.dart';
 import 'diff_view.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class LabDraftSaver extends Autosaver {
   LabDraftSaver(this._repository, this.exerciseId, this.code)
@@ -464,6 +466,7 @@ class _EditorState extends ConsumerState<_Editor> with WidgetsBindingObserver {
       appBar: AppBar(
         leading: BackButton(onPressed: () => context.go(AppSection.lab.path)),
         title: Text(_exercise.title),
+        actions: const [HelpButton(GrimoireTopic.lab)],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

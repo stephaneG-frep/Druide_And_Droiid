@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:druide_and_droiid/design_system/code_highlighter.dart';
 import 'package:druide_and_droiid/features/lab/data/code_runner.dart';
-import 'package:druide_and_droiid/features/lab/data/lab_platform.dart';
+import 'package:druide_and_droiid/features/sauvegarde/data/file_saver.dart';
 import 'package:druide_and_droiid/features/lab/data/tool_detector.dart';
 import 'package:druide_and_droiid/features/lab/domain/lab_checks.dart';
 import 'package:druide_and_droiid/features/lab/domain/lab_exercise.dart';
@@ -50,17 +50,19 @@ void main() {
     expect(result.errors, contains('Main.kt'));
   }, timeout: const Timeout(Duration(minutes: 2)));
 
-  test('l\'export écrit un vrai fichier sans écraser', () async {
-    const exporter = SystemCodeExporter();
+  test('l\'export de repli écrit un vrai fichier sans écraser', () async {
     final name = 'essai-${DateTime.now().microsecondsSinceEpoch}.kt';
 
-    final first = await exporter.export(name, 'fun main() {} // été');
-    final second = await exporter.export(name, 'deuxième');
+    final first = await saveInDownloads(
+      name,
+      utf8.encode('fun main() {} // été'),
+    );
+    final second = await saveInDownloads(name, utf8.encode('deuxième'));
     expect(first, isNot(second));
 
     final directory = await getDownloadsDirectory();
     expect(first, startsWith(directory!.path));
-    for (final path in [first!, second!]) {
+    for (final path in [first, second]) {
       addTearDown(() => File(path).delete());
     }
     expect(await File(first).readAsString(), 'fun main() {} // été');

@@ -1,5 +1,30 @@
 # Rapport de tests
 
+## Phase 11 — 2026-11-07
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 401 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| Sauvegarde puis restauration, toutes les tables remplies | Données identiques, ligne par ligne |
+| Clés d'API | Absentes de toute sauvegarde |
+| Sauvegardes invalides, plus récentes ou interrompues | Refusées, sans toucher aux données |
+| Sauvegarde d'une version plus ancienne | Restaurée |
+| Réouverture de la base après fermeture | Données identiques |
+| PDF lus par `pdftotext` | Accents, titres, code et mention des certificats présents |
+| Intégration Linux | Socle 5 sur 5, Maître 1 sur 1, Lab 3 sur 3, sauvegardes 3 sur 3 (ZIP sur disque restauré, copie dans le dossier privé, PDF écrit) |
+| Copie de sécurité sur le Honor | Créée au démarrage dans `files/sauvegardes`, version 8, sans clé |
+| Mise à jour sur Honor | Base identique, lancement sans plantage |
+| Intégration sur Honor | **Non lancée** : elle désinstalle l'application |
+
+### Non vérifié
+
+- **Boîtes de dialogue d'enregistrement et d'ouverture** : le sélecteur d'Android et la boîte de dialogue de GTK n'ont pas été ouverts. Les tests passent par de faux sélecteurs, ou par le repli vers Téléchargements.
+- **Restauration sur le Honor** : la copie de sécurité y a été créée et lue, mais aucune restauration n'a été lancée sur le téléphone.
+- **Impression des PDF** : leur texte a été vérifié, leur mise en page n'a pas été relue à l'œil.
+- **Sauvegarde volumineuse** : la copie du Honor pèse environ 1 Mo. Le comportement avec beaucoup plus de données n'a pas été mesuré.
+- **Lecteur d'écran** : les nouveaux écrans n'ont pas été parcourus avec TalkBack.
+
 ## Phase 10 — 2026-11-07
 
 | Vérification | Résultat |

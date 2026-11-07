@@ -11,6 +11,8 @@ import '../../../design_system/page_frame.dart';
 import '../../../design_system/techno_card.dart';
 import '../data/lab_platform.dart';
 import '../domain/lab_tools.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class LabToolsPage extends ConsumerStatefulWidget {
   const LabToolsPage({super.key});
@@ -104,6 +106,7 @@ class _LabToolsPageState extends ConsumerState<LabToolsPage> {
 
     return PageFrame(
       title: 'Outils Linux',
+      actions: const [HelpButton(GrimoireTopic.linux)],
       children: [
         Text(
           'Le Lab détecte vos outils et ne lance que les commandes ci-dessous. '

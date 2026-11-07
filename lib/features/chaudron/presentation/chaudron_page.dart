@@ -18,6 +18,8 @@ import '../data/log_importer.dart';
 import '../domain/bug_rule.dart';
 import '../domain/log_tools.dart';
 import 'chaudron_paths.dart';
+import '../../grimoire/domain/grimoire_topics.dart';
+import '../../grimoire/presentation/help_button.dart';
 
 class ChaudronPage extends ConsumerStatefulWidget {
   const ChaudronPage({super.key});
@@ -117,6 +119,7 @@ class _ChaudronPageState extends ConsumerState<ChaudronPage> {
 
     return PageFrame(
       title: AppSection.chaudron.label,
+      actions: const [HelpButton(GrimoireTopic.logs)],
       children: [
         const DialogueBubble(
           origin: 'Message préenregistré',

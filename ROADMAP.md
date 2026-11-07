@@ -12,14 +12,13 @@
 | 8 | Chaudron des Bugs | Terminée le 2026-11-07 |
 | 9 | Projets pratiques | Terminée le 2026-11-07 |
 | 10 | Gamification | Terminée le 2026-11-07 |
-| 11 | Sauvegardes et documentation | À faire |
+| 11 | Sauvegardes et documentation | Terminée le 2026-11-07 |
 | 12 | Audit général | À faire |
 | 13 | Compilation et livraison | À faire |
 
 ## Points ouverts
 
-- Branche `phase-10-gamification` à fusionner dans `main`.
-- Phase 11 : prévoir les brouillons et versions du Lab, les dossiers du Chaudron et le suivi des projets et les badges, dans les sauvegardes. Ajouter l'export PDF des certificats.
+- Branche `phase-11-sauvegardes` à fusionner dans `main`.
 - OpenAI et Gemini restent à essayer avec une vraie clé. Leur code n'a été testé que face à un serveur local.
 - Android : Ollama n'est joignable en HTTP que sur `127.0.0.1` (avec `adb reverse`) ou `10.0.2.2`. Une adresse du réseau local exige HTTPS.
 - Phase 13 : le projet reste sur AGP 9.1.0 et Gradle 9.3.1. Les bibliothèques Android récentes exigent `compileSdk 37`, AGP 9.5 et Gradle 9.6.
