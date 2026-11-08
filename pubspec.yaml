@@ -81,6 +81,9 @@ flutter:
     - assets/lab/
     - assets/bugs/
     - assets/projects/
+    - assets/fonts/atkinsonhyperlegible-OFL.txt
+    - assets/fonts/chakrapetch-OFL.txt
+    - assets/fonts/ibmplexmono-OFL.txt
 
   fonts:
     - family: ChakraPetch

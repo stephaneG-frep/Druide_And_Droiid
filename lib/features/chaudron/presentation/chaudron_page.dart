@@ -83,7 +83,14 @@ class _ChaudronPageState extends ConsumerState<ChaudronPage> {
       }
     });
     if (result.failed) {
-      showDruideToast(context, result.output, kind: ToastKind.error);
+      final detail = result.output.trim();
+      showDruideToast(
+        context,
+        'Journal de l\'appareil illisible. Vérifiez que le téléphone est '
+        'branché et le débogage USB autorisé.'
+        '${detail.isEmpty ? '' : '\n$detail'}',
+        kind: ToastKind.error,
+      );
     }
   }
 

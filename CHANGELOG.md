@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Phase 12 — 2026-11-07
+
+- Écran « Licences » dans les Paramètres : licences des paquets et des trois polices (SIL OFL 1.1), avec la version de l'application.
+- Le Lab affiche un message en français quand une commande ne peut pas être lancée. Le détail technique reste dans le journal de débogage.
+- Cours avancé : le Chaudron des Bugs n'est plus annoncé comme « bientôt » disponible.
+- Tests d'audit : toutes les pages sur six tailles d'écran, deux thèmes et deux tailles de texte ; règles d'accessibilité de Flutter sur dix-sept pages.
+
 ## Phase 11 — 2026-11-07
 
 - Export et import JSON de toutes les données, sans les clés d'API.

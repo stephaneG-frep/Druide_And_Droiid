@@ -1,5 +1,41 @@
 # Rapport de tests
 
+## Phase 12, audit général — 2026-11-07
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` et `dart analyze --fatal-infos` | Aucun problème |
+| `flutter test` | 438 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| Navigation | 21 pages, dont toutes celles des phases 6 à 11, sur 6 tailles d'écran, 2 thèmes et texte à 100 % puis 200 % : aucun débordement, aucune page introuvable |
+| Accessibilité automatique | 17 pages, thèmes sombre et clair : cibles tactiles de 48 dp, cibles nommées, contraste du texte |
+| Hors ligne, Linux, réseau coupé (`unshare -n`) | Lab 3 sur 3, sauvegardes 3 sur 3, socle 4 sur 5 |
+| Échec hors ligne restant | Le coffre à secrets : le trousseau du bureau n'est pas joignable depuis l'espace isolé. Même échec réseau ouvert dans cet espace, succès hors de l'espace : la cause est l'isolement, pas l'absence de réseau. L'application affiche alors son message « coffre indisponible » |
+| Intégration Linux normale | Socle 5 sur 5, Maître 1 sur 1 |
+| Vulnérabilités connues (OSV, 137 paquets de `pubspec.lock`) | Aucune |
+| Licences des 137 paquets | BSD, MIT, Apache-2.0 ; `dbus` sous MPL-2.0, utilisé sans modification |
+| Clés et secrets | Aucune clé dans le code ni dans l'historique git, hormis deux fausses clés volontaires du test de masquage ; clés exclues des sauvegardes ; aucun journal ne les affiche |
+| Manifeste Android | Internet seulement, `allowBackup=false`, HTTP clair limité à la machine locale |
+| Exemples des cours | 127 exécutés, 106 extraits Android compilés, 18 extraits Flutter analysés et compilés, 0 erreur |
+| Lab et projets | 18 exercices, 20 projets vérifiés |
+| Démarrage à froid sur le Honor, build profile | 849 à 943 ms sur 5 mesures, médiane 883 ms |
+| Mémoire sur le Honor, accueil | 235 Mo (PSS) |
+| Base du Honor | Identique après installation du profile puis retour au debug |
+
+### Anomalies corrigées
+
+- Aucun écran ne listait les licences ; les licences des polices n'étaient pas embarquées. Ajout d'un écran « Licences » dans les Paramètres.
+- Le Lab affichait l'exception brute quand une commande ne pouvait pas démarrer. Message en français, détail dans le journal de débogage.
+- Le Chaudron affichait le message anglais d'adb seul quand la lecture du journal échouait. Explication en français ajoutée devant.
+- Le cours avancé annonçait le Chaudron des Bugs comme « bientôt » disponible.
+- Commentaire de code périmé sur l'expérience de la question flash.
+
+### Non vérifié
+
+- **Lecteurs d'écran** : TalkBack et Orca n'ont pas été utilisés. Les règles automatiques ne les remplacent pas.
+- **Taille de l'APK release** : l'APK profile pèse 100 Mo, toutes architectures. La version release est l'objet de la phase 13.
+- **Hors ligne sur le Honor** : non testé en mode avion.
+- **Fluidité image par image** : aucune trace de rendu n'a été enregistrée.
+
 ## Phase 11 — 2026-11-07
 
 | Vérification | Résultat |

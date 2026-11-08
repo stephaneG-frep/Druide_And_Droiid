@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 import '../domain/lab_tools.dart';
 import 'tool_detector.dart';
 
@@ -59,7 +61,12 @@ class LocalToolCommands implements ToolCommands {
       final text = '${result.stdout}${result.stderr}'.trimRight();
       return CommandResult(text, failed: result.exitCode != 0);
     } on Exception catch (error) {
-      return CommandResult('Commande impossible : $error', failed: true);
+      debugPrint('Commande $executable impossible : $error');
+      return CommandResult(
+        'La commande n\'a pas pu être lancée. Vérifiez que l\'outil est '
+        'installé et accessible, puis réessayez.',
+        failed: true,
+      );
     }
   }
 

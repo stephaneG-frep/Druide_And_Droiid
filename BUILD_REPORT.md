@@ -1,5 +1,16 @@
 # Rapport de compilation
 
+## Phase 12 — 2026-11-07
+
+| Livrable | Commande | Résultat |
+| --- | --- | --- |
+| APK profile | `flutter build apk --profile` | 100,2 Mo, toutes architectures, installé sur le Honor pour la mesure |
+| APK debug | `flutter build apk --debug` | Réinstallé sur le Honor, base conservée |
+| Extraits Android | `python3 tool/check_android_snippets.py` sur les douze modules | 106 extraits compilés |
+| Extraits Flutter | `python3 tool/check_flutter_snippets.py flutter expert` | 18 extraits analysés, APK de preuve compilé |
+
+Avertissement sans effet à la compilation : Flutter cherche la police `CupertinoIcons`, que l'application n'utilise pas.
+
 ## Phase 11 — 2026-11-07
 
 | Cible | Commande | Résultat |
