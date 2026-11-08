@@ -4,7 +4,14 @@
 
 Académie Android interactive en français, pour Android et Linux, développée avec Flutter.
 
-**État : phase 11 (Sauvegardes et documentation) terminée.** Les douze modules sont rédigés, et le Professeur IA est validé avec Ollama et Anthropic. Le détail est dans [ROADMAP.md](ROADMAP.md).
+**État : version 1.0.0 compilée (phase 13).** APK Android et paquet Debian produits et installés ; quelques vérifications restent à faire, listées dans [ROADMAP.md](ROADMAP.md). L'APK est signé avec une clé de debug : il n'est pas destiné à un magasin d'applications.
+
+## Installer
+
+- **Android 7.0 ou plus** : installez `Druide_And-Droiid_v1.0.0.apk` (autorisez l'installation depuis cette source), ou `adb install Druide_And-Droiid_v1.0.0.apk`.
+- **Ubuntu, PC x86-64** (essayé sur 22.04 seulement) : `sudo apt install ./Druide_And-Droiid_v1.0.0_amd64.deb`, puis lancez **Druide And-Droiīd** depuis le menu ou avec `druide-and-droiid`. Pour désinstaller : `sudo apt remove druide-and-droiid`.
+
+Reconstruire ces fichiers : voir [BUILD.md](BUILD.md).
 
 ## Prérequis
 
@@ -70,5 +77,6 @@ Chakra Petch, Atkinson Hyperlegible et IBM Plex Mono sont distribuées sous lice
 | [ROADMAP.md](ROADMAP.md) | Phases et avancement |
 | [CHANGELOG.md](CHANGELOG.md) | Modifications |
 | [TEST_REPORT.md](TEST_REPORT.md) | Résultats des tests |
+| [BUILD.md](BUILD.md) | Reconstruire l'APK, le paquet et l'archive des sources |
 | [BUILD_REPORT.md](BUILD_REPORT.md) | État réel des compilations |
 | [USER_GUIDE.md](USER_GUIDE.md) | Mode d'emploi |

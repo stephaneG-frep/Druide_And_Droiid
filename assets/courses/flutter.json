@@ -1122,7 +1122,7 @@
     },
     {
      "type": "warning",
-     "text": "Le modèle généré par Flutter signe la release avec la clé de debug. Elle fonctionne pour tester, mais Google Play la refuse. C'est encore le cas de cette application, et ce sera corrigé avant sa livraison."
+     "text": "Le modèle généré par Flutter signe la release avec la clé de debug. Elle fonctionne pour tester, mais Google Play la refuse. Cette application en est un exemple : tant qu'elle n'est pas publiée, sa release lit `key.properties` s'il existe, et retombe sinon sur la clé de debug en l'annonçant. C'est acceptable pour un usage personnel, jamais pour un magasin d'applications."
     },
     {
      "type": "heading",

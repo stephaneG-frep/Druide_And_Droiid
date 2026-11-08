@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Druide And-Droiīd
+GenericName=Apprentissage du développement Android
+Comment=Apprendre Kotlin, Java, Flutter et Android, avec un professeur IA
+Exec=druide-and-droiid
+Icon=com.druideanddroiid.druide_and_droiid
+Terminal=false
+Categories=Education;ComputerScience;
+Keywords=Android;Kotlin;Flutter;Java;cours;
+StartupWMClass=com.druideanddroiid.druide_and_droiid

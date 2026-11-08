@@ -1,0 +1,22 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Druide And-Droiīd
+
+Files: *
+Copyright: 2026 Stephane Gaillet
+License: tous-droits-reserves
+ L'auteur n'a pas encore choisi de licence pour l'application.
+ Tous droits réservés.
+
+Files: opt/druide-and-droiid/lib/libflutter_linux_gtk.so opt/druide-and-droiid/lib/libapp.so
+Copyright: The Flutter Authors, auteurs des paquets Dart utilisés
+License: BSD-3-Clause, MIT, Apache-2.0, MPL-2.0
+ Le moteur Flutter et les paquets Dart compilés dans l'application gardent
+ leur licence. Leurs textes complets sont affichés dans l'application :
+ Paramètres, À propos, Licences.
+
+Files: opt/druide-and-droiid/data/flutter_assets/assets/fonts/*
+Copyright: 2018 The Chakra Petch Project Authors ; 2020 Braille Institute of America, Inc. ;
+ 2017 IBM Corp.
+License: OFL-1.1
+ SIL Open Font License 1.1. Les textes sont fournis à côté des polices
+ (fichiers *-OFL.txt) et dans l'écran Licences de l'application.

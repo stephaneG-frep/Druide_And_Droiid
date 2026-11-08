@@ -203,3 +203,13 @@ Les badges, défis, parcours et certificats sont des fonctions pures de `Learner
 ## Grimoire et aide contextuelle
 
 Le texte de l'aide vit dans `GrimoireTopic`. La page du Grimoire et `HelpButton` l'affichent tous les deux : modifiez-le à un seul endroit.
+
+## Livraison
+
+- **Signature Android** : `android/app/build.gradle.kts` lit `android/key.properties` s'il existe, sinon signe la release avec la clé de debug et le dit dans un avertissement Gradle.
+- **Paquet Debian** : `tool/build_deb.py` assemble `build/deb/` à partir du bundle Linux release et des fichiers de `linux/packaging/` (lanceur, icônes, `copyright`). Aucun script de maintenance : les déclencheurs de dpkg mettent à jour le cache d'icônes et le menu.
+- **Icône de fenêtre** : `my_application.cc` demande l'icône du thème, puis charge `data/app_icon.png` à côté de l'exécutable, ce qui marche aussi hors paquet.
+- **Licences** : `lib/app/licenses.dart` ajoute les licences des polices à celles des paquets, affichées par `showLicensePage`.
+- **Sources** : `tool/build_sources.sh` archive le commit courant avec `git archive`, ce qui exclut tout fichier ignoré.
+
+Les commandes sont détaillées dans BUILD.md.
