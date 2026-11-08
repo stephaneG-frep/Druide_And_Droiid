@@ -1,5 +1,38 @@
 # Rapport de tests
 
+## Phase 13, livraison — 2026-11-08
+
+| Vérification | Résultat |
+| --- | --- |
+| `flutter analyze` | Aucun problème |
+| `flutter test` | 438 tests réussis, 6 ignorés (Ollama réel, à la demande) |
+| APK release, analyse | Non débogable, `allowBackup=false`, permission Internet seule (plus une permission interne d'AndroidX), API 24 à 36, arm64-v8a, armeabi-v7a et x86_64 |
+| Alignement 16 Ko | APK aligné (`zipalign -P 16`), bibliothèques natives alignées sur 16 ou 64 Ko |
+| Signature | Clé de debug de la machine, empreinte vérifiée, identique à la version déjà installée |
+| Installation sur le Honor (Android 16, arm64) | Mise à jour par-dessus la version debug, sans désinstaller : 45 XP, leçon, quiz, conversations et fournisseur actif conservés |
+| Démarrage à froid sur le Honor, release | 490 à 535 ms sur 5 mesures (profile : médiane 883 ms) |
+| Mémoire sur le Honor, accueil | 180 Mo (PSS) |
+| Navigation sur le Honor | Cinq onglets, module, leçon, Plus, Paramètres, Sauvegardes : aucun plantage dans le journal |
+| Hors ligne sur le Honor, mode avion | Démarrage, module, leçon, export PDF et sauvegarde ZIP fonctionnent |
+| Export PDF sur le Honor | `module-2-kotlin.pdf` écrit par le sélecteur d'Android : 23 pages, texte et accents lus par `pdftotext` |
+| Sauvegarde ZIP sur le Honor | `sauvegarde.json`, notes, exercices, LISEZMOI ; mêmes comptes de lignes que la base d'avant la mise à jour ; aucune clé d'API |
+| Paquet `.deb`, contenu | 52 fichiers, droits 755 et 644, lanceur validé par `desktop-file-validate`, 15 dépendances directes |
+| Bibliothèques du paquet | Toutes résolues (`ldd`) |
+| Installation réelle sur Ubuntu 22.04 | Faite par l'utilisateur avec une première version du paquet (même binaire) : commande, lanceur, icônes et cache d'icônes en place, `/` intact |
+| Lancement de l'application installée | Fenêtre ouverte, icône et classe de fenêtre conformes au lanceur |
+| Lancement hors ligne sur Linux | Fonctionne réseau coupé (`unshare -n`) |
+| Installation puis purge, racine factice | Installé, puis plus aucun fichier après `dpkg -P` |
+| Archive des sources | Fichiers suivis par git seulement : ni `key.properties`, ni clé, ni build |
+
+### Non vérifié
+
+- **Désinstallation réelle du `.deb`** : elle demande `sudo`. Seule la purge dans une racine factice a été faite.
+- **Paquet final installé** : la version installée sur la machine est la première du paquet. La version finale a le même binaire, avec le cours Flutter corrigé, la racine en 755 et des suggestions limitées à `default-jdk` et `adb`.
+- **Restauration sur le Honor** : une sauvegarde est prête dans Téléchargements, mais aucune restauration n'a été lancée.
+- **Autres Ubuntu et arm64** : seul Ubuntu 22.04 amd64 a été essayé.
+- **Clé de publication** : aucune, à la demande de l'auteur. L'APK ne peut pas aller sur un magasin d'applications.
+- **Lecteurs d'écran, OpenAI et Gemini réels** : toujours non essayés.
+
 ## Phase 12, audit général — 2026-11-07
 
 | Vérification | Résultat |

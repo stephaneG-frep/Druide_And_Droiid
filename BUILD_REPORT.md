@@ -1,5 +1,20 @@
 # Rapport de compilation
 
+## Phase 13 — 2026-11-08 (version 1.0.0)
+
+| Livrable | Commande | Taille | SHA-256 |
+| --- | --- | --- | --- |
+| `Druide_And-Droiid_v1.0.0.apk` | `flutter build apk --release` | 74,8 Mo | `e502bf1647f0ccef26c22872fc1f799397a00bd959e4e75b1bdba9cc8d675a40` |
+| `Druide_And-Droiid_v1.0.0_amd64.deb` | `python3 tool/build_deb.py` | 10,4 Mo | `a4625440d401379900d6fbe8b8457c3ea5e57361ac1abadeb43492cf0570ec0f` |
+| `Druide_And-Droiid_v1.0.0_sources.zip` | `tool/build_sources.sh` | voir le rapport de fin de phase | archive du commit de livraison |
+
+Machine : Ubuntu 22.04.5 amd64, Flutter 3.47.2, AGP 9.1.0, Gradle 9.3.1, compileSdk et targetSdk 36, minSdk 24.
+
+- **Signature** : clé de debug de la machine (certificat `4a11b4a9…0b6d`), faute de `android/key.properties`. Choix de l'auteur, qui ne publie pas pour l'instant.
+- **`--no-pub` interdit pour la release** : sans `pub get`, l'enregistrement des plugins garde `integration_test`, et la compilation Java échoue. Constaté deux fois, documenté dans BUILD.md.
+- **Deux compilations Flutter en parallèle** se disputent les fichiers générés : les lancer l'une après l'autre.
+- **Dépendances du paquet** : `readelf` (bibliothèques NEEDED), `ldd`, puis `dpkg -S`. La première version listait aussi les dépendances transitives (66 paquets), ramenées à 15.
+
 ## Phase 12 — 2026-11-07
 
 | Livrable | Commande | Résultat |

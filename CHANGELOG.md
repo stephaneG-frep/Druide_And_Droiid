@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## Phase 13 — 2026-11-08 (version 1.0.0)
+
+- APK release `Druide_And-Droiid_v1.0.0.apk` : arm64-v8a, armeabi-v7a et x86_64, Android 7.0 minimum.
+- Signature release : clé de `android/key.properties` si le fichier existe, sinon clé de debug annoncée par Gradle.
+- Paquet `Druide_And-Droiid_v1.0.0_amd64.deb` : application dans `/opt`, commande `druide-and-droiid`, lanceur, icônes, documentation, dépendances déduites des bibliothèques liées.
+- Icône de la fenêtre Linux.
+- Archive des sources produite par `tool/build_sources.sh`, sans secrets.
+- `BUILD.md` : reconstruction des trois livrables.
+- Module Flutter : la phrase sur la signature de l'application décrit l'état réel.
+
 ## Phase 12 — 2026-11-07
 
 - Écran « Licences » dans les Paramètres : licences des paquets et des trois polices (SIL OFL 1.1), avec la version de l'application.

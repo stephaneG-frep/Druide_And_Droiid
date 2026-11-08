@@ -2,6 +2,13 @@
 
 Ce guide reprend l'essentiel. Dans l'application, la rubrique **Plus**, **Grimoire** en donne la version complète, et le bouton d'aide des écrans les plus riches ouvre directement le bon passage.
 
+## Installer
+
+- **Android** : ouvrez le fichier `Druide_And-Droiid_v1.0.0.apk` sur le téléphone et acceptez l'installation depuis cette source. Android 7.0 au minimum.
+- **Ubuntu** : dans un terminal, `sudo apt install ./Druide_And-Droiid_v1.0.0_amd64.deb`. L'application apparaît dans le menu.
+
+Vos données restent sur l'appareil. Une désinstallation sur Android les efface : exportez d'abord une sauvegarde. Sur Ubuntu, elles restent dans votre dossier personnel.
+
 ## Se déplacer
 
 - **Sur téléphone** : utilisez la barre en bas de l'écran.
